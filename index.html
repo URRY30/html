@@ -258,6 +258,32 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
 .empty-state strong{font-size:15px;color:var(--dark);display:block}
 .empty-state p{font-size:13px;margin-top:4px}
 
+/* AI Chat Styles */
+.chat-message{display:flex;gap:12px;max-width:85%}
+.chat-message.user-message{margin-left:auto;flex-direction:row-reverse}
+.message-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.chat-message.user-message .message-avatar{background:linear-gradient(135deg,var(--green),#059669)}
+.message-content{flex:1;min-width:0}
+.message-bubble{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow-xs)}
+.chat-message.user-message .message-bubble{background:var(--blue-light);border-color:var(--blue-mid)}
+.message-bubble p{font-size:13px;line-height:1.7;margin-bottom:6px}
+.message-bubble p:last-child{margin-bottom:0}
+.message-bubble ul{margin:8px 0 0 18px}
+.message-bubble li{font-size:13px;line-height:1.7;color:var(--muted)}
+.result-list{margin-top:10px;background:#F8FAFC;border-radius:8px;padding:12px}
+.result-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:6px;background:var(--white);border:1px solid #E2E8F0;font-size:13px}
+.result-item:last-child{margin-bottom:0}
+.result-item:hover{background:var(--blue-light);border-color:var(--blue-mid)}
+.result-name{font-weight:600;color:var(--dark);min-width:80px}
+.result-dept{color:var(--muted);font-size:12px}
+.result-tags{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.stat-highlight{font-size:16px;font-weight:700;color:var(--blue);margin:8px 0}
+.loading-dots{display:inline-flex;gap:4px}
+.loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:bounce 1.4s infinite ease-in-out both}
+.loading-dots span:nth-child(1){animation-delay:-0.32s}
+.loading-dots span:nth-child(2){animation-delay:-0.16s}
+@keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+
 /* ================================================================
    SLIDE-OVER PANEL
    ================================================================ */
@@ -484,6 +510,10 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
     <div class="sidebar-section">核心功能</div>
     <div class="nav-item active" onclick="showPage('talent')" id="nav-talent">
       <span class="nav-icon">👥</span><span>人才档案库</span>
+    </div>
+    <div class="nav-item" onclick="showPage('ai-chat')" id="nav-ai-chat">
+      <span class="nav-icon">🤖</span><span>AI 智能问答</span>
+      <span class="nav-badge">NEW</span>
     </div>
     <div class="nav-item" onclick="showPage('export')" id="nav-export">
       <span class="nav-icon">📤</span><span>导出中心</span>
@@ -880,6 +910,67 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
         </div>
       </div>
 
+      <!-- ======================================================
+           PAGE: AI 智能问答
+           ====================================================== -->
+      <div class="page" id="page-ai-chat">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">AI 智能问答</h1>
+            <p class="page-subtitle">基于人才数据进行智能查询和分析</p>
+          </div>
+        </div>
+
+        <div class="card" style="height:calc(100vh - 180px);display:flex;flex-direction:column;overflow:hidden">
+          <!-- 聊天历史区域 -->
+          <div id="chatHistory" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px">
+            <!-- 欢迎消息 -->
+            <div class="chat-message ai-message">
+              <div class="message-avatar">🤖</div>
+              <div class="message-content">
+                <div class="message-bubble">
+                  <p>您好！我是您的 AI 人才数据助手，可以帮您查询和分析人才数据。</p>
+                  <p style="margin-top:8px;color:var(--muted)">您可以问我：</p>
+                  <ul style="margin-top:6px;margin-left:18px;color:var(--muted);font-size:13px;line-height:1.8">
+                    <li>有多少个具有 Java 标签的人员？把他们列出来</li>
+                    <li>技术序列有多少人？</li>
+                    <li>显示所有 Q1 绩效的员工</li>
+                    <li>北京地区有哪些员工？</li>
+                    <li>AI 等级为 L3 以上的员工有谁？</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 输入区域 -->
+          <div style="border-top:1px solid var(--border);padding:16px 20px;background:var(--white)">
+            <div style="display:flex;gap:12px;align-items:flex-end">
+              <div style="flex:1;position:relative">
+                <textarea 
+                  id="chatInput" 
+                  class="filter-input" 
+                  placeholder="请输入您的问题，例如：有多少个具有 Java 标签的人员？"
+                  rows="2"
+                  style="resize:none;height:64px;padding:12px;font-family:var(--font)"
+                  onkeydown="if(event.keyCode===13&&!event.shiftKey){event.preventDefault();sendChatMessage()}"
+                ></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="sendChatMessage()" style="height:64px;padding:0 24px">
+                <span>发送</span>
+                <span style="margin-left:6px">➤</span>
+              </button>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-secondary btn-sm" onclick="fillChatQuery('有多少个具有 Java 标签的人员，把他们列出来')">Java 人员查询</button>
+              <button class="btn btn-secondary btn-sm" onclick="fillChatQuery('技术序列有多少人？')">技术序列统计</button>
+              <button class="btn btn-secondary btn-sm" onclick="fillChatQuery('显示所有 Q1 绩效的员工')">Q1 绩效查询</button>
+              <button class="btn btn-secondary btn-sm" onclick="fillChatQuery('北京地区有哪些员工？')">北京员工查询</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /page-content -->
   </div><!-- /main-area -->
 </div><!-- /app-shell -->
@@ -1244,6 +1335,147 @@ let editingUserId = null;
 let selectedRoleColor = '#2563EB';
 
 /* ================================================================   DEPARTMENT HIERARCHY   ================================================================ */
+
+// 标准岗位体系数据（主序列 - 子序列 - 三级岗位）
+const STANDARD_POSITION_DATA = {
+  "技术": {
+    "开发": [
+      "前端开发岗",
+      "后端开发岗",
+      "软件开发序列大类",
+      "应用架构岗"
+    ],
+    "算法": [
+      "算法岗"
+    ],
+    "AI 与大数据": [
+      "大数据应用研发岗",
+      "数据研发岗",
+      "机器学习岗",
+      "AI 与大数据大类"
+    ],
+    "测试": [
+      "测试岗"
+    ],
+    "运维": [
+      "运维 - 数据库运维开发岗",
+      "运维-IT 应用运维岗",
+      "运维-IT 服务支持岗",
+      "运维 - 系统运维"
+    ],
+    "信息安全": [
+      "信息安全岗（技术方向）",
+      "信息安全岗 (运营方向)"
+    ]
+  },
+  "产品": {
+    "产品经理": [
+      "产品经理岗 - 商业类",
+      "产品经理岗 - 其他"
+    ],
+    "运营": [
+      "产品运营岗（交通线）"
+    ],
+    "UED 设计": [
+      "UED 设计岗"
+    ]
+  },
+  "数据": {
+    "数据生产": [
+      "生产管理岗",
+      "质量管理岗",
+      "供应商管理岗"
+    ],
+    "数据工艺": [
+      "数据工艺岗"
+    ],
+    "数据运营与分析": [
+      "数据运营与分析岗"
+    ]
+  },
+  "前场": {
+    "销售": [
+      "销售 - 数字孪生业务",
+      "销售 - 交通 To B",
+      "销售 - 交通 To G",
+      "销售 - 加油业务"
+    ],
+    "解决方案": [
+      "解决方案 - 数字孪生业务",
+      "解决方案 - 交通 To B"
+    ],
+    "售前": [
+      "售前 - 数字孪生"
+    ],
+    "项目管理": [
+      "PMO",
+      "交付经理",
+      "项目经理岗 - 交通",
+      "数据交付岗"
+    ],
+    "市场营销": [
+      "市场营销岗"
+    ],
+    "销售支持": [
+      "销售运营岗",
+      "商务支持岗"
+    ]
+  },
+  "职能": {
+    "公共事务": [
+      "公共事务岗"
+    ],
+    "法务&风控": [
+      "法律事务岗"
+    ],
+    "投融资类": [
+      "投融资岗"
+    ],
+    "财务": [
+      "财务综合管理岗"
+    ],
+    "采购": [
+      "采购岗"
+    ],
+    "行政": [
+      "行政事务管理岗"
+    ],
+    "企划": [
+      "企划岗"
+    ],
+    "人力资源": [
+      "人力资源-COE 方向",
+      "人力资源-HRBP 方向"
+    ]
+  }
+};
+
+// 构建标准化的部门层级结构
+function buildStandardDepartmentHierarchy() {
+  const hierarchy = {};
+  for (const [level1, level2Obj] of Object.entries(STANDARD_POSITION_DATA)) {
+    hierarchy[level1] = {
+      name: level1,
+      children: {}
+    };
+    for (const [level2, level3Array] of Object.entries(level2Obj)) {
+      hierarchy[level1].children[level2] = {
+        name: level2,
+        children: {}
+      };
+      level3Array.forEach(level3 => {
+        const fullDept = `${level1}-${level2}-${level3}`;
+        hierarchy[level1].children[level2].children[level3] = {
+          name: level3,
+          full: fullDept
+        };
+      });
+    }
+  }
+  return hierarchy;
+}
+
+// 解析部门字符串为标准格式
 function parseDepartment(deptString) {
   // 移除括号内的介绍性文字
   const cleanDept = deptString.replace(/\s*\([^)]*\)/g, '').trim();
@@ -1257,7 +1489,10 @@ function parseDepartment(deptString) {
 }
 
 function buildDepartmentHierarchy() {
-  const hierarchy = {};
+  // 首先使用标准岗位体系构建基础层级
+  const hierarchy = buildStandardDepartmentHierarchy();
+  
+  // 然后从现有数据中补充可能缺失的岗位
   MOCK_DATA.forEach(emp => {
     const dept = parseDepartment(emp.dept);
     if (!hierarchy[dept.level1]) {
@@ -1273,10 +1508,13 @@ function buildDepartmentHierarchy() {
       };
     }
     if (dept.level3 && dept.level2) {
-      hierarchy[dept.level1].children[dept.level2].children[dept.level3] = {
-        name: dept.level3,
-        full: emp.dept
-      };
+      // 如果三级岗位不存在则添加
+      if (!hierarchy[dept.level1].children[dept.level2].children[dept.level3]) {
+        hierarchy[dept.level1].children[dept.level2].children[dept.level3] = {
+          name: dept.level3,
+          full: emp.dept
+        };
+      }
     }
   });
   return hierarchy;
@@ -1419,12 +1657,13 @@ function showPage(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.getElementById('nav-'+page).classList.add('active');
-  const titles = {talent:'人才档案库',export:'导出中心',users:'用户管理',permissions:'权限管理',tags:'标签库管理'};
+  const titles = {talent:'人才档案库',export:'导出中心',users:'用户管理',permissions:'权限管理',tags:'标签库管理','ai-chat':'AI 智能问答'};
   document.getElementById('topbarTitle').textContent = titles[page]||page;
   if(page==='export') renderExportLog();
   if(page==='users') renderUsers();
   if(page==='permissions') renderPermissions();
   if(page==='tags') renderTags();
+  if(page==='ai-chat') scrollToChatBottom();
 }
 
 /* ================================================================
@@ -1591,6 +1830,12 @@ function closePanel(){
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('detailPanel').classList.remove('show');
   document.body.style.overflow='';
+}
+
+// AI 问答中打开详情的函数
+function openDetailPanel(empId) {
+  const emp = MOCK_DATA.find(d => d.id === empId);
+  if (emp) openPanel(emp);
 }
 
 function buildPanelBody(emp){
@@ -2473,7 +2718,182 @@ initTags();
 • 后端存储：将 USERS、permMatrix、exportLog 接口化，持久化到数据库
 • 审计日志：在每次导出/用户变更操作后，POST到 /api/audit-log 接口
 • 图表接入：ECharts 替换雷达图SVG占位，接入真实图表组件
+
 =================================================================
+
+/* ================================================================
+   AI CHAT FUNCTIONS
+   ================================================================ */
+function scrollToChatBottom() {
+  const chatHistory = document.getElementById('chatHistory');
+  if (chatHistory) {
+    setTimeout(() => {
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }, 100);
+  }
+}
+
+function fillChatQuery(query) {
+  document.getElementById('chatInput').value = query;
+  document.getElementById('chatInput').focus();
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  if (!message) return;
+  
+  // 添加用户消息
+  addChatMessage(message, 'user');
+  input.value = '';
+  
+  // 显示加载状态
+  const loadingId = addLoadingMessage();
+  
+  // 处理查询（模拟 AI 响应）
+  setTimeout(() => {
+    removeLoadingMessage(loadingId);
+    const response = processChatQuery(message);
+    addChatMessage(response.text, 'ai', response.html);
+  }, 600 + Math.random() * 400);
+}
+
+function addChatMessage(content, type, extraHtml = '') {
+  const chatHistory = document.getElementById('chatHistory');
+  const div = document.createElement('div');
+  div.className = `chat-message ${type}-message`;
+  
+  const avatar = type === 'user' ? '👤' : '🤖';
+  
+  div.innerHTML = `
+    <div class="message-avatar">${avatar}</div>
+    <div class="message-content">
+      <div class="message-bubble">
+        <p>${content}</p>
+        ${extraHtml}
+      </div>
+    </div>
+  `;
+  
+  chatHistory.appendChild(div);
+  scrollToChatBottom();
+}
+
+function addLoadingMessage() {
+  const chatHistory = document.getElementById('chatHistory');
+  const id = 'loading-' + Date.now();
+  const div = document.createElement('div');
+  div.className = 'chat-message ai-message';
+  div.id = id;
+  div.innerHTML = `
+    <div class="message-avatar">🤖</div>
+    <div class="message-content">
+      <div class="message-bubble">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  `;
+  chatHistory.appendChild(div);
+  scrollToChatBottom();
+  return id;
+}
+
+function removeLoadingMessage(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function processChatQuery(query) {
+  const q = query.toLowerCase();
+  
+  // 标签查询：例如 "Java"、"Python"等
+  const tagMatch = q.match(/(?:具有 | 有 | 包含 | 标签为 | 标签是)\s*(?:的)?\s*([a-zA-Z0-9+#.]+)(?:标签 | 人员 | 员工 | 人)?/);
+  if (tagMatch || q.includes('标签')) {
+    const tagName = tagMatch ? tagMatch[1] : null;
+    let filtered = MOCK_DATA;
+    if (tagName) {
+      filtered = MOCK_DATA.filter(emp => emp.tags.some(t => t.toLowerCase().includes(tagName.toLowerCase())));
+    }
+    return buildListResponse(filtered, `具有${tagName || '指定'}标签的人员`, `${filtered.length}人`);
+  }
+  
+  // 序列查询：例如 "技术序列"、"产品序列"等
+  const seqMatch = q.match(/(?:技术 | 产品 | 数据 | 前场 | 职能)(?:序列 | 部门 | 岗)?/);
+  if (seqMatch) {
+    const seqName = seqMatch[0].replace(/序列 | 部门 | 岗/g, '');
+    const filtered = MOCK_DATA.filter(emp => emp.dept.startsWith(seqName));
+    return buildListResponse(filtered, `${seqName}序列人员`, `${filtered.length}人`);
+  }
+  
+  // Q 值查询：例如 "Q1"、"Q2"等
+  const qValueMatch = q.match(/q[1-4]/);
+  if (qValueMatch) {
+    const qValue = qValueMatch[0].toUpperCase();
+    const filtered = MOCK_DATA.filter(emp => emp.qValue === qValue);
+    return buildListResponse(filtered, `${qValue}绩效人员`, `${filtered.length}人`);
+  }
+  
+  // 地点查询：例如 "北京"、"上海"、"深圳"等
+  const locationMatch = q.match(/(?:北京 | 上海 | 深圳 | 广州 | 杭州)/);
+  if (locationMatch) {
+    const location = locationMatch[0];
+    const filtered = MOCK_DATA.filter(emp => emp.basicInfo.location === location);
+    return buildListResponse(filtered, `${location}地区员工`, `${filtered.length}人`);
+  }
+  
+  // AI 等级查询：例如 "L3"、"L4"等
+  const aiLevelMatch = q.match(/l[1-4](?:以上 | 及以上|>=|≥)?/);
+  if (aiLevelMatch) {
+    const levelStr = aiLevelMatch[0].replace(/以上 | 及以上|>=|≥/g, '').toUpperCase();
+    const minLevel = parseInt(levelStr.replace('L', ''));
+    const filtered = MOCK_DATA.filter(emp => {
+      const empLevel = parseInt(emp.aiLevel.replace('L', ''));
+      return empLevel >= minLevel;
+    });
+    return buildListResponse(filtered, `AI 等级 L${minLevel}及以上人员`, `${filtered.length}人`);
+  }
+  
+  // 总人数统计
+  if (q.includes('总共') || q.includes('一共') || q.includes('多少人') || q.includes('多少人')) {
+    return {
+      text: `当前人才库共有<strong class="stat-highlight">${MOCK_DATA.length}名</strong>员工。`,
+      html: ''
+    };
+  }
+  
+  // 默认回复
+  return {
+    text: '抱歉，我还没有理解您的问题。您可以尝试问我：<br/>• 有多少个具有 Java 标签的人员？<br/>• 技术序列有多少人？<br/>• 显示所有 Q1 绩效的员工<br/>• 北京地区有哪些员工？',
+    html: ''
+  };
+}
+
+function buildListResponse(data, title, count) {
+  if (data.length === 0) {
+    return { text: `未找到符合条件的${title}。`, html: '' };
+  }
+  
+  let html = `<div class="result-list">`;
+  data.slice(0, 10).forEach(emp => {
+    const tagsHtml = emp.tags.slice(0, 3).map(t => `<span class="badge badge-blue">${t}</span>`).join('');
+    html += `
+      <div class="result-item" style="cursor:pointer" onclick="openDetailPanel('${emp.id}')">
+        <span class="result-name">${emp.name}</span>
+        <span class="result-dept">${emp.dept.split('-').slice(0, 2).join('-')}</span>
+        <div class="result-tags">${tagsHtml}</div>
+      </div>
+    `;
+  });
+  if (data.length > 10) {
+    html += `<p style="margin-top:8px;font-size:12px;color:var(--muted)">还有${data.length - 10}人，请在人才档案库中查看完整列表</p>`;
+  }
+  html += `</div>`;
+  
+  return {
+    text: `共找到<strong class="stat-highlight">${count}</strong>${title}：`,
+    html: html
+  };
+}
 -->
 </body>
 </html>
