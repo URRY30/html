@@ -130,6 +130,237 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);min-height:1
 .page.active{display:block}
 
 /* ================================================================
+   AI智能问答页面样式
+   ================================================================ */
+.aiqa-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 140px);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.aiqa-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background: linear-gradient(180deg, #f8fafc 0%, var(--white) 100%);
+}
+.aiqa-chat:has(.aiqa-welcome) {
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.aiqa-welcome {
+  text-align: center;
+  padding: 32px 24px;
+  max-width: 550px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.aiqa-welcome-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 24px;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 8px 24px rgba(37, 99, 235, 0.5); }
+  100% { transform: scale(1); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+}
+.aiqa-welcome h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.aiqa-welcome p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.aiqa-welcome ul {
+  text-align: left;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px 0;
+  background: var(--blue-light);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  border: 1px solid var(--blue-mid);
+}
+.aiqa-welcome li {
+  padding: 10px 0;
+  color: var(--mid);
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.aiqa-welcome li::before {
+  content: "•";
+  color: var(--blue);
+  font-weight: bold;
+  margin-top: 2px;
+}
+.aiqa-welcome li:last-child {
+  border-bottom: none;
+}
+.aiqa-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.aiqa-suggestion {
+  background: var(--blue-light);
+  color: var(--blue);
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--blue-mid);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.aiqa-suggestion::after {
+  content: "💡";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+}
+.aiqa-suggestion:hover {
+  background: var(--blue);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+.aiqa-suggestion:hover::after {
+  opacity: 1;
+  animation: bounce 1s infinite;
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(-50%); }
+  40% { transform: translateY(-60%); }
+  60% { transform: translateY(-45%); }
+}
+.aiqa-input-area {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+}
+.aiqa-input {
+  flex: 1;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 16px;
+  font-size: 14px;
+  font-family: var(--font);
+  outline: none;
+  transition: all 0.15s;
+}
+.aiqa-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.aiqa-send-btn {
+  height: 44px;
+  padding: 0 24px;
+  background: var(--blue);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font);
+}
+.aiqa-send-btn:hover {
+  background: var(--blue-dark);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+.aiqa-message {
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.aiqa-message.user {
+  display: flex;
+  justify-content: flex-end;
+}
+.aiqa-message.ai {
+  display: flex;
+  justify-content: flex-start;
+}
+.aiqa-bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.aiqa-message.user .aiqa-bubble {
+  background: var(--blue);
+  color: var(--white);
+  border-bottom-right-radius: 4px;
+}
+.aiqa-message.ai .aiqa-bubble {
+  background: var(--white);
+  color: var(--dark);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  box-shadow: var(--shadow-xs);
+}
+.aiqa-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin: 0 8px;
+}
+.aiqa-message.user .aiqa-avatar {
+  background: var(--blue);
+  color: var(--white);
+}
+.aiqa-message.ai .aiqa-avatar {
+  background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+  color: var(--white);
+}
+
+/* ================================================================
    COMMON COMPONENTS
    ================================================================ */
 .page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
@@ -316,7 +547,7 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
 @keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
 .modal-header{background:var(--dark2);padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
 .modal-title{font-size:15px;font-weight:600;color:#F1F5F9}
-.modal-body{padding:24px}
+.modal-body{padding:24px;max-height:70vh;overflow-y:auto}
 .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
 
 .export-option{
@@ -329,7 +560,7 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
 .export-option-title{font-size:14px;font-weight:600;color:var(--dark)}
 .export-option-desc{font-size:12px;color:var(--muted);margin-top:2px}
 
-.export-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+.export-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;max-height:300px;overflow-y:auto}
 .field-check{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s}
 .field-check:hover{border-color:var(--blue);background:var(--blue-light)}
 .field-check.checked{border-color:var(--blue);background:var(--blue-light);color:var(--blue);font-weight:500}
@@ -446,6 +677,143 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
 .toast.info{border-left:3px solid var(--blue)}
 @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
 
+/* ================================================================
+   ANALYTICS STYLES
+   ================================================================ */
+
+/* 数据分析卡片样式 */
+.analytics-card{
+  transition:all 0.3s ease;
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.analytics-card:hover{
+  transform: translateY(-2px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+
+.card-header-content{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+}
+
+.card-icon{
+  font-size:18px;
+  margin-left:12px;
+}
+
+/* 分析内容动画 */
+.analytics-card .card-body{
+  animation:fadeIn 0.5s ease;
+}
+
+/* 数据可视化样式 */
+.data-stat{
+  background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius:8px;
+  padding:16px;
+  text-align:center;
+  transition:all 0.3s ease;
+}
+
+.data-stat:hover{
+  transform:scale(1.02);
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.data-stat-value{
+  font-size:24px;
+  font-weight:bold;
+  color:var(--primary);
+  margin-bottom:4px;
+}
+
+.data-stat-label{
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* 技能标签样式 */
+.skill-tag{
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:16px;
+  font-size:12px;
+  font-weight:500;
+  margin:4px;
+  transition:all 0.2s ease;
+}
+
+.skill-tag:hover{
+  transform:scale(1.05);
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 表格样式 */
+.analytics-table{
+  width:100%;
+  border-collapse:collapse;
+  margin:12px 0;
+}
+
+.analytics-table th{
+  background:var(--card-header);
+  padding:10px;
+  text-align:left;
+  font-size:12px;
+  font-weight:600;
+  border-bottom:2px solid var(--border);
+}
+
+.analytics-table td{
+  padding:10px;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+
+.analytics-table tr:hover{
+  background:var(--blue-light);
+}
+
+/* 进度条样式 */
+.progress-bar{
+  width:100%;
+  height:8px;
+  background:var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  margin:8px 0;
+}
+
+.progress-fill{
+  height:100%;
+  background:var(--primary);
+  border-radius:4px;
+  transition:width 0.5s ease;
+}
+
+/* 卡片标题样式 */
+.card-header h3{
+  margin:0;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+}
+
+/* 分析内容容器 */
+#analyticsContent{
+  animation:slideIn 0.3s ease;
+}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
 /* Scrollbar */
 .page-content::-webkit-scrollbar{width:5px}
 .page-content::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
@@ -482,7 +850,10 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
     </div>
 
     <div class="sidebar-section">核心功能</div>
-    <div class="nav-item active" onclick="showPage('talent')" id="nav-talent">
+    <div class="nav-item active" onclick="showPage('aiqa')" id="nav-aiqa">
+      <span class="nav-icon">🤖</span><span>AI问答</span>
+    </div>
+    <div class="nav-item" onclick="showPage('talent')" id="nav-talent">
       <span class="nav-icon">👥</span><span>人才档案库</span>
     </div>
     <div class="nav-item" onclick="showPage('export')" id="nav-export">
@@ -502,6 +873,11 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
       <span class="nav-icon">🏷️</span><span>标签管理</span>
     </div>
 
+    <div class="sidebar-section">数据分析</div>
+    <div class="nav-item" onclick="showPage('analytics')" id="nav-analytics">
+      <span class="nav-icon">📊</span><span>数据分析</span>
+    </div>
+
     <div class="sidebar-footer">
       <div class="avatar" style="width:32px;height:32px;font-size:12px">管</div>
       <div>
@@ -514,7 +890,7 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
   <!-- MAIN AREA -->
   <div class="main-area">
     <div class="topbar">
-      <div class="topbar-title" id="topbarTitle">人才档案库</div>
+      <div class="topbar-title" id="topbarTitle">AI智能问答</div>
       <div class="topbar-right">
         <span class="topbar-badge" id="topbarBadge">Super Admin</span>
         <button class="notif-btn" title="通知">🔔</button>
@@ -527,7 +903,7 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
       <!-- ======================================================
            PAGE: 人才档案
            ====================================================== -->
-      <div class="page active" id="page-talent">
+      <div class="page" id="page-talent">
         <div class="page-header">
           <div>
             <h1 class="page-title">人才档案库</h1>
@@ -549,7 +925,7 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
               <label>姓名（模糊搜索）</label>
               <input class="filter-input" id="filterName" placeholder="输入姓名…" oninput="applyFilters()">
             </div>
-            <div class="filter-group" style="max-width:400px">
+            <div class="filter-group" style="max-width:500px">
               <label>部门 / 业务线</label>
               <div style="display:flex;gap:6px">
                 <select class="filter-select" id="filterDeptLevel1" onchange="updateDeptLevel2('filter')">
@@ -562,16 +938,6 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
                   <option value="">全部岗位</option>
                 </select>
               </div>
-            </div>
-            <div class="filter-group" style="max-width:210px">
-              <label>技能标签</label>
-              <div class="tag-filter-wrapper">
-                <div class="tag-filter-btn" id="tagBtn" onclick="toggleTagDropdown()">
-                  <span id="tagBtnText" style="color:var(--muted)">选择技能标签</span><span>▾</span>
-                </div>
-                <div class="tag-dropdown" id="tagDropdown"></div>
-              </div>
-              <div class="active-tag-pills" id="activeTagPills"></div>
             </div>
             <div class="filter-group" style="max-width:140px">
               <label>Q值</label>
@@ -594,6 +960,27 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
             </div>
             <div style="align-self:flex-end">
               <button class="btn btn-secondary btn-sm" onclick="clearFilters()">✕ 清空</button>
+            </div>
+          </div>
+          <div class="filter-row" style="display:flex;align-items:flex-start;gap:20px">
+            <div style="flex:1">
+              <label style="font-size:11px;color:var(--muted);font-weight:500;display:block;margin-bottom:3px">技能标签</label>
+              <div class="tag-filter-wrapper">
+                <div class="tag-filter-btn" id="tagBtn" onclick="toggleTagDropdown()">
+                  <span id="tagBtnText" style="color:var(--muted)">选择技能标签</span><span>▾</span>
+                </div>
+                <div class="tag-dropdown" id="tagDropdown"></div>
+              </div>
+              <div class="active-tag-pills" id="activeTagPills"></div>
+            </div>
+            <div style="max-width:140px">
+              <label style="font-size:11px;color:var(--muted);font-weight:500;display:block;margin-bottom:3px">AI等级</label>
+              <select class="filter-select" id="filterAI" onchange="applyFilters()">
+                <option value="">全部</option>
+                <option value="L1">L1</option>
+                <option value="L2">L2</option>
+                <option value="L3">L3</option>
+              </select>
             </div>
           </div>
         </div>
@@ -832,10 +1219,10 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
             <div class="filter-group" style="max-width:400px">
               <label>所属部门</label>
               <div style="display:flex;gap:6px">
-                <select class="filter-select" id="tagDeptLevel1" onchange="updateDeptLevel2('tag')">
+                <select class="filter-select" id="tagDeptLevel1" onchange="updateDeptLevel2('tag'); renderTags()">
                   <option value="">全部一级部门</option>
                 </select>
-                <select class="filter-select" id="tagDeptLevel2" onchange="updateDeptLevel3('tag')">
+                <select class="filter-select" id="tagDeptLevel2" onchange="updateDeptLevel3('tag'); renderTags()">
                   <option value="">全部二级部门</option>
                 </select>
                 <select class="filter-select" id="tagDeptLevel3" onchange="renderTags()">
@@ -880,7 +1267,212 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
         </div>
       </div>
 
+      <!-- ======================================================
+           PAGE: 数据分析
+           ====================================================== -->
+      <div class="page" id="page-analytics">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">数据分析</h1>
+            <p class="page-subtitle">基于人才库数据的深度分析与洞察</p>
+          </div>
+        </div>
+
+        <!-- 分析类型选择 -->
+        <div class="filter-card" style="margin-bottom:20px">
+          <div class="filter-row">
+            <div class="filter-group" style="max-width:200px">
+              <label>分析类型</label>
+              <select class="filter-select" id="analyticsType" onchange="renderAnalytics()">
+                <option value="department">部门级分析</option>
+                <option value="company">公司级分析</option>
+              </select>
+            </div>
+            <div class="filter-group" style="max-width:200px" id="deptFilterGroup">
+              <label>部门选择</label>
+              <select class="filter-select" id="analyticsDept" onchange="renderAnalytics()">
+                <option value="">全部部门</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 分析内容 -->
+        <div id="analyticsContent">
+          <!-- 部门级分析 -->
+          <div id="departmentAnalytics">
+            <div class="grid grid-2">
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>人才结构分布</h3>
+                    <span class="card-icon">📊</span>
+                  </div>
+                </div>
+                <div class="card-body" id="talentStructureContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>管理岗继任覆盖率</h3>
+                    <span class="card-icon">👥</span>
+                  </div>
+                </div>
+                <div class="card-body" id="successionCoverageContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>技能缺口分析</h3>
+                    <span class="card-icon">🔍</span>
+                  </div>
+                </div>
+                <div class="card-body" id="skillGapContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>AI应用渗透率</h3>
+                    <span class="card-icon">🤖</span>
+                  </div>
+                </div>
+                <div class="card-body" id="aiPenetrationContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card" style="grid-column:1/-1">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>流失预警</h3>
+                    <span class="card-icon">⚠️</span>
+                  </div>
+                </div>
+                <div class="card-body" id="attritionWarningContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 公司级分析 -->
+          <div id="companyAnalytics" style="display:none">
+            <div class="grid grid-2">
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>人才结构分布</h3>
+                    <span class="card-icon">📈</span>
+                  </div>
+                </div>
+                <div class="card-body" id="companyTalentStructureContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>管理岗继任覆盖率</h3>
+                    <span class="card-icon">👤</span>
+                  </div>
+                </div>
+                <div class="card-body" id="companySuccessionCoverageContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>关键岗位盘点</h3>
+                    <span class="card-icon">🎯</span>
+                  </div>
+                </div>
+                <div class="card-body" id="keyPositionsContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>TOP50核心人才</h3>
+                    <span class="card-icon">🏆</span>
+                  </div>
+                </div>
+                <div class="card-body" id="top50TalentContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>跨部门AI人才密度</h3>
+                    <span class="card-icon">🌐</span>
+                  </div>
+                </div>
+                <div class="card-body" id="aiDensityContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+              <div class="card analytics-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <h3>AI转型进度追踪</h3>
+                    <span class="card-icon">🚀</span>
+                  </div>
+                </div>
+                <div class="card-body" id="aiTransformationContent">
+                  <p>加载中...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           PAGE: AI智能问答
+           ====================================================== -->
+      <div class="page active" id="page-aiqa">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">AI智能问答</h1>
+            <p class="page-subtitle">基于人才数据的智能问答助手</p>
+          </div>
+        </div>
+
+        <div class="aiqa-container">
+          <div class="aiqa-chat" id="aiqaChat">
+            <div class="aiqa-welcome">
+              <div class="aiqa-welcome-icon">🤖</div>
+              <h3>AI智能问答助手</h3>
+              <p>您好！我是人才管理智能体的AI助手。我可以帮您：</p>
+              <ul>
+                <li>查询人才信息 - "帮我查找所有AI等级为L3的候选人"</li>
+                <li>分析人才结构 - "分析技术部门的职级分布情况"</li>
+                <li>统计关键指标 - "公司Q1/Q2核心人才有多少人？"</li>
+                <li>生成人才报告 - "帮我生成一份数据部门的分析报告"</li>
+              </ul>
+              <div class="aiqa-suggestions">
+                <div class="aiqa-suggestion" onclick="aiqaAsk('公司有多少核心人才？')">公司有多少核心人才？</div>
+                <div class="aiqa-suggestion" onclick="aiqaAsk('技术部门的AI渗透率是多少？')">技术部门的AI渗透率是多少？</div>
+                <div class="aiqa-suggestion" onclick="aiqaAsk('哪些岗位有继任者覆盖？')">哪些岗位有继任者覆盖？</div>
+              </div>
+            </div>
+          </div>
+          <div class="aiqa-input-area">
+            <input type="text" class="aiqa-input" id="aiqaInput" placeholder="输入您的问题，按Enter发送..." onkeypress="if(event.key==='Enter')aiqaSend()">
+            <button class="aiqa-send-btn" onclick="aiqaSend()">发送</button>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /page-content -->
+
   </div><!-- /main-area -->
 </div><!-- /app-shell -->
 
@@ -1157,10 +1749,50 @@ input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:poin
      SCRIPT
      ================================================================ -->
 <script>
+// 定义完整的部门结构
+const DEPARTMENT_STRUCTURE = {
+  "技术": {
+    "开发": ["前端开发岗", "后端开发岗", "软件开发序列大类", "应用架构岗"],
+    "算法": ["算法岗"],
+    "AI与大数据": ["大数据应用研发岗", "数据研发岗", "机器学习岗", "AI与大数据大类"],
+    "测试": ["测试岗"],
+    "运维": ["运维-数据库运维开发岗", "运维- IT应用运维岗", "运维-IT服务支持岗", "运维-系统运维"],
+    "信息安全": ["信息安全岗（技术方向）", "信息安全岗 (运营方向)"],
+  },
+  "产品": {
+    "产品经理": ["产品经理岗-商业类", "产品经理岗- 其他"],
+    "运营": ["产品运营岗（交通线）"],
+    "UED设计": ["UED设计岗"],
+  },
+  "数据": {
+    "数据生产": ["生产管理岗", "质量管理岗", "供应商管理岗"],
+    "数据工艺": ["数据工艺岗"],
+    "数据运营与分析": ["数据运营与分析岗"],
+  },
+  "前场": {
+    "销售": ["销售-数字孪生业务", "销售-交通To B", "销售-交通To G", "销售-加油业务"],
+    "解决方案": ["解决方案-数字孪生业务", "解决方案-交通To B"],
+    "售前": ["售前-数字孪生"],
+    "项目管理": ["PMO", "交付经理", "项目经理岗-交通", "数据交付岗"],
+    "市场营销": ["市场营销岗"],
+    "销售支持": ["销售运营岗", "商务支持岗"],
+  },
+  "职能": {
+    "公共事务": ["公共事务岗"],
+    "法务&风控": ["法律事务岗"],
+    "投融资类": ["投融资岗"],
+    "财务": ["财务综合管理岗"],
+    "采购": ["采购岗"],
+    "行政": ["行政事务管理岗"],
+    "企划": ["企划岗"],
+    "人力资源": ["人力资源-COE方向", "人力资源-HRBP方向"],
+  },
+};
+
 /* ================================================================
-   MOCK DATA — 18条人才档案
+   MOCK DATA — 80条人才档案
    ================================================================ */
-const MOCK_DATA=[{id:"EMP001",name:"张三",dept:"技术-开发-后端开发岗",positionLevel:"高级开发工程师/P6",tags:["Java","高并发架构","AI工程化"],qValue:"Q2",aiLevel:"L2",stability:"高",performance:"中",basicInfo:{age:29,tenure:"3年2个月",location:"深圳",education:"硕士",university:"华中科技大学",status:"在职",manager:"李四(直属)/王五(虚线)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:高,2023全年:高",potentialScore:4.2,potentialRadar:{业务洞察:4,技术深度:5,协同领导力:3,创新突破:4,学习敏捷:4},aiLevelDetail:"L2-熟练应用AI工具",historyGrid:[{year:"2023",label:"中潜高绩"},{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["Java","微服务"],generalTags:["项目管理","跨部门协同"],recentProjects:["平安南山项目-数据负责人(2024.03-2024.08)","智能客服系统重构(2024.09-至今)"]},developmentInfo:{succession:"Ready Now - 技术架构师",promotionHistory:["2023.07 晋升P6","2021.03 入职P5"]},performanceHistory:["2024Q4: 中","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2022.06–2023.06",role:"技术-开发-后端开发岗-开发工程师"},{period:"2023.07–至今",role:"技术-开发-后端开发岗-高级开发工程师"}]},{id:"EMP002",name:"李梅",dept:"产品-产品经理-产品经理岗-商业类（数字孪生产品、交通线产品等）",positionLevel:"资深产品经理/P7",tags:["B端产品","用户研究","数据分析"],qValue:"Q1",aiLevel:"L3",stability:"高",performance:"高",basicInfo:{age:33,tenure:"5年6个月",location:"上海",education:"本科",university:"复旦大学",status:"在职",manager:"陈总(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.8,potentialRadar:{业务洞察:5,技术深度:3,协同领导力:5,创新突破:4,学习敏捷:5},aiLevelDetail:"L3-具备AI产品策划能力",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["ToB产品","SaaS"],generalTags:["战略规划","团队领导","客户访谈"],recentProjects:["HR-SaaS全新功能规划(2024.01-至今)","用户体验提升专项(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 产品总监候选",promotionHistory:["2024.01 晋升P7","2021.07 晋升P6","2019.01 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2019.01–2021.06",role:"产品-产品经理-初级产品经理"},{period:"2021.07–2024.01",role:"产品-产品经理-产品经理"},{period:"2024.01–至今",role:"产品-产品经理-产品经理岗-商业类（数字孪生产品、交通线产品等）-资深产品经理"}]},{id:"EMP003",name:"王强",dept:"技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）",positionLevel:"AI算法工程师/P6",tags:["NLP","LLM微调","Python","AI工程化"],qValue:"Q1",aiLevel:"L4",stability:"中",performance:"高",basicInfo:{age:28,tenure:"2年1个月",location:"北京",education:"硕士",university:"清华大学",status:"在职",manager:"赵工(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.9,potentialRadar:{业务洞察:4,技术深度:5,协同领导力:3,创新突破:5,学习敏捷:5},aiLevelDetail:"L4-AI应用开发专家",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["机器学习","深度学习","LLM"],generalTags:["技术分享","论文阅读"],recentProjects:["企业内部LLM平台搭建(2024.03-至今)","智能问答系统(2023.09-2024.03)"]},developmentInfo:{succession:"1-2年 - 技术专家/P7",promotionHistory:["2023.03 晋升P6","2022.12 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 中"],internalExperience:[{period:"2022.12–2023.02",role:"技术-AI与大数据-机器学习岗-算法工程师"},{period:"2023.03–至今",role:"技术-AI与大数据-机器学习岗-AI算法工程师"}]},{id:"EMP004",name:"陈静",dept:"职能-人力资源-人力资源-HRBP方向",positionLevel:"高级HRBP/M2",tags:["HRBP","组织发展","人才盘点","敬业度"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"高",basicInfo:{age:35,tenure:"7年3个月",location:"深圳",education:"本科",university:"武汉大学",status:"在职",manager:"HR总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:中",potentialScore:3.9,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:5,创新突破:3,学习敏捷:4},aiLevelDetail:"L1-基础AI工具使用",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"中潜高绩"}]},capabilityProfile:{ethnicTags:["HR管理","劳动法"],generalTags:["影响力","沟通协调","数据分析"],recentProjects:["2024年全员人才盘点(2024.08-2024.10)","核心人才保留专项(2024.01-2024.06)"]},developmentInfo:{succession:"Ready Now - CHRO候选梯队",promotionHistory:["2022.01 晋升M2","2019.06 晋升M1","2017.07 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 中","2024Q1: 中"],internalExperience:[{period:"2017.07–2019.05",role:"职能-人力资源-招聘组"},{period:"2019.06–2022.01",role:"职能-人力资源-人力资源-HRBP方向-HRBP"},{period:"2022.01–至今",role:"职能-人力资源-人力资源-HRBP方向-高级HRBP"}]},{id:"EMP005",name:"刘洋",dept:"前场-销售-销售-交通To B",positionLevel:"客户成功经理/B5",tags:["客户成功","SaaS销售","数据分析"],qValue:"Q3",aiLevel:"L1",stability:"低",performance:"中",basicInfo:{age:27,tenure:"1年5个月",location:"上海",education:"本科",university:"同济大学",status:"在职",manager:"张总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.2,potentialRadar:{业务洞察:3,技术深度:2,协同领导力:3,创新突破:3,学习敏捷:3},aiLevelDetail:"L1-基础AI工具",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"低潜中绩"}]},capabilityProfile:{ethnicTags:["B2B销售","SaaS"],generalTags:["客户关系","演示技能"],recentProjects:["Q3大客户续约专项(2024.07-2024.09)"]},developmentInfo:{succession:"暂无继任计划",promotionHistory:["2023.08 入职B4","2024.03 晋升B5"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 低"],internalExperience:[{period:"2023.08–2024.03",role:"前场-销售-销售-交通To B-销售专员"},{period:"2024.03–至今",role:"前场-销售-销售-交通To B-客户成功经理"}]},{id:"EMP006",name:"赵敏",dept:"技术-开发-前端开发岗",positionLevel:"前端架构师/P7",tags:["Vue3","React","工程化","低代码"],qValue:"Q1",aiLevel:"L3",stability:"高",performance:"高",basicInfo:{age:31,tenure:"4年8个月",location:"深圳",education:"本科",university:"浙江大学",status:"在职",manager:"CTO(虚线)/技术总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.7,potentialRadar:{业务洞察:4,技术深度:5,协同领导力:4,创新突破:5,学习敏捷:4},aiLevelDetail:"L3-AI辅助开发专家",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["前端工程化","性能优化"],generalTags:["技术规划","跨团队协同","代码评审"],recentProjects:["低代码平台核心架构设计(2024.02-至今)","微前端改造专项(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 前端技术负责人",promotionHistory:["2023.10 晋升P7","2021.03 晋升P6","2020.04 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2020.04–2021.02",role:"技术-开发-前端开发岗-前端开发"},{period:"2021.03–2023.10",role:"技术-开发-前端开发岗-高级前端"},{period:"2023.10–至今",role:"技术-开发-前端开发岗-前端架构师"}]},{id:"EMP007",name:"孙磊",dept:"技术-AI与大数据-数据研发岗",positionLevel:"数据工程师/P5",tags:["Flink","Spark","数据仓库","ClickHouse"],qValue:"Q2",aiLevel:"L2",stability:"中",performance:"中",basicInfo:{age:26,tenure:"1年10个月",location:"北京",education:"本科",university:"北京航空航天大学",status:"在职",manager:"李架构师(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.8,potentialRadar:{业务洞察:3,技术深度:4,协同领导力:3,创新突破:3,学习敏捷:5},aiLevelDetail:"L2-AI工具辅助分析",historyGrid:[{year:"2023",label:"高潜中绩"},{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["大数据","实时计算"],generalTags:["问题诊断","文档编写"],recentProjects:["实时数仓架构升级(2024.06-至今)"]},developmentInfo:{succession:"1-2年 - 高级数据工程师P6",promotionHistory:["2023.02 入职P5"]},performanceHistory:["2024Q4: 中","2024Q3: 高","2024Q2: 中","2024Q1: 中"],internalExperience:[{period:"2023.02–至今",role:"技术-AI与大数据-数据研发岗-数据工程师"}]},{id:"EMP008",name:"吴芳",dept:"职能-财务-财务综合管理岗",positionLevel:"高级财务BP/M1",tags:["财务分析","预算管理","业财融合"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"中",basicInfo:{age:32,tenure:"4年2个月",location:"上海",education:"硕士",university:"上海财经大学",status:"在职",manager:"CFO(虚线)/财务总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:高",potentialScore:3.6,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:4,创新突破:3,学习敏捷:3},aiLevelDetail:"L1-基础AI辅助",historyGrid:[{year:"2023",label:"中潜高绩"},{year:"2024",label:"中潜中绩"}]},capabilityProfile:{ethnicTags:["财务管理","会计准则"],generalTags:["数据分析","汇报能力","关系管理"],recentProjects:["2024年度全面预算编制(2024.09-2024.12)","业财一体化项目配合(2024.01-2024.08)"]},developmentInfo:{succession:"1-2年 - 财务总监候选",promotionHistory:["2023.01 晋升M1","2020.10 入职P6"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2020.10–2023.01",role:"职能-财务-财务综合管理岗-财务分析岗"},{period:"2023.01–至今",role:"职能-财务-财务综合管理岗-高级财务BP"}]},{id:"EMP009",name:"郑凯",dept:"技术-开发-后端开发岗",positionLevel:"后端工程师/P4",tags:["Go","微服务","K8s"],qValue:"Q3",aiLevel:"L1",stability:"低",performance:"低",basicInfo:{age:24,tenure:"0年9个月",location:"深圳",education:"本科",university:"南京大学",status:"在职",manager:"张三(直属)"},reviewData:{performanceHistory:"2024Q4:低,2024全年:低",potentialScore:2.8,potentialRadar:{业务洞察:2,技术深度:3,协同领导力:2,创新突破:2,学习敏捷:3},aiLevelDetail:"L1-了解基础AI概念",historyGrid:[{year:"2024",label:"中潜低绩"}]},capabilityProfile:{ethnicTags:["Go","云原生"],generalTags:["执行力"],recentProjects:["接口服务开发配合(2024.05-至今)"]},developmentInfo:{succession:"关注名单-建议绩效面谈",promotionHistory:["2024.03 入职P4"]},performanceHistory:["2024Q4: 低","2024Q3: 低","2024Q2: 中","2024Q1: —"],internalExperience:[{period:"2024.03–至今",role:"技术-开发-后端开发岗-工程师"}]},{id:"EMP010",name:"周婷",dept:"运营-产品运营岗（交通线）",positionLevel:"品牌经理/B6",tags:["品牌策划","内容营销","用户增长"],qValue:"Q2",aiLevel:"L2",stability:"中",performance:"高",basicInfo:{age:30,tenure:"3年6个月",location:"上海",education:"本科",university:"中山大学",status:"在职",manager:"CMO(虚线)/品牌总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:中",potentialScore:4.0,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:4,创新突破:5,学习敏捷:4},aiLevelDetail:"L2-AI内容创作应用",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["品牌管理","内容营销"],generalTags:["创意思维","项目统筹","数据驱动"],recentProjects:["品牌焕新项目-主负责人(2024.03-2024.09)","618大促内容营销(2024.05-2024.06)"]},developmentInfo:{succession:"1-2年 - 品牌总监候选",promotionHistory:["2024.04 晋升B6","2022.06 晋升B5","2021.06 入职B4"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 中","2024Q1: 中"],internalExperience:[{period:"2021.06–2022.05",role:"运营-产品运营岗（交通线）-内容专员"},{period:"2022.06–2024.04",role:"运营-产品运营岗（交通线）-品牌经理"},{period:"2024.04–至今",role:"运营-产品运营岗（交通线）-高级品牌经理"}]},{id:"EMP011",name:"胡伟",dept:"技术-信息安全-信息安全岗（技术方向）",positionLevel:"安全工程师/P6",tags:["渗透测试","安全架构","合规"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"中",basicInfo:{age:34,tenure:"6年1个月",location:"北京",education:"本科",university:"电子科技大学",status:"在职",manager:"CTO(虚线)/安全总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.5,potentialRadar:{业务洞察:3,技术深度:5,协同领导力:3,创新突破:3,学习敏捷:3},aiLevelDetail:"L1-基础AI安全理解",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"中潜中绩"}]},capabilityProfile:{ethnicTags:["信息安全","合规审计"],generalTags:["风险管理","培训能力"],recentProjects:["ISO27001认证推进(2024.01-2024.11)","等保三级整改(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 安全总监候选",promotionHistory:["2021.06 晋升P6","2019.06 晋升P5","2018.12 入职P4"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 高"],internalExperience:[{period:"2018.12–2019.05",role:"技术-运维-系统运维-运维工程师"},{period:"2019.06–2021.06",role:"技术-信息安全-信息安全岗（技术方向）-工程师"},{period:"2021.06–至今",role:"技术-信息安全-信息安全岗（技术方向）-高级工程师"}]},{id:"EMP012",name:"冯娜",dept:"产品-产品经理-产品经理岗- 其他（算法/平台/硬件产品/物流产品）",positionLevel:"增长产品经理/P5",tags:["增长黑客","A/B测试","用户行为分析"],qValue:"Q1",aiLevel:"L3",stability:"中",performance:"高",basicInfo:{age:27,tenure:"2年3个月",location:"上海",education:"本科",university:"厦门大学",status:"在职",manager:"李梅(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.5,potentialRadar:{业务洞察:5,技术深度:3,协同领导力:3,创新突破:5,学习敏捷:5},aiLevelDetail:"L3-AI辅助增长实验",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["增长运营","数据分析"],generalTags:["实验设计","快速迭代"],recentProjects:["新用户激活漏斗优化(2024.04-2024.10)","付费转化率提升专项(2024.10-至今)"]},developmentInfo:{succession:"1-2年 - 高级产品P6",promotionHistory:["2023.09 晋升P5","2022.09 入职P4"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 中"],internalExperience:[{period:"2022.09–2023.09",role:"产品-产品经理-产品经理岗- 其他（算法/平台/硬件产品/物流产品）-产品专员"},{period:"2023.09–至今",role:"产品-产品经理-产品经理岗- 其他（算法/平台/硬件产品/物流产品）-产品经理"}]},{id:"EMP013",name:"蒋涛",dept:"技术-开发-软件开发序列大类-应用架构岗",positionLevel:"技术架构师/P8",tags:["系统架构","高可用","分布式","Java","Go"],qValue:"Q1",aiLevel:"L2",stability:"中",performance:"高",basicInfo:{age:38,tenure:"8年4个月",location:"深圳",education:"硕士",university:"北京大学",status:"在职",manager:"CTO(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.6,potentialRadar:{业务洞察:5,技术深度:5,协同领导力:4,创新突破:4,学习敏捷:4},aiLevelDetail:"L2-AI辅助架构决策",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["系统架构","性能调优"],generalTags:["技术决策","导师辅导","跨部门协同"],recentProjects:["核心交易系统重架构(2023.06-2024.06)","混合云迁移专项(2024.07-至今)"]},developmentInfo:{succession:"Ready Now - CTO候选梯队",promotionHistory:["2022.01 晋升P8","2019.06 晋升P7","2016.08 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2016.08–2019.05",role:"技术-开发-后端开发岗-后端研发"},{period:"2019.06–2022.01",role:"技术-开发-软件开发序列大类-应用架构岗-技术专家"},{period:"2022.01–至今",role:"技术-开发-软件开发序列大类-应用架构岗-技术架构师"}]},{id:"EMP014",name:"韩雪",dept:"运营-产品运营岗（交通线）",positionLevel:"客服专员/B3",tags:["客户服务","投诉处理","CRM"],qValue:"Q4",aiLevel:"L1",stability:"低",performance:"低",basicInfo:{age:23,tenure:"0年6个月",location:"深圳",education:"本科",university:"广东外语外贸大学",status:"在职",manager:"李主管(直属)"},reviewData:{performanceHistory:"2024Q4:低,2024全年(半年):低",potentialScore:2.5,potentialRadar:{业务洞察:2,技术深度:1,协同领导力:2,创新突破:2,学习敏捷:3},aiLevelDetail:"L1-了解AI客服工具",historyGrid:[{year:"2024",label:"低潜低绩"}]},capabilityProfile:{ethnicTags:["客户服务"],generalTags:["沟通能力"],recentProjects:["VIP用户投诉处理日常工作"]},developmentInfo:{succession:"关注名单-建议绩效面谈",promotionHistory:["2024.06 入职B3"]},performanceHistory:["2024Q4: 低","2024Q3: 低","2024Q2: —","2024Q1: —"],internalExperience:[{period:"2024.06–至今",role:"运营-产品运营岗（交通线）-客服专员"}]},{id:"EMP015",name:"曹磊",dept:"运营-数据运营与分析-数据运营与分析岗",positionLevel:"高级运营经理/B7",tags:["私域运营","社群运营","SCRM","用户增长"],qValue:"Q2",aiLevel:"L2",stability:"高",performance:"高",basicInfo:{age:32,tenure:"5年0个月",location:"上海",education:"本科",university:"华东师范大学",status:"在职",manager:"运营总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.1,potentialRadar:{业务洞察:5,技术深度:2,协同领导力:4,创新突破:4,学习敏捷:4},aiLevelDetail:"L2-AI辅助运营决策",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["用户运营","私域流量"],generalTags:["数据分析","活动策划","团队管理"],recentProjects:["私域用户规模10万+达成(2024.01-2024.12)","SCRM系统建设落地(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 运营总监候选",promotionHistory:["2023.07 晋升B7","2021.06 晋升B6","2019.12 入职B5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2019.12–2021.05",role:"运营-数据运营与分析-数据运营与分析岗-运营专员"},{period:"2021.06–2023.07",role:"运营-数据运营与分析-数据运营与分析岗-运营经理"},{period:"2023.07–至今",role:"运营-数据运营与分析-数据运营与分析岗-高级运营经理"}]},{id:"EMP016",name:"秦阳",dept:"技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）",positionLevel:"机器学习工程师/P5",tags:["PyTorch","模型部署","推荐系统"],qValue:"Q2",aiLevel:"L3",stability:"中",performance:"中",basicInfo:{age:25,tenure:"1年2个月",location:"北京",education:"硕士",university:"上海交通大学",status:"在职",manager:"王强(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中",potentialScore:4.0,potentialRadar:{业务洞察:3,技术深度:4,协同领导力:2,创新突破:4,学习敏捷:5},aiLevelDetail:"L3-AI模型工程化部署",historyGrid:[{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["机器学习","推荐算法"],generalTags:["快速学习","论文实现"],recentProjects:["推荐系统A/B实验框架(2024.06-至今)"]},developmentInfo:{succession:"1-2年 - 高级MLE/P6",promotionHistory:["2023.10 入职P5"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 高","2024Q1: —"],internalExperience:[{period:"2023.10–至今",role:"技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）-ML工程师"}]},{id:"EMP017",name:"林佳",dept:"职能-法务&风控-法律事务岗",positionLevel:"法务经理/M1",tags:["数据合规","GDPR","劳动法","合同审查"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"中",basicInfo:{age:33,tenure:"4年9个月",location:"深圳",education:"硕士",university:"中国政法大学",status:"在职",manager:"法务总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:高",potentialScore:3.7,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:4,创新突破:3,学习敏捷:4},aiLevelDetail:"L1-AI合规文档辅助",historyGrid:[{year:"2023",label:"中潜高绩"},{year:"2024",label:"中潜中绩"}]},capabilityProfile:{ethnicTags:["公司法务","数据安全法"],generalTags:["风险评估","内部培训","政策解读"],recentProjects:["数据出境安全评估(2024.07-2024.10)","供应商合规体系建立(2023.12-2024.06)"]},developmentInfo:{succession:"1-2年 - 高级法务经理",promotionHistory:["2022.03 晋升M1","2020.03 入职P6"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 高"],internalExperience:[{period:"2020.03–2022.02",role:"职能-法务&风控-法律事务岗-法务专员"},{period:"2022.03–至今",role:"职能-法务&风控-法律事务岗-法务经理"}]},{id:"EMP018",name:"杨帆",dept:"技术-开发-前端开发岗",positionLevel:"前端工程师/P5",tags:["Vue3","TypeScript","性能优化"],qValue:"Q2",aiLevel:"L2",stability:"中",performance:"中",basicInfo:{age:26,tenure:"2年0个月",location:"深圳",education:"本科",university:"华南理工大学",status:"在职",manager:"赵敏(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.6,potentialRadar:{业务洞察:3,技术深度:4,协同领导力:2,创新突破:3,学习敏捷:4},aiLevelDetail:"L2-AI辅助编码",historyGrid:[{year:"2023",label:"高潜中绩"},{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["前端开发","组件库"],generalTags:["代码规范","文档撰写"],recentProjects:["低代码平台前端组件开发(2024.03-至今)"]},developmentInfo:{succession:"1-2年 - 高级前端P6",promotionHistory:["2023.12 晋升P5","2022.12 入职P4"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 高"],internalExperience:[{period:"2022.12–2023.12",role:"技术-开发-前端开发岗-前端工程师P4"},{period:"2023.12–至今",role:"技术-开发-前端开发岗-前端工程师P5"}]}];
+const MOCK_DATA = generateMockData();
 
 /* ================================================================
    SYSTEM USERS DATA
@@ -1236,6 +1868,12 @@ let selectedRoleKey = null;
 let selectedTags = new Set();
 let filteredData = [...MOCK_DATA];
 let selectedRows = new Set();
+
+// 分页相关变量
+let currentPage = 1;
+const pageSize = 10;
+let currentTagPage = 1;
+const tagPageSize = 10;
 let currentEmp = null;
 let exportLog = [];
 let exportType = 'list';
@@ -1256,39 +1894,185 @@ function parseDepartment(deptString) {
   };
 }
 
+
+
 function buildDepartmentHierarchy() {
   const hierarchy = {};
-  MOCK_DATA.forEach(emp => {
-    const dept = parseDepartment(emp.dept);
-    if (!hierarchy[dept.level1]) {
-      hierarchy[dept.level1] = {
-        name: dept.level1,
+
+  // 从预定义的部门结构构建层次
+  Object.keys(DEPARTMENT_STRUCTURE).forEach(level1 => {
+    hierarchy[level1] = {
+      name: level1,
+      children: {}
+    };
+
+    const level2s = DEPARTMENT_STRUCTURE[level1];
+    Object.keys(level2s).forEach(level2 => {
+      hierarchy[level1].children[level2] = {
+        name: level2,
         children: {}
       };
-    }
-    if (dept.level2 && !hierarchy[dept.level1].children[dept.level2]) {
-      hierarchy[dept.level1].children[dept.level2] = {
-        name: dept.level2,
-        children: {}
-      };
-    }
-    if (dept.level3 && dept.level2) {
-      hierarchy[dept.level1].children[dept.level2].children[dept.level3] = {
-        name: dept.level3,
-        full: emp.dept
-      };
-    }
+
+      const level3s = level2s[level2];
+      level3s.forEach(level3 => {
+        const fullDept = `${level1}-${level2}-${level3}`;
+        hierarchy[level1].children[level2].children[level3] = {
+          name: level3,
+          full: fullDept
+        };
+      });
+    });
   });
+
   return hierarchy;
 }
 
 let departmentHierarchy = buildDepartmentHierarchy();
 
+// 生成随机人员数据的辅助函数
+function generateMockData() {
+  const names = [
+    "张三", "李四", "王五", "赵六", "钱七", "孙八", "周九", "吴十", "郑一", "王二",
+    "陈三", "刘四", "林五", "黄六", "杨七", "马八", "朱九", "胡十", "郭一", "何二",
+    "高三", "罗四", "梁五", "宋六", "谢七", "唐八", "许九", "韩十", "冯一", "于二",
+    "董三", "萧四", "程五", "曹六", "袁七", "邓八", "傅九", "沈十", "曾一", "彭二",
+    "吕三", "苏四", "卢五", "蒋六", "蔡七", "贾八", "丁九", "魏十", "薛一", "叶二"
+  ];
+
+  const positions = [
+    "初级工程师", "中级工程师", "高级工程师", "资深工程师", "技术专家",
+    "产品经理", "高级产品经理", "产品总监",
+    "运营专员", "运营经理", "高级运营经理",
+    "设计师", "高级设计师", "设计总监",
+    "销售专员", "销售经理", "高级销售经理",
+    "HR专员", "HR经理", "HRBP",
+    "财务专员", "财务经理", "财务总监",
+    "行政专员", "行政经理"
+  ];
+
+  const tags = [
+    "Java", "Python", "JavaScript", "C++", "Go",
+    "前端开发", "后端开发", "全栈开发",
+    "人工智能", "机器学习", "深度学习",
+    "大数据", "数据挖掘", "数据分析",
+    "产品设计", "用户体验", "交互设计",
+    "项目管理", "敏捷开发", "DevOps",
+    "测试自动化", "性能优化", "安全开发",
+    "销售技巧", "客户关系", "市场分析",
+    "人力资源", "招聘", "培训",
+    "财务分析", "预算管理", "税务筹划"
+  ];
+
+  const qValues = ["Q1", "Q2", "Q3", "Q4"];
+  const aiLevels = ["L1", "L2", "L3"];
+  const stability = ["高", "中", "低"];
+  const performance = ["高", "中", "低"];
+
+  // 收集所有部门
+  const allDepts = [];
+  Object.keys(DEPARTMENT_STRUCTURE).forEach(level1 => {
+    const level2s = DEPARTMENT_STRUCTURE[level1];
+    Object.keys(level2s).forEach(level2 => {
+      const level3s = level2s[level2];
+      level3s.forEach(level3 => {
+        allDepts.push(`${level1}-${level2}-${level3}`);
+      });
+    });
+  });
+
+  const data = [];
+  for (let i = 1; i <= 80; i++) {
+    const name = names[Math.floor(Math.random() * names.length)];
+    const dept = allDepts[Math.floor(Math.random() * allDepts.length)];
+    const positionLevel = positions[Math.floor(Math.random() * positions.length)];
+
+    // 生成随机标签（2-4个）
+    const numTags = Math.floor(Math.random() * 3) + 2;
+    const randomTags = [];
+    while (randomTags.length < numTags) {
+      const tag = tags[Math.floor(Math.random() * tags.length)];
+      if (!randomTags.includes(tag)) {
+        randomTags.push(tag);
+      }
+    }
+
+    data.push({
+      id: `EMP${String(i).padStart(3, '0')}`,
+      name: name,
+      dept: dept,
+      positionLevel: positionLevel,
+      tags: randomTags,
+      qValue: qValues[Math.floor(Math.random() * qValues.length)],
+      aiLevel: aiLevels[Math.floor(Math.random() * aiLevels.length)],
+      stability: stability[Math.floor(Math.random() * stability.length)],
+      performance: performance[Math.floor(Math.random() * performance.length)],
+      basicInfo: {
+        age: Math.floor(Math.random() * 20) + 22,
+        tenure: `${Math.floor(Math.random() * 5) + 1}年${Math.floor(Math.random() * 12)}个月`,
+        location: ["北京", "上海", "深圳", "广州", "杭州", "成都", "武汉"][Math.floor(Math.random() * 7)],
+        education: ["本科", "硕士", "博士"][Math.floor(Math.random() * 3)],
+        university: ["北京大学", "清华大学", "复旦大学", "上海交通大学", "浙江大学", "华中科技大学", "中山大学"][Math.floor(Math.random() * 7)],
+        status: "在职",
+        manager: `${names[Math.floor(Math.random() * names.length)]}(直属)/${names[Math.floor(Math.random() * names.length)]}(虚线)`
+      },
+      reviewData: {
+        performanceHistory: `2024Q4:${performance[Math.floor(Math.random() * performance.length)]}, 2024全年:${performance[Math.floor(Math.random() * performance.length)]}, 2023全年:${performance[Math.floor(Math.random() * performance.length)]}`,
+        potentialScore: (Math.random() * 2 + 3).toFixed(1),
+        potentialRadar: {
+          业务洞察: Math.floor(Math.random() * 3) + 3,
+          技术深度: Math.floor(Math.random() * 3) + 3,
+          协同领导力: Math.floor(Math.random() * 3) + 3,
+          创新突破: Math.floor(Math.random() * 3) + 3,
+          学习敏捷: Math.floor(Math.random() * 3) + 3
+        },
+        aiLevelDetail: `L${Math.floor(Math.random() * 3) + 1}-${["了解AI概念", "能够使用AI工具", "具备AI产品策划能力"][Math.floor(Math.random() * 3)]}`,
+        historyGrid: [
+          { year: "2023", label: ["低潜低绩", "低潜中绩", "低潜高绩", "中潜低绩", "中潜中绩", "中潜高绩", "高潜低绩", "高潜中绩", "高潜高绩"][Math.floor(Math.random() * 9)] },
+          { year: "2024", label: ["低潜低绩", "低潜中绩", "低潜高绩", "中潜低绩", "中潜中绩", "中潜高绩", "高潜低绩", "高潜中绩", "高潜高绩"][Math.floor(Math.random() * 9)] }
+        ]
+      },
+      capabilityProfile: {
+        tags: randomTags.slice(0, Math.floor(Math.random() * 3) + 2),
+        generalTags: ["项目管理", "跨部门协同", "沟通能力", "团队协作", "问题解决"].slice(0, Math.floor(Math.random() * 3) + 1),
+        recentProjects: [
+          `${["平安南山项目", "智能客服系统", "数字孪生平台", "交通线产品", "加油业务系统"][Math.floor(Math.random() * 5)]}-${["开发负责人", "产品负责人", "测试负责人", "运营负责人"][Math.floor(Math.random() * 4)]}(${2024 - Math.floor(Math.random() * 2)}.${Math.floor(Math.random() * 12) + 1}-${2024}.${Math.floor(Math.random() * 12) + 1})`,
+          `${["智慧城市项目", "大数据分析平台", "AI推荐系统", "移动应用开发", "企业管理系统"][Math.floor(Math.random() * 5)]}-${["开发负责人", "产品负责人", "测试负责人", "运营负责人"][Math.floor(Math.random() * 4)]}(${2024 - Math.floor(Math.random() * 2)}.${Math.floor(Math.random() * 12) + 1}-${2024}.${Math.floor(Math.random() * 12) + 1})`
+        ]
+      },
+      developmentInfo: {
+        succession: ["Ready Now - 技术架构师", "Ready Now - 产品总监", "Ready Now - 运营总监", "Ready in 1-2 years", "Not Ready"][Math.floor(Math.random() * 5)],
+        promotionHistory: [
+          `${2024 - Math.floor(Math.random() * 3)}.${Math.floor(Math.random() * 12) + 1} 晋升${["P6", "P7", "P8"][Math.floor(Math.random() * 3)]}`,
+          `${2024 - Math.floor(Math.random() * 5) - 3}.${Math.floor(Math.random() * 12) + 1} 入职${["P5", "P6"][Math.floor(Math.random() * 2)]}`
+        ]
+      },
+      performanceHistory: [
+        `2024Q4: ${performance[Math.floor(Math.random() * performance.length)]}`,
+        `2024Q3: ${performance[Math.floor(Math.random() * performance.length)]}`,
+        `2024Q2: ${performance[Math.floor(Math.random() * performance.length)]}`,
+        `2024Q1: ${performance[Math.floor(Math.random() * performance.length)]}`
+      ],
+      internalExperience: [
+        {
+          period: `${2024 - Math.floor(Math.random() * 3)}.${Math.floor(Math.random() * 12) + 1}–${2024 - Math.floor(Math.random() * 2)}.${Math.floor(Math.random() * 12) + 1}`,
+          role: `${dept}-${positions[Math.floor(Math.random() * positions.length)]}`
+        },
+        {
+          period: `${2024 - Math.floor(Math.random() * 2)}.${Math.floor(Math.random() * 12) + 1}–至今`,
+          role: `${dept}-${positionLevel}`
+        }
+      ]
+    });
+  }
+
+  return data;
+}
+
 /* ================================================================   DEPARTMENT SELECTION FUNCTIONS   ================================================================ */
 function initDeptSelects(prefix) {
   const level1Select = document.getElementById(`${prefix}DeptLevel1`);
   if (!level1Select) return;
-  
+
   // 清空并添加一级部门选项
   level1Select.innerHTML = '<option value="">全部一级部门</option>';
   Object.keys(departmentHierarchy).sort().forEach(level1 => {
@@ -1297,7 +2081,7 @@ function initDeptSelects(prefix) {
     option.textContent = level1;
     level1Select.appendChild(option);
   });
-  
+
   // 重置二级和三级部门选择
   const level2Select = document.getElementById(`${prefix}DeptLevel2`);
   const level3Select = document.getElementById(`${prefix}DeptLevel3`);
@@ -1313,14 +2097,14 @@ function updateDeptLevel2(prefix) {
   const level1Select = document.getElementById(`${prefix}DeptLevel1`);
   const level2Select = document.getElementById(`${prefix}DeptLevel2`);
   const level3Select = document.getElementById(`${prefix}DeptLevel3`);
-  
+
   if (!level1Select || !level2Select || !level3Select) return;
-  
+
   const selectedLevel1 = level1Select.value;
-  
+
   // 清空二级部门选择
   level2Select.innerHTML = '<option value="">全部二级部门</option>';
-  
+
   if (selectedLevel1) {
     const level2s = departmentHierarchy[selectedLevel1]?.children || {};
     Object.keys(level2s).sort().forEach(level2 => {
@@ -1330,10 +2114,10 @@ function updateDeptLevel2(prefix) {
       level2Select.appendChild(option);
     });
   }
-  
+
   // 重置三级部门选择
   level3Select.innerHTML = '<option value="">全部岗位</option>';
-  
+
   // 如果是过滤功能，重新应用过滤
   if (prefix === 'filter') {
     applyFilters();
@@ -1344,15 +2128,15 @@ function updateDeptLevel3(prefix) {
   const level1Select = document.getElementById(`${prefix}DeptLevel1`);
   const level2Select = document.getElementById(`${prefix}DeptLevel2`);
   const level3Select = document.getElementById(`${prefix}DeptLevel3`);
-  
+
   if (!level1Select || !level2Select || !level3Select) return;
-  
+
   const selectedLevel1 = level1Select.value;
   const selectedLevel2 = level2Select.value;
-  
+
   // 清空三级部门选择
   level3Select.innerHTML = '<option value="">全部岗位</option>';
-  
+
   if (selectedLevel1 && selectedLevel2) {
     const level3s = departmentHierarchy[selectedLevel1]?.children[selectedLevel2]?.children || {};
     Object.keys(level3s).sort().forEach(level3 => {
@@ -1362,7 +2146,7 @@ function updateDeptLevel3(prefix) {
       level3Select.appendChild(option);
     });
   }
-  
+
   // 如果是过滤功能，重新应用过滤
   if (prefix === 'filter') {
     applyFilters();
@@ -1379,6 +2163,17 @@ function getSelectedDept(prefix) {
   if (level3Select && level3Select.value) {
     return level3Select.value;
   }
+  
+  const level2Select = document.getElementById(`${prefix}DeptLevel2`);
+  if (level2Select && level2Select.value) {
+    return level2Select.value;
+  }
+  
+  const level1Select = document.getElementById(`${prefix}DeptLevel1`);
+  if (level1Select && level1Select.value) {
+    return level1Select.value;
+  }
+  
   return '';
 }
 
@@ -1419,12 +2214,156 @@ function showPage(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.getElementById('nav-'+page).classList.add('active');
-  const titles = {talent:'人才档案库',export:'导出中心',users:'用户管理',permissions:'权限管理',tags:'标签库管理'};
+  const titles = {talent:'人才档案库',export:'导出中心',users:'用户管理',permissions:'权限管理',tags:'标签库管理',analytics:'数据分析',aiqa:'AI智能问答'};
   document.getElementById('topbarTitle').textContent = titles[page]||page;
   if(page==='export') renderExportLog();
   if(page==='users') renderUsers();
   if(page==='permissions') renderPermissions();
   if(page==='tags') renderTags();
+  if(page==='analytics') initAnalytics();
+}
+
+/* ================================================================
+   AI智能问答功能
+   ================================================================ */
+function aiqaAsk(question) {
+  document.getElementById('aiqaInput').value = question;
+  aiqaSend();
+}
+
+function aiqaSend() {
+  const input = document.getElementById('aiqaInput');
+  const question = input.value.trim();
+  if (!question) return;
+
+  const chat = document.getElementById('aiqaChat');
+  const welcome = chat.querySelector('.aiqa-welcome');
+  if (welcome) welcome.remove();
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'aiqa-message user';
+  userMsg.innerHTML = `<div class="aiqa-bubble">${escapeHtml(question)}</div><div class="aiqa-avatar">👤</div>`;
+  chat.appendChild(userMsg);
+
+  input.value = '';
+
+  setTimeout(() => {
+    const answer = generateAIAnswer(question);
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'aiqa-message ai';
+    aiMsg.innerHTML = `<div class="aiqa-avatar">🤖</div><div class="aiqa-bubble">${answer}</div>`;
+    chat.appendChild(aiMsg);
+    chat.scrollTop = chat.scrollHeight;
+  }, 500);
+}
+
+function generateAIAnswer(question) {
+  const q = question.toLowerCase();
+
+  if (q.includes('核心人才') || q.includes('q1') || q.includes('q2')) {
+    const q1q2 = MOCK_DATA.filter(d => d.qValue === 'Q1' || d.qValue === 'Q2');
+    return `根据当前人才库数据，公司共有 <strong>${q1q2.length} 名</strong> Q1/Q2核心人才。\n\n` +
+      `其中Q1人才 ${q1q2.filter(d => d.qValue === 'Q1').length} 人，Q2人才 ${q1q2.filter(d => d.qValue === 'Q2').length} 人。\n\n` +
+      `这些核心人才主要集中在 ${getTopDepts(q1q2)} 等部门，建议重点关注和培养。`;
+  }
+
+  if (q.includes('ai等级') || q.includes('ai渗透') || q.includes('l1') || q.includes('l2') || q.includes('l3')) {
+    const l1 = MOCK_DATA.filter(d => d.aiLevel === 'L1').length;
+    const l2 = MOCK_DATA.filter(d => d.aiLevel === 'L2').length;
+    const l3 = MOCK_DATA.filter(d => d.aiLevel === 'L3').length;
+    const rate = ((l2 + l3) / MOCK_DATA.length * 100).toFixed(1);
+    return `当前人才库的AI能力等级分布如下：\n\n` +
+      `• L1（基础）: ${l1} 人 (${(l1/MOCK_DATA.length*100).toFixed(1)}%)\n` +
+      `• L2（进阶）: ${l2} 人 (${(l2/MOCK_DATA.length*100).toFixed(1)}%)\n` +
+      `• L3（高级）: ${l3} 人 (${(l3/MOCK_DATA.length*100).toFixed(1)}%)\n\n` +
+      `AI渗透率（L2/L3占比）: <strong>${rate}%</strong>\n\n` +
+      `AI高能力人才（L2/L3）总数: <strong>${l2 + l3} 人</strong>`;
+  }
+
+  if (q.includes('继任') || q.includes(' successor')) {
+    const withSuccessor = MOCK_DATA.filter(d => d.successor && d.successor !== '无');
+    const withoutSuccessor = MOCK_DATA.filter(d => !d.successor || d.successor === '无');
+    return `管理岗继任覆盖分析：\n\n` +
+      `• 有继任者岗位: <strong>${withSuccessor.length} 个</strong>\n` +
+      `• 无继任者岗位: <strong>${withoutSuccessor.length} 个</strong> ⚠️\n\n` +
+      (withoutSuccessor.length > 0 ? `建议关注以下关键岗位的继任者培养：\n${withoutSuccessor.slice(0, 5).map(d => `• ${d.name} (${d.position})`).join('\n')}` : '');
+  }
+
+  if (q.includes('部门') && (q.includes('分布') || q.includes('结构'))) {
+    const deptCount = {};
+    MOCK_DATA.forEach(d => {
+      deptCount[d.dept] = (deptCount[d.dept] || 0) + 1;
+    });
+    const sorted = Object.entries(deptCount).sort((a, b) => b[1] - a[1]);
+    return `各部门人才分布：\n\n` +
+      sorted.slice(0, 8).map(([dept, count]) => `• ${dept}: <strong>${count} 人</strong> (${(count/MOCK_DATA.length*100).toFixed(1)}%)`).join('\n');
+  }
+
+  if (q.includes('职级') || q.includes('级别')) {
+    const levels = {};
+    MOCK_DATA.forEach(d => {
+      levels[d.level] = (levels[d.level] || 0) + 1;
+    });
+    return `人才职级分布：\n\n` +
+      Object.entries(levels).sort().map(([level, count]) => `• ${level}: <strong>${count} 人</strong>`).join('\n');
+  }
+
+  if (q.includes('技能') || q.includes('标签')) {
+    const allTags = [...new Set(MOCK_DATA.flatMap(d => d.tags))];
+    const tagCount = {};
+    MOCK_DATA.forEach(d => {
+      d.tags.forEach(tag => {
+        tagCount[tag] = (tagCount[tag] || 0) + 1;
+      });
+    });
+    const topTags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    return `技能标签分析：\n\n` +
+      `公司人才共使用 <strong>${allTags.length} 种</strong>技能标签。\n\n` +
+      `热门标签 TOP10：\n` +
+      topTags.map(([tag, count]) => `• ${tag}: ${count} 人`).join('\n');
+  }
+
+  if (q.includes('流失') || q.includes('预警')) {
+    const risk = MOCK_DATA.filter(d => d.stability && d.stability < 3);
+    return `流失预警分析：\n\n` +
+      `根据当前数据，稳定性评分较低（<3分）的人才共 <strong>${risk.length} 人</strong>：\n\n` +
+      (risk.length > 0 ? risk.slice(0, 5).map(d => `⚠️ ${d.name} - 稳定性: ${d.stability}分`).join('\n') : '暂无预警人员');
+  }
+
+  if (q.includes('总人数') || q.includes('一共')) {
+    return `当前人才库共有 <strong>${MOCK_DATA.length} 名</strong>人才。\n\n` +
+      `其中：\n` +
+      `• 技术序列: ${MOCK_DATA.filter(d => d.dept.includes('技术')).length} 人\n` +
+      `• 产品序列: ${MOCK_DATA.filter(d => d.dept.includes('产品')).length} 人\n` +
+      `• 数据序列: ${MOCK_DATA.filter(d => d.dept.includes('数据')).length} 人\n` +
+      `• 前场序列: ${MOCK_DATA.filter(d => d.dept.includes('前场')).length} 人\n` +
+      `• 职能序列: ${MOCK_DATA.filter(d => d.dept.includes('职能')).length} 人`;
+  }
+
+  return `您好！我是人才管理智能体的AI助手。\n\n` +
+    `您可以问我以下类型的问题：\n\n` +
+    `• 人才统计 - "公司有多少核心人才？"\n` +
+    `• AI能力分析 - "AI渗透率是多少？"\n` +
+    `• 继任覆盖 - "哪些岗位有继任者？"\n` +
+    `• 部门分布 - "各部门人才分布如何？"\n` +
+    `• 职级结构 - "职级分布是什么样的？"\n` +
+    `• 技能分析 - "热门技能标签有哪些？"\n` +
+    `• 流失预警 - "有哪些流失风险？"\n\n` +
+    `请告诉我您想了解的具体内容。`;
+}
+
+function getTopDepts(data) {
+  const deptCount = {};
+  data.forEach(d => {
+    deptCount[d.dept] = (deptCount[d.dept] || 0) + 1;
+  });
+  return Object.entries(deptCount).sort((a, b) => b[1] - a[1]).slice(0, 3).map(d => d[0]).join('、');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 /* ================================================================
@@ -1449,16 +2388,16 @@ function initTalent() {
 
   // Stats
   const stats = document.getElementById('talentStats');
-  const deptCount = Object.keys(departmentHierarchy).reduce((count, level1) => {
+  // 计算子序列（二级部门）的个数
+  const subDeptCount = Object.keys(departmentHierarchy).reduce((count, level1) => {
     const level2s = departmentHierarchy[level1].children;
-    const level3s = Object.values(level2s).reduce((sum, level2) => sum + Object.keys(level2.children).length, 0);
-    return count + level3s;
+    return count + Object.keys(level2s).length;
   }, 0);
   stats.innerHTML = `
     <div class="stat-card"><div class="stat-num">${MOCK_DATA.length}</div><div class="stat-label">总人才数</div></div>
     <div class="stat-card"><div class="stat-num">${MOCK_DATA.filter(d=>d.qValue==='Q1'||d.qValue==='Q2').length}</div><div class="stat-label">Q1/Q2核心人才</div><div class="stat-delta" style="color:var(--green)">↑ 重点关注</div></div>
-    <div class="stat-card"><div class="stat-num">${deptCount}</div><div class="stat-label">覆盖部门数</div></div>
-    <div class="stat-card"><div class="stat-num">${MOCK_DATA.filter(d=>d.aiLevel==='L3'||d.aiLevel==='L4').length}</div><div class="stat-label">AI高能力人才</div><div class="stat-delta" style="color:var(--blue)">L3/L4 等级</div></div>
+    <div class="stat-card"><div class="stat-num">${subDeptCount}</div><div class="stat-label">覆盖部门数</div></div>
+    <div class="stat-card"><div class="stat-num">${MOCK_DATA.filter(d=>d.aiLevel==='L2'||d.aiLevel==='L3').length}</div><div class="stat-label">AI高能力人才</div><div class="stat-delta" style="color:var(--blue)">L2/L3 等级</div></div>
   `;
   applyFilters();
 }
@@ -1471,17 +2410,35 @@ window.addEventListener('click',e=>{
 
 function applyFilters(){
   const name=document.getElementById('filterName').value.trim().toLowerCase();
-  const dept=getSelectedDept('filter');
+  const level1=document.getElementById('filterDeptLevel1').value;
+  const level2=document.getElementById('filterDeptLevel2').value;
+  const level3=document.getElementById('filterDeptLevel3').value;
   const q=document.getElementById('filterQ').value;
   const perf=document.getElementById('filterPerf').value;
+  const aiLevel=document.getElementById('filterAI').value;
   filteredData=MOCK_DATA.filter(emp=>{
     if(name&&!emp.name.toLowerCase().includes(name))return false;
-    if(dept&&emp.dept!==dept)return false;
+
+    // 部门过滤逻辑
+    if(level3){
+      // 选择了三级岗位，必须完全匹配
+      if(emp.dept!==level3)return false;
+    }else if(level2){
+      // 选择了二级部门但未选择三级岗位，匹配二级部门
+      if(!emp.dept.includes(`-${level2}-`))return false;
+    }else if(level1){
+      // 选择了一级部门但未选择二级部门，匹配一级部门
+      if(!emp.dept.startsWith(level1+'-'))return false;
+    }
+
     if(q&&emp.qValue!==q)return false;
     if(perf&&emp.performance!==perf)return false;
+    if(aiLevel&&emp.aiLevel!==aiLevel)return false;
     if(selectedTags.size>0&&![...selectedTags].every(t=>emp.tags.includes(t)))return false;
     return true;
   });
+  // 重置分页到第一页
+  currentPage = 1;
   selectedRows.clear();
   renderTable();
   document.getElementById('exportCountLabel').textContent=`${filteredData.length} 条记录`;
@@ -1489,9 +2446,12 @@ function applyFilters(){
 
 function clearFilters(){
   document.getElementById('filterName').value='';
-  document.getElementById('filterDept').value='';
+  document.getElementById('filterDeptLevel1').value='';
+  document.getElementById('filterDeptLevel2').value='';
+  document.getElementById('filterDeptLevel3').value='';
   document.getElementById('filterQ').value='';
   document.getElementById('filterPerf').value='';
+  document.getElementById('filterAI').value='';
   selectedTags.clear();
   document.querySelectorAll('#tagDropdown input').forEach(c=>c.checked=false);
   updateTagPills();applyFilters();
@@ -1505,7 +2465,7 @@ function updateTagPills(){
   const t=document.getElementById('tagBtnText');
   c.innerHTML='';
   if(selectedTags.size===0){t.textContent='选择技能标签';t.style.color='var(--muted)';return;}
-  t.textContent=`已选 ${selectedTags.size} 个`;t.style.color='var(--blue)';
+  t.textContent='已选标签：';t.style.color='var(--blue)';
   selectedTags.forEach(tag=>{
     const p=document.createElement('div');p.className='tag-pill-rm';
     p.innerHTML=`${tag} <span onclick="removeTag('${tag}')">✕</span>`;c.appendChild(p);
@@ -1526,7 +2486,13 @@ function renderTable(){
   tbody.innerHTML='';
   if(filteredData.length===0){empty.style.display='';return;}
   empty.style.display='none';
-  filteredData.forEach((emp,i)=>{
+
+  // 计算分页数据
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentPageData = filteredData.slice(startIndex, endIndex);
+
+  currentPageData.forEach((emp,i)=>{
     const tr=document.createElement('tr');
     tr.className='anim-row';tr.style.animationDelay=`${i*.03}s`;
     const checked=selectedRows.has(emp.id);
@@ -1552,6 +2518,56 @@ function renderTable(){
     `;
     tbody.appendChild(tr);
   });
+
+  // 渲染分页控件
+  renderPagination();
+}
+
+function renderPagination() {
+  const paginationContainer = document.getElementById('pagination');
+  if (!paginationContainer) {
+    // 创建分页容器
+    const tableCard = document.querySelector('.table-card');
+    const paginationDiv = document.createElement('div');
+    paginationDiv.id = 'pagination';
+    paginationDiv.className = 'pagination';
+    tableCard.appendChild(paginationDiv);
+  }
+
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const paginationElement = document.getElementById('pagination');
+
+  if (totalPages <= 1) {
+    paginationElement.innerHTML = '';
+    return;
+  }
+
+  let paginationHTML = `
+    <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
+      <button class="btn btn-secondary btn-sm" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(1)">首页</button>
+      <button class="btn btn-secondary btn-sm" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(currentPage - 1)">上一页</button>
+  `;
+
+  // 显示当前页和前后各2页
+  for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+    paginationHTML += `
+      <button class="btn ${i === currentPage ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="changePage(${i})"><strong>${i}</strong></button>
+    `;
+  }
+
+  paginationHTML += `
+      <button class="btn btn-secondary btn-sm" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(currentPage + 1)">下一页</button>
+      <button class="btn btn-secondary btn-sm" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${totalPages})">末页</button>
+      <span style="font-size:12px;color:var(--muted)">第 ${currentPage} / ${totalPages} 页</span>
+    </div>
+  `;
+
+  paginationElement.innerHTML = paginationHTML;
+}
+
+function changePage(page) {
+  currentPage = page;
+  renderTable();
 }
 
 function toggleRow(id,cb){
@@ -1629,7 +2645,7 @@ function buildPanelBody(emp){
     <div style="margin-top:14px"><div class="info-key" style="margin-bottom:8px">历史九宫格轨迹</div><div style="display:flex;gap:8px;flex-wrap:wrap">${gridHistory}</div></div>
   </div>
   <div class="module"><div class="module-title">能力画像</div>
-    <div style="margin-bottom:12px"><div class="info-key">族群级标签</div><div class="tags-group" style="margin-top:6px">${cp.ethnicTags.map(t=>`<span class="badge badge-blue">${t}</span>`).join('')}</div></div>
+    <div style="margin-bottom:12px"><div class="info-key">技能标签</div><div class="tags-group" style="margin-top:6px">${cp.tags.map(t=>`<span class="badge badge-blue">${t}</span>`).join('')}</div></div>
     <div style="margin-bottom:12px"><div class="info-key">通用能力标签</div><div class="tags-group" style="margin-top:6px">${cp.generalTags.map(t=>`<span class="badge badge-purple">${t}</span>`).join('')}</div></div>
     <div><div class="info-key">近1年关键项目经历</div><div style="margin-top:6px;display:flex;flex-direction:column;gap:6px">${cp.recentProjects.map(p=>`<div class="project-chip">${p}</div>`).join('')}</div></div>
   </div>
@@ -1854,7 +2870,7 @@ function buildProfileHTML(emp,mods){
 
   if(modsMap.basic) html+=sec('基础信息',grid([['年龄',bi.age+'岁'],['司龄',bi.tenure],['地点',bi.location],['学历',bi.education],['院校',bi.university],['在职状态',bi.status]])+`<div style="margin-top:10px">${kv('汇报关系',bi.manager)}</div>`);
   if(modsMap.review) html+=sec('盘点数据',`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">${kv('综合潜力',`<span style="font-size:18px;font-weight:700;color:#2563EB;font-family:monospace">${rd.potentialScore}/5.0</span>`)}${kv('AI等级',rd.aiLevelDetail)}${kv('绩效摘要',`<span style="font-size:12px">${rd.performanceHistory}</span>`)}</div><div>${Object.entries(rd.potentialRadar).map(([k,v])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px dashed #F1F5F9"><span style="font-size:12px;color:#334155">${k}</span><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden"><div style="height:100%;width:${v/5*100}%;background:#2563EB;border-radius:3px"></div></div><span style="font-family:monospace;font-size:12px;font-weight:600;color:#2563EB;width:24px;text-align:right">${v}</span></div></div>`).join('')}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${rd.historyGrid.map(g=>`<div style="background:#F1F5F9;border-radius:6px;padding:6px 12px;font-size:12px"><strong style="font-family:monospace">${g.year}</strong> ${g.label}</div>`).join('')}</div>`);
-  if(modsMap.capability) html+=sec('能力画像',`<div style="margin-bottom:10px"><div style="font-size:11px;color:#64748B;margin-bottom:6px">族群级标签</div><div style="display:flex;gap:6px;flex-wrap:wrap">${cp.ethnicTags.map(t=>`<span style="background:#EFF6FF;color:#2563EB;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500">${t}</span>`).join('')}</div></div><div style="margin-bottom:10px"><div style="font-size:11px;color:#64748B;margin-bottom:6px">通用能力标签</div><div style="display:flex;gap:6px;flex-wrap:wrap">${cp.generalTags.map(t=>`<span style="background:#F5F3FF;color:#5B21B6;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500">${t}</span>`).join('')}</div></div><div><div style="font-size:11px;color:#64748B;margin-bottom:6px">近1年关键项目</div>${cp.recentProjects.map(p=>`<div style="background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:6px;padding:6px 10px;font-size:12px;margin-bottom:6px">${p}</div>`).join('')}</div>`);
+  if(modsMap.capability) html+=sec('能力画像',`<div style="margin-bottom:10px"><div style="font-size:11px;color:#64748B;margin-bottom:6px">技能标签</div><div style="display:flex;gap:6px;flex-wrap:wrap">${cp.tags.map(t=>`<span style="background:#EFF6FF;color:#2563EB;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500">${t}</span>`).join('')}</div></div><div style="margin-bottom:10px"><div style="font-size:11px;color:#64748B;margin-bottom:6px">通用能力标签</div><div style="display:flex;gap:6px;flex-wrap:wrap">${cp.generalTags.map(t=>`<span style="background:#F5F3FF;color:#5B21B6;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500">${t}</span>`).join('')}</div></div><div><div style="font-size:11px;color:#64748B;margin-bottom:6px">近1年关键项目</div>${cp.recentProjects.map(p=>`<div style="background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:6px;padding:6px 10px;font-size:12px;margin-bottom:6px">${p}</div>`).join('')}</div>`);
   if(modsMap.development) html+=sec('发展信息',`<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:12px 16px;margin-bottom:12px"><div style="font-size:11px;color:#15803D;font-weight:700;text-transform:uppercase;letter-spacing:.04em">继任计划</div><div style="font-size:14px;font-weight:600;margin-top:2px">${di.succession}</div></div><div style="font-size:11px;color:#64748B;margin-bottom:8px">晋升/调动记录</div><div style="padding-left:16px;border-left:2px solid #E2E8F0">${di.promotionHistory.map(p=>`<div style="margin-bottom:8px;font-size:13px">${p}</div>`).join('')}</div>`);
   if(modsMap.perf) html+=sec('绩效记录',emp.performanceHistory.map(p=>{const[q,r]=p.split(': ');const c=r==='高'?'#15803D':r==='低'?'#B91C1C':'#2563EB';return`<div style="display:flex;justify-content:space-between;padding:8px 12px;background:#F8FAFC;border-radius:6px;margin-bottom:6px"><span style="font-family:monospace;font-size:12px;color:#64748B">${q}</span><span style="font-weight:600;color:${c}">${r||'—'}</span></div>`;}).join(''));
   if(modsMap.experience) html+=sec('内部任职经历',`<div style="padding-left:16px;border-left:2px solid #E2E8F0">${emp.internalExperience.map(e=>`<div style="margin-bottom:12px"><div style="font-size:11px;color:#94A3B8;font-family:monospace">${e.period}</div><div style="font-size:13px;font-weight:500">${e.role}</div></div>`).join('')}</div>`);
@@ -1969,26 +2985,26 @@ function openUserModal(userId=null){
     document.getElementById('uStatus').value=u.status;
     document.getElementById('uScope').value=u.scope;
     document.getElementById('uRemark').value=u.remark||'';
-    
+
     // 设置三级部门选择
     if (u.dept) {
       const dept = parseDepartment(u.dept);
       const level1Select = document.getElementById('uDeptLevel1');
       const level2Select = document.getElementById('uDeptLevel2');
       const level3Select = document.getElementById('uDeptLevel3');
-      
+
       // 设置一级部门
       if (level1Select) {
         level1Select.value = dept.level1;
         // 触发二级部门更新
         updateDeptLevel2('u');
-        
+
         // 设置二级部门
         if (level2Select) {
           level2Select.value = dept.level2;
           // 触发三级部门更新
           updateDeptLevel3('u');
-          
+
           // 设置三级部门
           if (level3Select) {
             level3Select.value = u.dept;
@@ -2001,7 +3017,7 @@ function openUserModal(userId=null){
     document.getElementById('uRole').value='viewer';
     document.getElementById('uStatus').value='active';
     document.getElementById('uScope').value='all';
-    
+
     // 重置三级部门选择
     const level1Select = document.getElementById('uDeptLevel1');
     const level2Select = document.getElementById('uDeptLevel2');
@@ -2095,7 +3111,7 @@ function selectRole(key){
         <div class="perm-desc">${p.desc}</div>
         <div class="perm-toggle">
           <label class="toggle" title="${key==='super_admin'?'超级管理员权限不可修改':''}">
-            <input type="checkbox" ${permMatrix[key][p.key]?'checked':''} 
+            <input type="checkbox" ${permMatrix[key][p.key]?'checked':''}
               ${key==='super_admin'?'disabled':''}
               onchange="permMatrix['${key}']['${p.key}']=this.checked">
             <span class="toggle-slider"></span>
@@ -2161,24 +3177,237 @@ function showToast(msg,type='info'){
    TAGS MANAGEMENT
    ================================================================ */
 let TAGS = [
-  {id: 'TAG001', name: 'Java', type: 'dept', dept: '技术-开发-后端开发岗', usage: 12, createdAt: '2024-01-01'},
-  {id: 'TAG002', name: 'Python', type: 'dept', dept: '技术-开发-后端开发岗', usage: 8, createdAt: '2024-01-02'},
-  {id: 'TAG003', name: '前端开发', type: 'dept', dept: '技术-开发-前端开发岗', usage: 15, createdAt: '2024-01-03'},
-  {id: 'TAG004', name: '产品设计', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类（数字孪生产品、交通线产品等）', usage: 10, createdAt: '2024-01-04'},
-  {id: 'TAG005', name: '数据分析', type: 'common', dept: '', usage: 20, createdAt: '2024-01-05'},
-  {id: 'TAG006', name: '项目管理', type: 'common', dept: '', usage: 25, createdAt: '2024-01-06'},
-  {id: 'TAG007', name: '沟通能力', type: 'common', dept: '', usage: 30, createdAt: '2024-01-07'},
-  {id: 'TAG008', name: 'AI算法', type: 'dept', dept: '技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）', usage: 5, createdAt: '2024-01-08'},
-  {id: 'TAG009', name: '测试自动化', type: 'dept', dept: '技术-测试-测试开发岗', usage: 7, createdAt: '2024-01-09'},
-  {id: 'TAG010', name: '团队协作', type: 'common', dept: '', usage: 35, createdAt: '2024-01-10'},
-  {id: 'TAG011', name: '全栈开发', type: 'dept', dept: '技术-开发-全栈开发岗', usage: 6, createdAt: '2024-01-11'},
-  {id: 'TAG012', name: '运维开发', type: 'dept', dept: '技术-运维-运维开发岗', usage: 4, createdAt: '2024-01-12'},
-  {id: 'TAG013', name: '解决方案架构', type: 'dept', dept: '技术-架构-解决方案架构师岗', usage: 3, createdAt: '2024-01-13'},
-  {id: 'TAG014', name: '数据工程', type: 'dept', dept: '技术-数据-数据工程师岗', usage: 5, createdAt: '2024-01-14'},
-  {id: 'TAG015', name: '网络安全', type: 'dept', dept: '技术-安全-安全工程师岗', usage: 2, createdAt: '2024-01-15'},
-  {id: 'TAG016', name: '云平台', type: 'dept', dept: '技术-云原生-云平台工程师岗', usage: 4, createdAt: '2024-01-16'},
-  {id: 'TAG017', name: 'Android开发', type: 'dept', dept: '技术-移动开发-Android开发岗', usage: 3, createdAt: '2024-01-17'},
-  {id: 'TAG018', name: 'iOS开发', type: 'dept', dept: '技术-移动开发-iOS开发岗', usage: 2, createdAt: '2024-01-18'}
+  // 技术-开发-前端开发岗
+  {id: 'TAG001', name: 'JavaScript', type: 'dept', dept: '技术-开发-前端开发岗', usage: 15, createdAt: '2024-01-01'},
+  {id: 'TAG002', name: 'HTML5', type: 'dept', dept: '技术-开发-前端开发岗', usage: 18, createdAt: '2024-01-02'},
+  {id: 'TAG003', name: 'CSS3', type: 'dept', dept: '技术-开发-前端开发岗', usage: 16, createdAt: '2024-01-03'},
+  {id: 'TAG004', name: 'React', type: 'dept', dept: '技术-开发-前端开发岗', usage: 14, createdAt: '2024-01-04'},
+  {id: 'TAG005', name: 'Vue', type: 'dept', dept: '技术-开发-前端开发岗', usage: 12, createdAt: '2024-01-05'},
+  {id: 'TAG006', name: 'Angular', type: 'dept', dept: '技术-开发-前端开发岗', usage: 8, createdAt: '2024-01-06'},
+  {id: 'TAG007', name: 'TypeScript', type: 'dept', dept: '技术-开发-前端开发岗', usage: 13, createdAt: '2024-01-07'},
+  {id: 'TAG008', name: 'Webpack', type: 'dept', dept: '技术-开发-前端开发岗', usage: 11, createdAt: '2024-01-08'},
+  {id: 'TAG009', name: 'Vite', type: 'dept', dept: '技术-开发-前端开发岗', usage: 9, createdAt: '2024-01-09'},
+  {id: 'TAG010', name: 'Tailwind CSS', type: 'dept', dept: '技术-开发-前端开发岗', usage: 10, createdAt: '2024-01-10'},
+  {id: 'TAG011', name: '前端开发', type: 'dept', dept: '技术-开发-前端开发岗', usage: 18, createdAt: '2024-01-11'},
+  {id: 'TAG012', name: '响应式设计', type: 'dept', dept: '技术-开发-前端开发岗', usage: 16, createdAt: '2024-01-12'},
+  {id: 'TAG013', name: '性能优化', type: 'dept', dept: '技术-开发-前端开发岗', usage: 14, createdAt: '2024-01-13'},
+  {id: 'TAG014', name: 'PWA', type: 'dept', dept: '技术-开发-前端开发岗', usage: 7, createdAt: '2024-01-14'},
+  {id: 'TAG015', name: '微前端', type: 'dept', dept: '技术-开发-前端开发岗', usage: 6, createdAt: '2024-01-15'},
+  {id: 'TAG016', name: '状态管理', type: 'dept', dept: '技术-开发-前端开发岗', usage: 12, createdAt: '2024-01-16'},
+  {id: 'TAG017', name: 'HTTP/HTTPS', type: 'dept', dept: '技术-开发-前端开发岗', usage: 15, createdAt: '2024-01-17'},
+  {id: 'TAG018', name: '浏览器原理', type: 'dept', dept: '技术-开发-前端开发岗', usage: 10, createdAt: '2024-01-18'},
+  {id: 'TAG019', name: '跨域', type: 'dept', dept: '技术-开发-前端开发岗', usage: 13, createdAt: '2024-01-19'},
+  {id: 'TAG020', name: '前端安全', type: 'dept', dept: '技术-开发-前端开发岗', usage: 9, createdAt: '2024-01-20'},
+  
+  // 技术-开发-后端开发岗
+  {id: 'TAG021', name: 'Java', type: 'dept', dept: '技术-开发-后端开发岗', usage: 12, createdAt: '2024-01-21'},
+  {id: 'TAG022', name: 'Python', type: 'dept', dept: '技术-开发-后端开发岗', usage: 8, createdAt: '2024-01-22'},
+  {id: 'TAG023', name: 'C++', type: 'dept', dept: '技术-开发-后端开发岗', usage: 5, createdAt: '2024-01-23'},
+  {id: 'TAG024', name: 'Go', type: 'dept', dept: '技术-开发-后端开发岗', usage: 7, createdAt: '2024-01-24'},
+  {id: 'TAG025', name: 'PHP', type: 'dept', dept: '技术-开发-后端开发岗', usage: 6, createdAt: '2024-01-25'},
+  {id: 'TAG026', name: 'Ruby', type: 'dept', dept: '技术-开发-后端开发岗', usage: 3, createdAt: '2024-01-26'},
+  {id: 'TAG027', name: 'Node.js', type: 'dept', dept: '技术-开发-后端开发岗', usage: 9, createdAt: '2024-01-27'},
+  {id: 'TAG028', name: 'Spring Boot', type: 'dept', dept: '技术-开发-后端开发岗', usage: 10, createdAt: '2024-01-28'},
+  {id: 'TAG029', name: 'Django', type: 'dept', dept: '技术-开发-后端开发岗', usage: 7, createdAt: '2024-01-29'},
+  {id: 'TAG030', name: 'Flask', type: 'dept', dept: '技术-开发-后端开发岗', usage: 5, createdAt: '2024-01-30'},
+  {id: 'TAG031', name: 'Express', type: 'dept', dept: '技术-开发-后端开发岗', usage: 6, createdAt: '2024-01-31'},
+  {id: 'TAG032', name: '数据库设计', type: 'dept', dept: '技术-开发-后端开发岗', usage: 14, createdAt: '2024-02-01'},
+  {id: 'TAG033', name: 'SQL', type: 'dept', dept: '技术-开发-后端开发岗', usage: 15, createdAt: '2024-02-02'},
+  {id: 'TAG034', name: 'NoSQL', type: 'dept', dept: '技术-开发-后端开发岗', usage: 8, createdAt: '2024-02-03'},
+  {id: 'TAG035', name: 'Redis', type: 'dept', dept: '技术-开发-后端开发岗', usage: 10, createdAt: '2024-02-04'},
+  {id: 'TAG036', name: 'RabbitMQ', type: 'dept', dept: '技术-开发-后端开发岗', usage: 7, createdAt: '2024-02-05'},
+  {id: 'TAG037', name: 'Kafka', type: 'dept', dept: '技术-开发-后端开发岗', usage: 6, createdAt: '2024-02-06'},
+  {id: 'TAG038', name: '微服务', type: 'dept', dept: '技术-开发-后端开发岗', usage: 9, createdAt: '2024-02-07'},
+  {id: 'TAG039', name: 'Docker', type: 'dept', dept: '技术-开发-后端开发岗', usage: 8, createdAt: '2024-02-08'},
+  {id: 'TAG040', name: 'Kubernetes', type: 'dept', dept: '技术-开发-后端开发岗', usage: 6, createdAt: '2024-02-09'},
+  {id: 'TAG041', name: 'RESTful API', type: 'dept', dept: '技术-开发-后端开发岗', usage: 12, createdAt: '2024-02-10'},
+  {id: 'TAG042', name: 'GraphQL', type: 'dept', dept: '技术-开发-后端开发岗', usage: 5, createdAt: '2024-02-11'},
+  {id: 'TAG043', name: '后端开发', type: 'dept', dept: '技术-开发-后端开发岗', usage: 16, createdAt: '2024-02-12'},
+  {id: 'TAG044', name: '性能调优', type: 'dept', dept: '技术-开发-后端开发岗', usage: 11, createdAt: '2024-02-13'},
+  {id: 'TAG045', name: '系统设计', type: 'dept', dept: '技术-开发-后端开发岗', usage: 10, createdAt: '2024-02-14'},
+  {id: 'TAG046', name: '安全开发', type: 'dept', dept: '技术-开发-后端开发岗', usage: 8, createdAt: '2024-02-15'},
+  {id: 'TAG047', name: '缓存策略', type: 'dept', dept: '技术-开发-后端开发岗', usage: 9, createdAt: '2024-02-16'},
+  {id: 'TAG048', name: '负载均衡', type: 'dept', dept: '技术-开发-后端开发岗', usage: 7, createdAt: '2024-02-17'},
+  {id: 'TAG049', name: '并发编程', type: 'dept', dept: '技术-开发-后端开发岗', usage: 8, createdAt: '2024-02-18'},
+  {id: 'TAG050', name: '事务处理', type: 'dept', dept: '技术-开发-后端开发岗', usage: 11, createdAt: '2024-02-19'},
+  
+  // 技术-开发-应用架构岗
+  {id: 'TAG051', name: '系统架构', type: 'dept', dept: '技术-开发-应用架构岗', usage: 12, createdAt: '2024-02-20'},
+  {id: 'TAG052', name: '软件架构', type: 'dept', dept: '技术-开发-应用架构岗', usage: 10, createdAt: '2024-02-21'},
+  {id: 'TAG053', name: '架构设计', type: 'dept', dept: '技术-开发-应用架构岗', usage: 9, createdAt: '2024-02-22'},
+  {id: 'TAG054', name: '技术选型', type: 'dept', dept: '技术-开发-应用架构岗', usage: 8, createdAt: '2024-02-23'},
+  {id: 'TAG055', name: '技术方案', type: 'dept', dept: '技术-开发-应用架构岗', usage: 11, createdAt: '2024-02-24'},
+  {id: 'TAG056', name: '架构评审', type: 'dept', dept: '技术-开发-应用架构岗', usage: 7, createdAt: '2024-02-25'},
+  {id: 'TAG057', name: '技术债务', type: 'dept', dept: '技术-开发-应用架构岗', usage: 6, createdAt: '2024-02-26'},
+  {id: 'TAG058', name: '可扩展性', type: 'dept', dept: '技术-开发-应用架构岗', usage: 8, createdAt: '2024-02-27'},
+  {id: 'TAG059', name: '可靠性', type: 'dept', dept: '技术-开发-应用架构岗', usage: 9, createdAt: '2024-02-28'},
+  {id: 'TAG060', name: '可维护性', type: 'dept', dept: '技术-开发-应用架构岗', usage: 7, createdAt: '2024-03-01'},
+  
+  // 技术-算法-算法岗
+  {id: 'TAG061', name: '算法设计', type: 'dept', dept: '技术-算法-算法岗', usage: 8, createdAt: '2024-03-02'},
+  {id: 'TAG062', name: '数据结构', type: 'dept', dept: '技术-算法-算法岗', usage: 10, createdAt: '2024-03-03'},
+  {id: 'TAG063', name: '算法分析', type: 'dept', dept: '技术-算法-算法岗', usage: 7, createdAt: '2024-03-04'},
+  {id: 'TAG064', name: '排序算法', type: 'dept', dept: '技术-算法-算法岗', usage: 6, createdAt: '2024-03-05'},
+  {id: 'TAG065', name: '搜索算法', type: 'dept', dept: '技术-算法-算法岗', usage: 5, createdAt: '2024-03-06'},
+  {id: 'TAG066', name: '图算法', type: 'dept', dept: '技术-算法-算法岗', usage: 4, createdAt: '2024-03-07'},
+  {id: 'TAG067', name: '动态规划', type: 'dept', dept: '技术-算法-算法岗', usage: 6, createdAt: '2024-03-08'},
+  {id: 'TAG068', name: '贪心算法', type: 'dept', dept: '技术-算法-算法岗', usage: 5, createdAt: '2024-03-09'},
+  {id: 'TAG069', name: '分治算法', type: 'dept', dept: '技术-算法-算法岗', usage: 4, createdAt: '2024-03-10'},
+  {id: 'TAG070', name: '算法优化', type: 'dept', dept: '技术-算法-算法岗', usage: 7, createdAt: '2024-03-11'},
+  
+  // 技术-AI与大数据-机器学习岗
+  {id: 'TAG071', name: '人工智能', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 8, createdAt: '2024-03-12'},
+  {id: 'TAG072', name: '机器学习', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 6, createdAt: '2024-03-13'},
+  {id: 'TAG073', name: '深度学习', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 4, createdAt: '2024-03-14'},
+  {id: 'TAG074', name: '神经网络', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 5, createdAt: '2024-03-15'},
+  {id: 'TAG075', name: 'CNN', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 4, createdAt: '2024-03-16'},
+  {id: 'TAG076', name: 'RNN', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 3, createdAt: '2024-03-17'},
+  {id: 'TAG077', name: 'Transformer', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 4, createdAt: '2024-03-18'},
+  {id: 'TAG078', name: 'NLP', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 5, createdAt: '2024-03-19'},
+  {id: 'TAG079', name: '计算机视觉', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 4, createdAt: '2024-03-20'},
+  {id: 'TAG080', name: '强化学习', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 3, createdAt: '2024-03-21'},
+  {id: 'TAG081', name: '监督学习', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 5, createdAt: '2024-03-22'},
+  {id: 'TAG082', name: '无监督学习', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 4, createdAt: '2024-03-23'},
+  {id: 'TAG083', name: '半监督学习', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 3, createdAt: '2024-03-24'},
+  {id: 'TAG084', name: '模型训练', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 6, createdAt: '2024-03-25'},
+  {id: 'TAG085', name: '模型评估', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 5, createdAt: '2024-03-26'},
+  {id: 'TAG086', name: '特征工程', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 6, createdAt: '2024-03-27'},
+  {id: 'TAG087', name: '数据清洗', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 7, createdAt: '2024-03-28'},
+  {id: 'TAG088', name: 'PyTorch', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 5, createdAt: '2024-03-29'},
+  {id: 'TAG089', name: 'TensorFlow', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 4, createdAt: '2024-03-30'},
+  {id: 'TAG090', name: 'scikit-learn', type: 'dept', dept: '技术-AI与大数据-机器学习岗', usage: 6, createdAt: '2024-03-31'},
+  
+  // 技术-AI与大数据-大数据应用研发岗
+  {id: 'TAG091', name: '大数据', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 9, createdAt: '2024-04-01'},
+  {id: 'TAG092', name: 'Hadoop', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 6, createdAt: '2024-04-02'},
+  {id: 'TAG093', name: 'Spark', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 7, createdAt: '2024-04-03'},
+  {id: 'TAG094', name: 'Hive', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 5, createdAt: '2024-04-04'},
+  {id: 'TAG095', name: 'Pig', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 3, createdAt: '2024-04-05'},
+  {id: 'TAG096', name: 'MapReduce', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 4, createdAt: '2024-04-06'},
+  {id: 'TAG097', name: 'Kafka', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 6, createdAt: '2024-04-07'},
+  {id: 'TAG098', name: 'Flume', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 3, createdAt: '2024-04-08'},
+  {id: 'TAG099', name: 'Sqoop', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 4, createdAt: '2024-04-09'},
+  {id: 'TAG100', name: '大数据架构', type: 'dept', dept: '技术-AI与大数据-大数据应用研发岗', usage: 7, createdAt: '2024-04-10'},
+  
+  // 技术-AI与大数据-数据研发岗
+  {id: 'TAG101', name: '数据研发', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 7, createdAt: '2024-04-11'},
+  {id: 'TAG102', name: '数据挖掘', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 7, createdAt: '2024-04-12'},
+  {id: 'TAG103', name: '数据仓库', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 8, createdAt: '2024-04-13'},
+  {id: 'TAG104', name: '数据建模', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 6, createdAt: '2024-04-14'},
+  {id: 'TAG105', name: 'ETL', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 7, createdAt: '2024-04-15'},
+  {id: 'TAG106', name: '数据治理', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 5, createdAt: '2024-04-16'},
+  {id: 'TAG107', name: '数据质量', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 6, createdAt: '2024-04-17'},
+  {id: 'TAG108', name: '数据安全', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 5, createdAt: '2024-04-18'},
+  {id: 'TAG109', name: '元数据管理', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 4, createdAt: '2024-04-19'},
+  {id: 'TAG110', name: '数据字典', type: 'dept', dept: '技术-AI与大数据-数据研发岗', usage: 3, createdAt: '2024-04-20'},
+  
+  // 技术-测试-测试岗
+  {id: 'TAG111', name: '测试', type: 'dept', dept: '技术-测试-测试岗', usage: 10, createdAt: '2024-04-21'},
+  {id: 'TAG112', name: '功能测试', type: 'dept', dept: '技术-测试-测试岗', usage: 9, createdAt: '2024-04-22'},
+  {id: 'TAG113', name: '性能测试', type: 'dept', dept: '技术-测试-测试岗', usage: 7, createdAt: '2024-04-23'},
+  {id: 'TAG114', name: '自动化测试', type: 'dept', dept: '技术-测试-测试岗', usage: 10, createdAt: '2024-04-24'},
+  {id: 'TAG115', name: '回归测试', type: 'dept', dept: '技术-测试-测试岗', usage: 8, createdAt: '2024-04-25'},
+  {id: 'TAG116', name: '集成测试', type: 'dept', dept: '技术-测试-测试岗', usage: 7, createdAt: '2024-04-26'},
+  {id: 'TAG117', name: '单元测试', type: 'dept', dept: '技术-测试-测试岗', usage: 8, createdAt: '2024-04-27'},
+  {id: 'TAG118', name: '测试用例', type: 'dept', dept: '技术-测试-测试岗', usage: 9, createdAt: '2024-04-28'},
+  {id: 'TAG119', name: '测试计划', type: 'dept', dept: '技术-测试-测试岗', usage: 6, createdAt: '2024-04-29'},
+  {id: 'TAG120', name: '测试报告', type: 'dept', dept: '技术-测试-测试岗', usage: 7, createdAt: '2024-04-30'},
+  {id: 'TAG121', name: 'Selenium', type: 'dept', dept: '技术-测试-测试岗', usage: 6, createdAt: '2024-05-01'},
+  {id: 'TAG122', name: 'Jest', type: 'dept', dept: '技术-测试-测试岗', usage: 5, createdAt: '2024-05-02'},
+  {id: 'TAG123', name: 'Mocha', type: 'dept', dept: '技术-测试-测试岗', usage: 4, createdAt: '2024-05-03'},
+  {id: 'TAG124', name: '测试框架', type: 'dept', dept: '技术-测试-测试岗', usage: 8, createdAt: '2024-05-04'},
+  {id: 'TAG125', name: '缺陷管理', type: 'dept', dept: '技术-测试-测试岗', usage: 7, createdAt: '2024-05-05'},
+  
+  // 技术-运维-系统运维
+  {id: 'TAG126', name: '运维', type: 'dept', dept: '技术-运维-系统运维', usage: 12, createdAt: '2024-05-06'},
+  {id: 'TAG127', name: '系统运维', type: 'dept', dept: '技术-运维-系统运维', usage: 10, createdAt: '2024-05-07'},
+  {id: 'TAG128', name: '服务器管理', type: 'dept', dept: '技术-运维-系统运维', usage: 9, createdAt: '2024-05-08'},
+  {id: 'TAG129', name: '网络管理', type: 'dept', dept: '技术-运维-系统运维', usage: 8, createdAt: '2024-05-09'},
+  {id: 'TAG130', name: '存储管理', type: 'dept', dept: '技术-运维-系统运维', usage: 7, createdAt: '2024-05-10'},
+  {id: 'TAG131', name: '监控', type: 'dept', dept: '技术-运维-系统运维', usage: 11, createdAt: '2024-05-11'},
+  {id: 'TAG132', name: '告警', type: 'dept', dept: '技术-运维-系统运维', usage: 9, createdAt: '2024-05-12'},
+  {id: 'TAG133', name: '故障处理', type: 'dept', dept: '技术-运维-系统运维', usage: 10, createdAt: '2024-05-13'},
+  {id: 'TAG134', name: '灾备', type: 'dept', dept: '技术-运维-系统运维', usage: 6, createdAt: '2024-05-14'},
+  {id: 'TAG135', name: '备份', type: 'dept', dept: '技术-运维-系统运维', usage: 8, createdAt: '2024-05-15'},
+  {id: 'TAG136', name: 'DevOps', type: 'dept', dept: '技术-运维-系统运维', usage: 12, createdAt: '2024-05-16'},
+  {id: 'TAG137', name: 'CI/CD', type: 'dept', dept: '技术-运维-系统运维', usage: 10, createdAt: '2024-05-17'},
+  {id: 'TAG138', name: 'Ansible', type: 'dept', dept: '技术-运维-系统运维', usage: 6, createdAt: '2024-05-18'},
+  {id: 'TAG139', name: 'Puppet', type: 'dept', dept: '技术-运维-系统运维', usage: 4, createdAt: '2024-05-19'},
+  {id: 'TAG140', name: 'Chef', type: 'dept', dept: '技术-运维-系统运维', usage: 3, createdAt: '2024-05-20'},
+  
+  // 技术-信息安全-信息安全岗（技术方向）
+  {id: 'TAG141', name: '信息安全', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 8, createdAt: '2024-05-21'},
+  {id: 'TAG142', name: '网络安全', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 7, createdAt: '2024-05-22'},
+  {id: 'TAG143', name: '应用安全', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 6, createdAt: '2024-05-23'},
+  {id: 'TAG144', name: '数据安全', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 7, createdAt: '2024-05-24'},
+  {id: 'TAG145', name: '安全审计', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 5, createdAt: '2024-05-25'},
+  {id: 'TAG146', name: '安全测试', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 6, createdAt: '2024-05-26'},
+  {id: 'TAG147', name: '渗透测试', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 5, createdAt: '2024-05-27'},
+  {id: 'TAG148', name: '漏洞扫描', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 6, createdAt: '2024-05-28'},
+  {id: 'TAG149', name: '安全防护', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 7, createdAt: '2024-05-29'},
+  {id: 'TAG150', name: '安全策略', type: 'dept', dept: '技术-信息安全-信息安全岗（技术方向）', usage: 4, createdAt: '2024-05-30'},
+  
+  // 产品-产品经理-产品经理岗-商业类
+  {id: 'TAG151', name: '产品设计', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 12, createdAt: '2024-05-31'},
+  {id: 'TAG152', name: '产品规划', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 10, createdAt: '2024-06-01'},
+  {id: 'TAG153', name: '需求分析', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 11, createdAt: '2024-06-02'},
+  {id: 'TAG154', name: '用户调研', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 8, createdAt: '2024-06-03'},
+  {id: 'TAG155', name: '竞品分析', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 7, createdAt: '2024-06-04'},
+  {id: 'TAG156', name: '产品文档', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 9, createdAt: '2024-06-05'},
+  {id: 'TAG157', name: 'PRD', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 10, createdAt: '2024-06-06'},
+  {id: 'TAG158', name: '用户体验', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 9, createdAt: '2024-06-07'},
+  {id: 'TAG159', name: '产品运营', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 8, createdAt: '2024-06-08'},
+  {id: 'TAG160', name: '产品迭代', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类', usage: 11, createdAt: '2024-06-09'},
+  
+  // 产品-UED设计-UED设计岗
+  {id: 'TAG161', name: 'UED设计', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 10, createdAt: '2024-06-10'},
+  {id: 'TAG162', name: 'UI设计', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 12, createdAt: '2024-06-11'},
+  {id: 'TAG163', name: '交互设计', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 8, createdAt: '2024-06-12'},
+  {id: 'TAG164', name: '用户研究', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 7, createdAt: '2024-06-13'},
+  {id: 'TAG165', name: '视觉设计', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 9, createdAt: '2024-06-14'},
+  {id: 'TAG166', name: '原型设计', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 10, createdAt: '2024-06-15'},
+  {id: 'TAG167', name: 'Figma', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 8, createdAt: '2024-06-16'},
+  {id: 'TAG168', name: 'Sketch', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 6, createdAt: '2024-06-17'},
+  {id: 'TAG169', name: 'Photoshop', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 7, createdAt: '2024-06-18'},
+  {id: 'TAG170', name: 'Illustrator', type: 'dept', dept: '产品-UED设计-UED设计岗', usage: 5, createdAt: '2024-06-19'},
+  
+  // 前场-销售-销售-数字孪生业务
+  {id: 'TAG171', name: '销售技巧', type: 'dept', dept: '前场-销售-销售-数字孪生业务', usage: 12, createdAt: '2024-06-20'},
+  {id: 'TAG172', name: '客户关系', type: 'dept', dept: '前场-销售-销售-数字孪生业务', usage: 10, createdAt: '2024-06-21'},
+  {id: 'TAG173', name: '商务谈判', type: 'dept', dept: '前场-销售-销售-数字孪生业务', usage: 9, createdAt: '2024-06-22'},
+  {id: 'TAG174', name: '产品演示', type: 'dept', dept: '前场-销售-销售-数字孪生业务', usage: 8, createdAt: '2024-06-23'},
+  {id: 'TAG175', name: '客户需求', type: 'dept', dept: '前场-销售-销售-数字孪生业务', usage: 10, createdAt: '2024-06-24'},
+  
+  // 职能-人力资源-人力资源-COE方向
+  {id: 'TAG176', name: '人力资源', type: 'dept', dept: '职能-人力资源-人力资源-COE方向', usage: 10, createdAt: '2024-06-25'},
+  {id: 'TAG177', name: '招聘', type: 'dept', dept: '职能-人力资源-人力资源-COE方向', usage: 8, createdAt: '2024-06-26'},
+  {id: 'TAG178', name: '培训', type: 'dept', dept: '职能-人力资源-人力资源-COE方向', usage: 6, createdAt: '2024-06-27'},
+  {id: 'TAG179', name: '绩效考核', type: 'dept', dept: '职能-人力资源-人力资源-COE方向', usage: 9, createdAt: '2024-06-28'},
+  {id: 'TAG180', name: '薪酬福利', type: 'dept', dept: '职能-人力资源-人力资源-COE方向', usage: 7, createdAt: '2024-06-29'},
+  
+  // 职能-财务-财务综合管理岗
+  {id: 'TAG181', name: '财务分析', type: 'dept', dept: '职能-财务-财务综合管理岗', usage: 8, createdAt: '2024-06-30'},
+  {id: 'TAG182', name: '预算管理', type: 'dept', dept: '职能-财务-财务综合管理岗', usage: 6, createdAt: '2024-07-01'},
+  {id: 'TAG183', name: '税务筹划', type: 'dept', dept: '职能-财务-财务综合管理岗', usage: 4, createdAt: '2024-07-02'},
+  {id: 'TAG184', name: '财务报表', type: 'dept', dept: '职能-财务-财务综合管理岗', usage: 7, createdAt: '2024-07-03'},
+  {id: 'TAG185', name: '成本控制', type: 'dept', dept: '职能-财务-财务综合管理岗', usage: 5, createdAt: '2024-07-04'},
+  
+  // 通用能力标签
+  {id: 'TAG186', name: '数据分析', type: 'common', dept: '', usage: 20, createdAt: '2024-07-05'},
+  {id: 'TAG187', name: '项目管理', type: 'common', dept: '', usage: 25, createdAt: '2024-07-06'},
+  {id: 'TAG188', name: '敏捷开发', type: 'common', dept: '', usage: 18, createdAt: '2024-07-07'},
+  {id: 'TAG189', name: '沟通能力', type: 'common', dept: '', usage: 30, createdAt: '2024-07-08'},
+  {id: 'TAG190', name: '团队协作', type: 'common', dept: '', usage: 28, createdAt: '2024-07-09'},
+  {id: 'TAG191', name: '领导力', type: 'common', dept: '', usage: 15, createdAt: '2024-07-10'},
+  {id: 'TAG192', name: '问题解决', type: 'common', dept: '', usage: 22, createdAt: '2024-07-11'},
+  {id: 'TAG193', name: '创新能力', type: 'common', dept: '', usage: 18, createdAt: '2024-07-12'},
+  {id: 'TAG194', name: '学习能力', type: 'common', dept: '', usage: 25, createdAt: '2024-07-13'},
+  {id: 'TAG195', name: '时间管理', type: 'common', dept: '', usage: 20, createdAt: '2024-07-14'},
+  {id: 'TAG196', name: '压力管理', type: 'common', dept: '', usage: 15, createdAt: '2024-07-15'},
+  {id: 'TAG197', name: '决策能力', type: 'common', dept: '', usage: 18, createdAt: '2024-07-16'},
+  {id: 'TAG198', name: '目标设定', type: 'common', dept: '', usage: 16, createdAt: '2024-07-17'},
+  {id: 'TAG199', name: '冲突管理', type: 'common', dept: '', usage: 12, createdAt: '2024-07-18'},
+  {id: 'TAG200', name: '演讲能力', type: 'common', dept: '', usage: 14, createdAt: '2024-07-19'}
 ];
 
 let selectedTagsIds = new Set();
@@ -2187,54 +3416,86 @@ let editingTagId = null;
 function initTags() {
   // 初始化标签管理页面的三级部门选择
   initDeptSelects('tag');
-  
+
   updateTagStats();
   renderTags();
 }
 
 function updateTagStats() {
+  // 计算真实的标签使用次数
+  calculateTagUsage();
+  
   const total = TAGS.length;
   const deptTags = TAGS.filter(t => t.type === 'dept').length;
   const commonTags = TAGS.filter(t => t.type === 'common').length;
   const usage = TAGS.reduce((sum, t) => sum + t.usage, 0);
-  
+
   document.getElementById('tagTotal').textContent = total;
   document.getElementById('tagDept').textContent = deptTags;
   document.getElementById('tagCommon').textContent = commonTags;
   document.getElementById('tagUsage').textContent = usage;
 }
 
+function calculateTagUsage() {
+  // 重置所有标签的使用次数
+  TAGS.forEach(tag => {
+    tag.usage = 0;
+  });
+  
+  // 遍历人才库数据，统计每个标签的使用次数
+  MOCK_DATA.forEach(emp => {
+    if (emp.tags && Array.isArray(emp.tags)) {
+      emp.tags.forEach(tagName => {
+        const tag = TAGS.find(t => t.name === tagName);
+        if (tag) {
+          tag.usage++;
+        }
+      });
+    }
+  });
+}
+
 function renderTags() {
   const search = document.getElementById('tagSearch').value.trim().toLowerCase();
   const typeFilter = document.getElementById('tagTypeFilter').value;
   const deptFilter = getSelectedDept('tag');
-  
+
   const filteredTags = TAGS.filter(tag => {
     if (search && !tag.name.toLowerCase().includes(search)) return false;
     if (typeFilter && tag.type !== typeFilter) return false;
-    if (deptFilter && tag.dept !== deptFilter) return false;
+    if (deptFilter) {
+      // 如果是通用标签，且没有部门，跳过部门过滤
+      if (tag.type === 'common' && !tag.dept) return true;
+      // 检查标签的部门路径是否包含选择的部门
+      return tag.dept.includes(deptFilter);
+    }
     return true;
   });
-  
+
   const tbody = document.getElementById('tagTableBody');
   const empty = document.getElementById('tagEmptyState');
   document.getElementById('tagResultCount').textContent = filteredTags.length;
   document.getElementById('tagBatchBtns').style.display = selectedTagsIds.size > 0 ? 'flex' : 'none';
-  
+
   tbody.innerHTML = '';
   if (filteredTags.length === 0) {
     empty.style.display = '';
     return;
   }
   empty.style.display = 'none';
-  
-  filteredTags.forEach((tag, i) => {
+
+  // 计算分页数据
+  const startIndex = (currentTagPage - 1) * tagPageSize;
+  const endIndex = startIndex + tagPageSize;
+  const currentPageData = filteredTags.slice(startIndex, endIndex);
+
+  currentPageData.forEach((tag, i) => {
     const tr = document.createElement('tr');
     tr.className = 'anim-row';
     tr.style.animationDelay = `${i * 0.03}s`;
     const checked = selectedTagsIds.has(tag.id);
     const typeText = tag.type === 'dept' ? '部门技能' : '通用能力';
-    
+
     tr.innerHTML = `
       <td class="checkbox-col" onclick="event.stopPropagation()">
         <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTagRow('${tag.id}', this)">
@@ -2253,6 +3514,751 @@ function renderTags() {
     `;
     tbody.appendChild(tr);
   });
+
+  // 渲染分页控件
+  renderTagPagination(filteredTags.length);
+}
+
+function renderTagPagination(totalItems) {
+  const paginationContainer = document.getElementById('tagPagination');
+  if (!paginationContainer) {
+    // 创建分页容器
+    const tagTableCard = document.querySelector('#page-tags .table-card');
+    const paginationDiv = document.createElement('div');
+    paginationDiv.id = 'tagPagination';
+    paginationDiv.className = 'pagination';
+    tagTableCard.appendChild(paginationDiv);
+  }
+
+  const totalPages = Math.ceil(totalItems / tagPageSize);
+  const paginationElement = document.getElementById('tagPagination');
+
+  if (totalPages <= 1) {
+    paginationElement.innerHTML = '';
+    return;
+  }
+
+  let paginationHTML = `
+    <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
+      <button class="btn btn-secondary btn-sm" ${currentTagPage === 1 ? 'disabled' : ''} onclick="changeTagPage(1)">首页</button>
+      <button class="btn btn-secondary btn-sm" ${currentTagPage === 1 ? 'disabled' : ''} onclick="changeTagPage(currentTagPage - 1)">上一页</button>
+  `;
+
+  // 显示当前页和前后各2页
+  for (let i = Math.max(1, currentTagPage - 2); i <= Math.min(totalPages, currentTagPage + 2); i++) {
+    paginationHTML += `
+      <button class="btn ${i === currentTagPage ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="changeTagPage(${i})"><strong>${i}</strong></button>
+    `;
+  }
+
+  paginationHTML += `
+      <button class="btn btn-secondary btn-sm" ${currentTagPage === totalPages ? 'disabled' : ''} onclick="changeTagPage(currentTagPage + 1)">下一页</button>
+      <button class="btn btn-secondary btn-sm" ${currentTagPage === totalPages ? 'disabled' : ''} onclick="changeTagPage(${totalPages})">末页</button>
+      <span style="font-size:12px;color:var(--muted)">第 ${currentTagPage} / ${totalPages} 页</span>
+    </div>
+  `;
+
+  paginationElement.innerHTML = paginationHTML;
+}
+
+function changeTagPage(page) {
+  currentTagPage = page;
+  renderTags();
+}
+
+/* ================================================================
+   ANALYTICS FUNCTIONS
+   ================================================================ */
+
+function initAnalytics() {
+  // 初始化部门选择器
+  const deptSelect = document.getElementById('analyticsDept');
+  if (deptSelect) {
+    deptSelect.innerHTML = '<option value="">全部部门</option>';
+
+    // 获取所有一级部门
+    const level1Depts = Object.keys(DEPARTMENT_STRUCTURE);
+    level1Depts.forEach(dept => {
+      const option = document.createElement('option');
+      option.value = dept;
+      option.textContent = dept;
+      deptSelect.appendChild(option);
+    });
+  }
+
+  // 渲染分析内容
+  renderAnalytics();
+}
+
+function renderAnalytics() {
+  const analyticsType = document.getElementById('analyticsType').value;
+  const selectedDept = document.getElementById('analyticsDept').value;
+
+  // 显示/隐藏部门选择器
+  document.getElementById('deptFilterGroup').style.display = analyticsType === 'department' ? 'block' : 'none';
+
+  // 显示相应的分析内容
+  document.getElementById('departmentAnalytics').style.display = analyticsType === 'department' ? 'block' : 'none';
+  document.getElementById('companyAnalytics').style.display = analyticsType === 'company' ? 'block' : 'none';
+
+  if (analyticsType === 'department') {
+    renderDepartmentAnalytics(selectedDept);
+  } else {
+    renderCompanyAnalytics();
+  }
+}
+
+function renderDepartmentAnalytics(dept) {
+  // 过滤数据
+  let filteredData = MOCK_DATA;
+  if (dept) {
+    filteredData = MOCK_DATA.filter(emp => emp.dept.startsWith(dept + '-'));
+  }
+
+  // 1. 人才结构分布
+  const talentStructure = calculateTalentStructure(filteredData);
+  document.getElementById('talentStructureContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div>
+        <h4>职级结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.levelDistribution).map(([level, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${level}</span>
+              <span>${count} (${((count / filteredData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div>
+        <h4>学历结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.educationDistribution).map(([edu, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${edu}</span>
+              <span>${count} (${((count / filteredData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div style="grid-column:1/-1">
+        <h4>其他指标</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.avgAge.toFixed(1)}</div>
+            <div style="color:#666;font-size:14px">平均年龄</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.cadreRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">干部占比</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${filteredData.length}</div>
+            <div style="color:#666;font-size:14px">总人数</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 2. 管理岗继任覆盖率
+  const successionCoverage = calculateSuccessionCoverage(filteredData);
+  document.getElementById('successionCoverageContent').innerHTML = `
+    <div>
+      <h4>继任情况</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>有Ready Now继任者</span>
+          <span>${successionCoverage.readyNow} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>存在断层</span>
+          <span>${successionCoverage.gap} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>覆盖率</span>
+          <span>${successionCoverage.coverageRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>需要关注的岗位</h4>
+        <ul style="list-style:none;padding:0">
+          ${successionCoverage.criticalPositions.map(pos => `
+            <li style="padding:4px 0;border-bottom:1px solid #f0f0f0">${pos}</li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+
+  // 3. 技能缺口分析
+  const skillGap = calculateSkillGap(filteredData);
+  document.getElementById('skillGapContent').innerHTML = `
+    <div>
+      <h4>技能覆盖情况</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>现有技能</span>
+          <span>${skillGap.existingSkills.length} 项</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>需求技能</span>
+          <span>${skillGap.requiredSkills.length} 项</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>覆盖率</span>
+          <span>${skillGap.coverageRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>技能缺口</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${skillGap.missingSkills.map(skill => `
+            <span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:16px;font-size:14px">${skill}</span>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 4. AI应用渗透率
+  const aiPenetration = calculateAIPenetration(filteredData);
+  document.getElementById('aiPenetrationContent').innerHTML = `
+    <div>
+      <h4>AI等级分布</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>L1</span>
+          <span>${aiPenetration.levels.L1} (${((aiPenetration.levels.L1 / filteredData.length) * 100).toFixed(1)}%)</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>L2</span>
+          <span>${aiPenetration.levels.L2} (${((aiPenetration.levels.L2 / filteredData.length) * 100).toFixed(1)}%)</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>L3</span>
+          <span>${aiPenetration.levels.L3} (${((aiPenetration.levels.L3 / filteredData.length) * 100).toFixed(1)}%)</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>与公司整体对比</h4>
+        <div style="padding:12px;background:#f3f4f6;border-radius:8px">
+          <p style="margin:0">AI应用深度：${aiPenetration.compareToCompany}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 5. 流失预警
+  const attritionWarning = calculateAttritionWarning(filteredData);
+  document.getElementById('attritionWarningContent').innerHTML = `
+    <div>
+      <h4>高风险人员</h4>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f3f4f6">
+              <th style="padding:8px;border:1px solid #e5e7eb">姓名</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">部门</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">职级</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">潜力</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">稳定性</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">AI等级</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${attritionWarning.highRisk.map(emp => `
+              <tr>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.name}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.dept}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.positionLevel}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.potential}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.stability}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.aiLevel}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px">
+        <h4>预警统计</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#fee2e2;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${attritionWarning.highRisk.length}</div>
+            <div style="color:#666;font-size:14px">高风险</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#fef3c7;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${attritionWarning.mediumRisk.length}</div>
+            <div style="color:#666;font-size:14px">中风险</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#d1fae5;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${attritionWarning.lowRisk.length}</div>
+            <div style="color:#666;font-size:14px">低风险</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderCompanyAnalytics() {
+  const allData = MOCK_DATA;
+
+  // 1. 公司级人才结构分布
+  const talentStructure = calculateTalentStructure(allData);
+  document.getElementById('companyTalentStructureContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div>
+        <h4>职级结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.levelDistribution).map(([level, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${level}</span>
+              <span>${count} (${((count / allData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div>
+        <h4>学历结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.educationDistribution).map(([edu, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${edu}</span>
+              <span>${count} (${((count / allData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div style="grid-column:1/-1">
+        <h4>其他指标</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.avgAge.toFixed(1)}</div>
+            <div style="color:#666;font-size:14px">平均年龄</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.cadreRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">干部占比</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${allData.length}</div>
+            <div style="color:#666;font-size:14px">总人数</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 2. 公司级管理岗继任覆盖率
+  const successionCoverage = calculateSuccessionCoverage(allData);
+  document.getElementById('companySuccessionCoverageContent').innerHTML = `
+    <div>
+      <h4>继任情况</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>有Ready Now继任者</span>
+          <span>${successionCoverage.readyNow} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>存在断层</span>
+          <span>${successionCoverage.gap} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>覆盖率</span>
+          <span>${successionCoverage.coverageRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>需要关注的岗位</h4>
+        <ul style="list-style:none;padding:0">
+          ${successionCoverage.criticalPositions.slice(0, 5).map(pos => `
+            <li style="padding:4px 0;border-bottom:1px solid #f0f0f0">${pos}</li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+
+  // 3. 关键岗位盘点
+  const keyPositions = calculateKeyPositions(allData);
+  document.getElementById('keyPositionsContent').innerHTML = `
+    <div>
+      <h4>关键岗位分布</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>高潜人才 (Q1-Q3)</span>
+          <span>${keyPositions.highPotential} 人</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>高级人才</span>
+          <span>${keyPositions.seniorTalent} 人</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>尾部人才</span>
+          <span>${keyPositions.bottomTalent} 人</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>投入占比</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#dbeafe;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${keyPositions.highPotentialRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">高潜人才</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#dbeafe;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${keyPositions.seniorTalentRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">高级人才</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#dbeafe;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${keyPositions.bottomTalentRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">尾部人才</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 4. TOP50核心人才
+  const top50Talent = calculateTop50Talent(allData);
+  document.getElementById('top50TalentContent').innerHTML = `
+    <div>
+      <h4>核心人才列表</h4>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f3f4f6">
+              <th style="padding:8px;border:1px solid #e5e7eb">排名</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">姓名</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">部门</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">职级</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">综合得分</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${top50Talent.slice(0, 10).map((emp, index) => `
+              <tr>
+                <td style="padding:8px;border:1px solid #e5e7eb">${index + 1}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.name}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.dept}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.positionLevel}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.score.toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;text-align:center">
+        <p style="margin:0">共 ${top50Talent.length} 名核心人才</p>
+      </div>
+    </div>
+  `;
+
+  // 5. 跨部门AI人才密度
+  const aiDensity = calculateAIDensity(allData);
+  document.getElementById('aiDensityContent').innerHTML = `
+    <div>
+      <h4>部门AI人才密度</h4>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f3f4f6">
+              <th style="padding:8px;border:1px solid #e5e7eb">部门</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">总人数</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">AI人才数</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">密度</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">AI等级分布</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.entries(aiDensity).map(([dept, data]) => `
+              <tr>
+                <td style="padding:8px;border:1px solid #e5e7eb">${dept}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${data.total}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${data.aiCount}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${((data.aiCount / data.total) * 100).toFixed(1)}%</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">
+                  L1: ${data.levels.L1}, L2: ${data.levels.L2}, L3: ${data.levels.L3}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // 6. AI转型进度追踪
+  const aiTransformation = calculateAITransformation(allData);
+  document.getElementById('aiTransformationContent').innerHTML = `
+    <div>
+      <h4>AI转型趋势</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>当前L1→L2迁移率</span>
+          <span>${aiTransformation.l1ToL2Rate.toFixed(1)}%</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>当前L2→L3迁移率</span>
+          <span>${aiTransformation.l2ToL3Rate.toFixed(1)}%</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>AI人才增长率</span>
+          <span>${aiTransformation.growthRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>转型目标</h4>
+        <div style="padding:12px;background:#f3f4f6;border-radius:8px">
+          <p style="margin:0">• L3人才占比目标：20%</p>
+          <p style="margin:0">• L2+L3人才占比目标：50%</p>
+          <p style="margin:0">• 预计完成时间：2026年底</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 辅助函数：计算人才结构分布
+function calculateTalentStructure(data) {
+  const levelDistribution = {};
+  const educationDistribution = {};
+  let totalAge = 0;
+  let cadreCount = 0;
+
+  data.forEach(emp => {
+    // 职级分布
+    const level = emp.positionLevel;
+    levelDistribution[level] = (levelDistribution[level] || 0) + 1;
+
+    // 学历分布
+    const education = emp.education;
+    educationDistribution[education] = (educationDistribution[education] || 0) + 1;
+
+    // 年龄总和
+    totalAge += emp.age;
+
+    // 干部计数（假设高级工程师及以上为干部）
+    if (emp.positionLevel.includes('高级') || emp.positionLevel.includes('总监') || emp.positionLevel.includes('经理')) {
+      cadreCount++;
+    }
+  });
+
+  return {
+    levelDistribution,
+    educationDistribution,
+    avgAge: totalAge / data.length,
+    cadreRatio: (cadreCount / data.length) * 100
+  };
+}
+
+// 辅助函数：计算管理岗继任覆盖率
+function calculateSuccessionCoverage(data) {
+  const managementPositions = new Set();
+  const positionsWithSuccession = new Set();
+
+  data.forEach(emp => {
+    if (emp.positionLevel.includes('经理') || emp.positionLevel.includes('总监') || emp.positionLevel.includes('主管')) {
+      managementPositions.add(emp.positionLevel);
+
+      // 假设潜力为4-5的员工为潜在继任者
+      if (emp.potential >= 4) {
+        positionsWithSuccession.add(emp.positionLevel);
+      }
+    }
+  });
+
+  const readyNow = positionsWithSuccession.size;
+  const gap = managementPositions.size - readyNow;
+  const coverageRate = (readyNow / managementPositions.size) * 100;
+
+  // 生成需要关注的岗位列表
+  const criticalPositions = Array.from(managementPositions).filter(pos => !positionsWithSuccession.has(pos));
+
+  return {
+    readyNow,
+    gap,
+    coverageRate,
+    criticalPositions
+  };
+}
+
+// 辅助函数：计算技能缺口分析
+function calculateSkillGap(data) {
+  const existingSkills = new Set();
+  const requiredSkills = new Set([
+    'Java', 'Python', 'JavaScript', 'C++', 'Go', '前端开发', '后端开发', '全栈开发',
+    '人工智能', '机器学习', '深度学习', '大数据', '数据挖掘', 'DevOps', '测试自动化',
+    '安全开发', '产品设计', '用户体验', '交互设计', '销售技巧', '客户关系', '市场分析',
+    '人力资源', '招聘', '培训', '财务分析', '预算管理', '税务筹划', '数据分析',
+    '项目管理', '敏捷开发', '性能优化'
+  ]);
+
+  data.forEach(emp => {
+    emp.tags.forEach(tag => {
+      existingSkills.add(tag);
+    });
+  });
+
+  const missingSkills = Array.from(requiredSkills).filter(skill => !existingSkills.has(skill));
+  const coverageRate = (existingSkills.size / requiredSkills.size) * 100;
+
+  return {
+    existingSkills: Array.from(existingSkills),
+    requiredSkills: Array.from(requiredSkills),
+    missingSkills,
+    coverageRate
+  };
+}
+
+// 辅助函数：计算AI应用渗透率
+function calculateAIPenetration(data) {
+  const levels = { L1: 0, L2: 0, L3: 0 };
+
+  data.forEach(emp => {
+    if (levels.hasOwnProperty(emp.aiLevel)) {
+      levels[emp.aiLevel]++;
+    }
+  });
+
+  // 与公司整体对比（模拟数据）
+  const companyAvgL2L3 = 35; // 假设公司整体L2+L3占比为35%
+  const currentL2L3 = ((levels.L2 + levels.L3) / data.length) * 100;
+  let compareToCompany = '低于平均水平';
+  if (currentL2L3 > companyAvgL2L3 + 5) {
+    compareToCompany = '高于平均水平';
+  } else if (currentL2L3 > companyAvgL2L3) {
+    compareToCompany = '略高于平均水平';
+  } else if (currentL2L3 > companyAvgL2L3 - 5) {
+    compareToCompany = '接近平均水平';
+  }
+
+  return {
+    levels,
+    compareToCompany
+  };
+}
+
+// 辅助函数：计算流失预警
+function calculateAttritionWarning(data) {
+  const highRisk = [];
+  const mediumRisk = [];
+  const lowRisk = [];
+
+  data.forEach(emp => {
+    // 高风险：高潜（潜力4-5）+ 低稳定性（稳定性1-2）
+    if (emp.potential >= 4 && emp.stability <= 2) {
+      highRisk.push(emp);
+    } else if (emp.potential >= 3 && emp.stability <= 3) {
+      mediumRisk.push(emp);
+    } else {
+      lowRisk.push(emp);
+    }
+  });
+
+  return {
+    highRisk,
+    mediumRisk,
+    lowRisk
+  };
+}
+
+// 辅助函数：计算关键岗位盘点
+function calculateKeyPositions(data) {
+  let highPotential = 0;
+  let seniorTalent = 0;
+  let bottomTalent = 0;
+
+  data.forEach(emp => {
+    // 高潜人才：Q1-Q3
+    if (emp.qValue === 'Q1' || emp.qValue === 'Q2' || emp.qValue === 'Q3') {
+      highPotential++;
+    }
+
+    // 高级人才：高级工程师及以上
+    if (emp.positionLevel.includes('高级') || emp.positionLevel.includes('总监') || emp.positionLevel.includes('经理')) {
+      seniorTalent++;
+    }
+
+    // 尾部人才：Q4且绩效低
+    if (emp.qValue === 'Q4' && (emp.performance === '低' || emp.performance === '中')) {
+      bottomTalent++;
+    }
+  });
+
+  return {
+    highPotential,
+    seniorTalent,
+    bottomTalent,
+    highPotentialRatio: (highPotential / data.length) * 100,
+    seniorTalentRatio: (seniorTalent / data.length) * 100,
+    bottomTalentRatio: (bottomTalent / data.length) * 100
+  };
+}
+
+// 辅助函数：计算TOP50核心人才
+function calculateTop50Talent(data) {
+  return data
+    .map(emp => {
+      // 综合得分计算：潜力*0.4 + 绩效*0.3 + 稳定性*0.2 + AI等级*0.1
+      let performanceScore = 1;
+      switch (emp.performance) {
+        case '高': performanceScore = 5; break;
+        case '中': performanceScore = 3; break;
+        case '低': performanceScore = 1; break;
+      }
+
+      let aiLevelScore = 1;
+      switch (emp.aiLevel) {
+        case 'L3': aiLevelScore = 5; break;
+        case 'L2': aiLevelScore = 3; break;
+        case 'L1': aiLevelScore = 1; break;
+      }
+
+      const score = emp.potential * 0.4 + performanceScore * 0.3 + emp.stability * 0.2 + aiLevelScore * 0.1;
+      return { ...emp, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 50);
+}
+
+// 辅助函数：计算跨部门AI人才密度
+function calculateAIDensity(data) {
+  const deptData = {};
+
+  data.forEach(emp => {
+    // 提取一级部门
+    const dept = emp.dept.split('-')[0];
+
+    if (!deptData[dept]) {
+      deptData[dept] = {
+        total: 0,
+        aiCount: 0,
+        levels: { L1: 0, L2: 0, L3: 0 }
+      };
+    }
+
+    deptData[dept].total++;
+
+    if (emp.aiLevel !== 'L0') {
+      deptData[dept].aiCount++;
+      if (deptData[dept].levels.hasOwnProperty(emp.aiLevel)) {
+        deptData[dept].levels[emp.aiLevel]++;
+      }
+    }
+  });
+
+  return deptData;
+}
+
+// 辅助函数：计算AI转型进度追踪
+function calculateAITransformation(data) {
+  // 模拟数据，实际应基于历史数据计算
+  return {
+    l1ToL2Rate: 25.5,
+    l2ToL3Rate: 12.3,
+    growthRate: 18.7
+  };
 }
 
 function toggleTagRow(id, cb) {
@@ -2276,7 +4282,7 @@ function openTagModal() {
   document.getElementById('tagName').value = '';
   document.getElementById('tagType').value = 'common';
   document.getElementById('tagDesc').value = '';
-  
+
   // 重置三级部门选择
   const level1Select = document.getElementById('tagDeptLevel1');
   const level2Select = document.getElementById('tagDeptLevel2');
@@ -2284,7 +4290,7 @@ function openTagModal() {
   if (level1Select) level1Select.value = '';
   if (level2Select) level2Select.value = '';
   if (level3Select) level3Select.value = '';
-  
+
   toggleTagDeptField();
   document.getElementById('tagModal').classList.add('show');
 }
@@ -2304,17 +4310,17 @@ function saveTag() {
   const type = document.getElementById('tagType').value;
   const dept = type === 'dept' ? getSelectedDept('tagModal') : '';
   const desc = document.getElementById('tagDesc').value.trim();
-  
+
   if (!name) {
     showToast('⚠ 请输入标签名称', 'error');
     return;
   }
-  
+
   if (type === 'dept' && !dept) {
     showToast('⚠ 部门技能标签必须选择所属部门', 'error');
     return;
   }
-  
+
   if (editingTagId) {
     const tag = TAGS.find(t => t.id === editingTagId);
     if (tag) {
@@ -2335,7 +4341,7 @@ function saveTag() {
     TAGS.push(newTag);
     showToast('✅ 标签已创建', 'success');
   }
-  
+
   closeTagModal();
   updateTagStats();
   renderTags();
@@ -2350,26 +4356,26 @@ function editTag(id) {
     document.getElementById('tagType').value = tag.type;
     document.getElementById('tagDesc').value = '';
     toggleTagDeptField();
-    
+
     // 设置三级部门选择
     if (tag.dept) {
       const dept = parseDepartment(tag.dept);
       const level1Select = document.getElementById('tagDeptLevel1');
       const level2Select = document.getElementById('tagDeptLevel2');
       const level3Select = document.getElementById('tagDeptLevel3');
-      
+
       // 设置一级部门
       if (level1Select) {
         level1Select.value = dept.level1;
         // 触发二级部门更新
         updateDeptLevel2('tagModal');
-        
+
         // 设置二级部门
         if (level2Select) {
           level2Select.value = dept.level2;
           // 触发三级部门更新
           updateDeptLevel3('tagModal');
-          
+
           // 设置三级部门
           if (level3Select) {
             level3Select.value = tag.dept;
@@ -2377,7 +4383,7 @@ function editTag(id) {
         }
       }
     }
-    
+
     document.getElementById('tagModal').classList.add('show');
   }
 }
@@ -2406,17 +4412,22 @@ function deleteSelectedTags() {
 function clearTagFilters() {
   document.getElementById('tagSearch').value = '';
   document.getElementById('tagTypeFilter').value = '';
-  document.getElementById('tagDeptFilter').value = '';
+  document.getElementById('tagDeptLevel1').value = '';
+  document.getElementById('tagDeptLevel2').value = '';
+  document.getElementById('tagDeptLevel3').value = '';
+  // 重置部门选择
+  updateDeptLevel2('tag');
+  updateDeptLevel3('tag');
   renderTags();
 }
 
 function exportTags() {
-  const csv = '标签名称,标签类型,所属部门,使用次数,创建时间\n' + 
+  const csv = '标签名称,标签类型,所属部门,使用次数,创建时间\n' +
     TAGS.map(tag => {
       const typeText = tag.type === 'dept' ? '部门技能' : '通用能力';
       return `"${tag.name}","${typeText}","${tag.dept || '通用'}",${tag.usage},${tag.createdAt}`;
     }).join('\n');
-  
+
   downloadFile(csv, 'tags_export_' + formatDate() + '.csv', 'text/csv;charset=utf-8;');
   showToast('✅ 标签已导出', 'success');
 }
@@ -2433,6 +4444,8 @@ initTalent();
 updateExportStats();
 renderUsers();
 initTags();
+// 计算并更新标签使用次数
+calculateTagUsage();
 </script>
 
 <!--
@@ -2475,5 +4488,836 @@ initTags();
 • 图表接入：ECharts 替换雷达图SVG占位，接入真实图表组件
 =================================================================
 -->
+
+    <!-- ======================================================
+         PAGE: 数据分析
+         ====================================================== -->
+    <div class="page" id="page-analytics">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">数据分析</h1>
+          <p class="page-subtitle">基于人才库数据的深度分析与洞察</p>
+        </div>
+      </div>
+
+      <!-- 分析类型选择 -->
+      <div class="filter-card" style="margin-bottom:20px">
+        <div class="filter-row">
+          <div class="filter-group" style="max-width:200px">
+            <label>分析类型</label>
+            <select class="filter-select" id="analyticsType" onchange="renderAnalytics()">
+              <option value="department">部门级分析</option>
+              <option value="company">公司级分析</option>
+            </select>
+          </div>
+          <div class="filter-group" style="max-width:200px" id="deptFilterGroup">
+            <label>部门选择</label>
+            <select class="filter-select" id="analyticsDept" onchange="renderAnalytics()">
+              <option value="">全部部门</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分析内容 -->
+      <div id="analyticsContent">
+        <!-- 部门级分析 -->
+        <div id="departmentAnalytics">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-header">
+                <h3>人才结构分布</h3>
+              </div>
+              <div class="card-body" id="talentStructureContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>管理岗继任覆盖率</h3>
+              </div>
+              <div class="card-body" id="successionCoverageContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>技能缺口分析</h3>
+              </div>
+              <div class="card-body" id="skillGapContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>AI应用渗透率</h3>
+              </div>
+              <div class="card-body" id="aiPenetrationContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-header">
+                <h3>流失预警</h3>
+              </div>
+              <div class="card-body" id="attritionWarningContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 公司级分析 -->
+        <div id="companyAnalytics" style="display:none">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-header">
+                <h3>人才结构分布</h3>
+              </div>
+              <div class="card-body" id="companyTalentStructureContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>管理岗继任覆盖率</h3>
+              </div>
+              <div class="card-body" id="companySuccessionCoverageContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>关键岗位盘点</h3>
+              </div>
+              <div class="card-body" id="keyPositionsContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>TOP50核心人才</h3>
+              </div>
+              <div class="card-body" id="top50TalentContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>跨部门AI人才密度</h3>
+              </div>
+              <div class="card-body" id="aiDensityContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>AI转型进度追踪</h3>
+              </div>
+              <div class="card-body" id="aiTransformationContent">
+                <p>加载中...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script>
+/* ================================================================
+   ANALYTICS FUNCTIONS
+   ================================================================ */
+
+function initAnalytics() {
+  // 初始化部门选择器
+  const deptSelect = document.getElementById('analyticsDept');
+  if (deptSelect) {
+    deptSelect.innerHTML = '<option value="">全部部门</option>';
+
+    // 获取所有一级部门
+    const level1Depts = Object.keys(DEPARTMENT_STRUCTURE);
+    level1Depts.forEach(dept => {
+      const option = document.createElement('option');
+      option.value = dept;
+      option.textContent = dept;
+      deptSelect.appendChild(option);
+    });
+  }
+
+  // 渲染分析内容
+  renderAnalytics();
+}
+
+function renderAnalytics() {
+  const analyticsType = document.getElementById('analyticsType').value;
+  const selectedDept = document.getElementById('analyticsDept').value;
+
+  // 显示/隐藏部门选择器
+  document.getElementById('deptFilterGroup').style.display = analyticsType === 'department' ? 'block' : 'none';
+
+  // 显示相应的分析内容
+  document.getElementById('departmentAnalytics').style.display = analyticsType === 'department' ? 'block' : 'none';
+  document.getElementById('companyAnalytics').style.display = analyticsType === 'company' ? 'block' : 'none';
+
+  if (analyticsType === 'department') {
+    renderDepartmentAnalytics(selectedDept);
+  } else {
+    renderCompanyAnalytics();
+  }
+}
+
+function renderDepartmentAnalytics(dept) {
+  // 过滤数据
+  let filteredData = MOCK_DATA;
+  if (dept) {
+    filteredData = MOCK_DATA.filter(emp => emp.dept.startsWith(dept + '-'));
+  }
+
+  // 1. 人才结构分布
+  const talentStructure = calculateTalentStructure(filteredData);
+  document.getElementById('talentStructureContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div>
+        <h4>职级结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.levelDistribution).map(([level, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${level}</span>
+              <span>${count} (${((count / filteredData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div>
+        <h4>学历结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.educationDistribution).map(([edu, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${edu}</span>
+              <span>${count} (${((count / filteredData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div style="grid-column:1/-1">
+        <h4>其他指标</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.avgAge.toFixed(1)}</div>
+            <div style="color:#666;font-size:14px">平均年龄</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.cadreRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">干部占比</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${filteredData.length}</div>
+            <div style="color:#666;font-size:14px">总人数</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 2. 管理岗继任覆盖率
+  const successionCoverage = calculateSuccessionCoverage(filteredData);
+  document.getElementById('successionCoverageContent').innerHTML = `
+    <div>
+      <h4>继任情况</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>有Ready Now继任者</span>
+          <span>${successionCoverage.readyNow} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>存在断层</span>
+          <span>${successionCoverage.gap} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>覆盖率</span>
+          <span>${successionCoverage.coverageRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>需要关注的岗位</h4>
+        <ul style="list-style:none;padding:0">
+          ${successionCoverage.criticalPositions.map(pos => `
+            <li style="padding:4px 0;border-bottom:1px solid #f0f0f0">${pos}</li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+
+  // 3. 技能缺口分析
+  const skillGap = calculateSkillGap(filteredData);
+  document.getElementById('skillGapContent').innerHTML = `
+    <div>
+      <h4>技能覆盖情况</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>现有技能</span>
+          <span>${skillGap.existingSkills.length} 项</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>需求技能</span>
+          <span>${skillGap.requiredSkills.length} 项</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>覆盖率</span>
+          <span>${skillGap.coverageRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>技能缺口</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${skillGap.missingSkills.map(skill => `
+            <span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:16px;font-size:14px">${skill}</span>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 4. AI应用渗透率
+  const aiPenetration = calculateAIPenetration(filteredData);
+  document.getElementById('aiPenetrationContent').innerHTML = `
+    <div>
+      <h4>AI等级分布</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>L1</span>
+          <span>${aiPenetration.levels.L1} (${((aiPenetration.levels.L1 / filteredData.length) * 100).toFixed(1)}%)</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>L2</span>
+          <span>${aiPenetration.levels.L2} (${((aiPenetration.levels.L2 / filteredData.length) * 100).toFixed(1)}%)</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>L3</span>
+          <span>${aiPenetration.levels.L3} (${((aiPenetration.levels.L3 / filteredData.length) * 100).toFixed(1)}%)</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>与公司整体对比</h4>
+        <div style="padding:12px;background:#f3f4f6;border-radius:8px">
+          <p style="margin:0">AI应用深度：${aiPenetration.compareToCompany}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 5. 流失预警
+  const attritionWarning = calculateAttritionWarning(filteredData);
+  document.getElementById('attritionWarningContent').innerHTML = `
+    <div>
+      <h4>高风险人员</h4>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f3f4f6">
+              <th style="padding:8px;border:1px solid #e5e7eb">姓名</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">部门</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">职级</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">潜力</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">稳定性</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">AI等级</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${attritionWarning.highRisk.map(emp => `
+              <tr>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.name}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.dept}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.positionLevel}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.potential}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.stability}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.aiLevel}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px">
+        <h4>预警统计</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#fee2e2;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${attritionWarning.highRisk.length}</div>
+            <div style="color:#666;font-size:14px">高风险</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#fef3c7;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${attritionWarning.mediumRisk.length}</div>
+            <div style="color:#666;font-size:14px">中风险</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#d1fae5;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${attritionWarning.lowRisk.length}</div>
+            <div style="color:#666;font-size:14px">低风险</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderCompanyAnalytics() {
+  const allData = MOCK_DATA;
+
+  // 1. 公司级人才结构分布
+  const talentStructure = calculateTalentStructure(allData);
+  document.getElementById('companyTalentStructureContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div>
+        <h4>职级结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.levelDistribution).map(([level, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${level}</span>
+              <span>${count} (${((count / allData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div>
+        <h4>学历结构</h4>
+        <ul style="list-style:none;padding:0">
+          ${Object.entries(talentStructure.educationDistribution).map(([edu, count]) => `
+            <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+              <span>${edu}</span>
+              <span>${count} (${((count / allData.length) * 100).toFixed(1)}%)</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      <div style="grid-column:1/-1">
+        <h4>其他指标</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.avgAge.toFixed(1)}</div>
+            <div style="color:#666;font-size:14px">平均年龄</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${talentStructure.cadreRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">干部占比</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f8f9fa;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${allData.length}</div>
+            <div style="color:#666;font-size:14px">总人数</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 2. 公司级管理岗继任覆盖率
+  const successionCoverage = calculateSuccessionCoverage(allData);
+  document.getElementById('companySuccessionCoverageContent').innerHTML = `
+    <div>
+      <h4>继任情况</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>有Ready Now继任者</span>
+          <span>${successionCoverage.readyNow} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>存在断层</span>
+          <span>${successionCoverage.gap} 个岗位</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>覆盖率</span>
+          <span>${successionCoverage.coverageRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>需要关注的岗位</h4>
+        <ul style="list-style:none;padding:0">
+          ${successionCoverage.criticalPositions.slice(0, 5).map(pos => `
+            <li style="padding:4px 0;border-bottom:1px solid #f0f0f0">${pos}</li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+
+  // 3. 关键岗位盘点
+  const keyPositions = calculateKeyPositions(allData);
+  document.getElementById('keyPositionsContent').innerHTML = `
+    <div>
+      <h4>关键岗位分布</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>高潜人才 (Q1-Q3)</span>
+          <span>${keyPositions.highPotential} 人</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>高级人才</span>
+          <span>${keyPositions.seniorTalent} 人</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>尾部人才</span>
+          <span>${keyPositions.bottomTalent} 人</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>投入占比</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="text-align:center;padding:16px;background:#dbeafe;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${keyPositions.highPotentialRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">高潜人才</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#dbeafe;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${keyPositions.seniorTalentRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">高级人才</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#dbeafe;border-radius:8px">
+            <div style="font-size:24px;font-weight:bold">${keyPositions.bottomTalentRatio.toFixed(1)}%</div>
+            <div style="color:#666;font-size:14px">尾部人才</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 4. TOP50核心人才
+  const top50Talent = calculateTop50Talent(allData);
+  document.getElementById('top50TalentContent').innerHTML = `
+    <div>
+      <h4>核心人才列表</h4>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f3f4f6">
+              <th style="padding:8px;border:1px solid #e5e7eb">排名</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">姓名</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">部门</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">职级</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">综合得分</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${top50Talent.slice(0, 10).map((emp, index) => `
+              <tr>
+                <td style="padding:8px;border:1px solid #e5e7eb">${index + 1}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.name}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.dept}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.positionLevel}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${emp.score.toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;text-align:center">
+        <p style="margin:0">共 ${top50Talent.length} 名核心人才</p>
+      </div>
+    </div>
+  `;
+
+  // 5. 跨部门AI人才密度
+  const aiDensity = calculateAIDensity(allData);
+  document.getElementById('aiDensityContent').innerHTML = `
+    <div>
+      <h4>部门AI人才密度</h4>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f3f4f6">
+              <th style="padding:8px;border:1px solid #e5e7eb">部门</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">总人数</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">AI人才数</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">密度</th>
+              <th style="padding:8px;border:1px solid #e5e7eb">AI等级分布</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.entries(aiDensity).map(([dept, data]) => `
+              <tr>
+                <td style="padding:8px;border:1px solid #e5e7eb">${dept}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${data.total}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${data.aiCount}</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">${((data.aiCount / data.total) * 100).toFixed(1)}%</td>
+                <td style="padding:8px;border:1px solid #e5e7eb">
+                  L1: ${data.levels.L1}, L2: ${data.levels.L2}, L3: ${data.levels.L3}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // 6. AI转型进度追踪
+  const aiTransformation = calculateAITransformation(allData);
+  document.getElementById('aiTransformationContent').innerHTML = `
+    <div>
+      <h4>AI转型趋势</h4>
+      <ul style="list-style:none;padding:0">
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>当前L1→L2迁移率</span>
+          <span>${aiTransformation.l1ToL2Rate.toFixed(1)}%</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>当前L2→L3迁移率</span>
+          <span>${aiTransformation.l2ToL3Rate.toFixed(1)}%</span>
+        </li>
+        <li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span>AI人才增长率</span>
+          <span>${aiTransformation.growthRate.toFixed(1)}%</span>
+        </li>
+      </ul>
+      <div style="margin-top:16px">
+        <h4>转型目标</h4>
+        <div style="padding:12px;background:#f3f4f6;border-radius:8px">
+          <p style="margin:0">• L3人才占比目标：20%</p>
+          <p style="margin:0">• L2+L3人才占比目标：50%</p>
+          <p style="margin:0">• 预计完成时间：2026年底</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 辅助函数：计算人才结构分布
+function calculateTalentStructure(data) {
+  const levelDistribution = {};
+  const educationDistribution = {};
+  let totalAge = 0;
+  let cadreCount = 0;
+
+  data.forEach(emp => {
+    // 职级分布
+    const level = emp.positionLevel;
+    levelDistribution[level] = (levelDistribution[level] || 0) + 1;
+
+    // 学历分布
+    const education = emp.education;
+    educationDistribution[education] = (educationDistribution[education] || 0) + 1;
+
+    // 年龄总和
+    totalAge += emp.age;
+
+    // 干部计数（假设高级工程师及以上为干部）
+    if (emp.positionLevel.includes('高级') || emp.positionLevel.includes('总监') || emp.positionLevel.includes('经理')) {
+      cadreCount++;
+    }
+  });
+
+  return {
+    levelDistribution,
+    educationDistribution,
+    avgAge: totalAge / data.length,
+    cadreRatio: (cadreCount / data.length) * 100
+  };
+}
+
+// 辅助函数：计算管理岗继任覆盖率
+function calculateSuccessionCoverage(data) {
+  const managementPositions = new Set();
+  const positionsWithSuccession = new Set();
+
+  data.forEach(emp => {
+    if (emp.positionLevel.includes('经理') || emp.positionLevel.includes('总监') || emp.positionLevel.includes('主管')) {
+      managementPositions.add(emp.positionLevel);
+
+      // 假设潜力为4-5的员工为潜在继任者
+      if (emp.potential >= 4) {
+        positionsWithSuccession.add(emp.positionLevel);
+      }
+    }
+  });
+
+  const readyNow = positionsWithSuccession.size;
+  const gap = managementPositions.size - readyNow;
+  const coverageRate = (readyNow / managementPositions.size) * 100;
+
+  // 生成需要关注的岗位列表
+  const criticalPositions = Array.from(managementPositions).filter(pos => !positionsWithSuccession.has(pos));
+
+  return {
+    readyNow,
+    gap,
+    coverageRate,
+    criticalPositions
+  };
+}
+
+// 辅助函数：计算技能缺口分析
+function calculateSkillGap(data) {
+  const existingSkills = new Set();
+  const requiredSkills = new Set([
+    'Java', 'Python', 'JavaScript', 'C++', 'Go', '前端开发', '后端开发', '全栈开发',
+    '人工智能', '机器学习', '深度学习', '大数据', '数据挖掘', 'DevOps', '测试自动化',
+    '安全开发', '产品设计', '用户体验', '交互设计', '销售技巧', '客户关系', '市场分析',
+    '人力资源', '招聘', '培训', '财务分析', '预算管理', '税务筹划', '数据分析',
+    '项目管理', '敏捷开发', '性能优化'
+  ]);
+
+  data.forEach(emp => {
+    emp.tags.forEach(tag => {
+      existingSkills.add(tag);
+    });
+  });
+
+  const missingSkills = Array.from(requiredSkills).filter(skill => !existingSkills.has(skill));
+  const coverageRate = (existingSkills.size / requiredSkills.size) * 100;
+
+  return {
+    existingSkills: Array.from(existingSkills),
+    requiredSkills: Array.from(requiredSkills),
+    missingSkills,
+    coverageRate
+  };
+}
+
+// 辅助函数：计算AI应用渗透率
+function calculateAIPenetration(data) {
+  const levels = { L1: 0, L2: 0, L3: 0 };
+
+  data.forEach(emp => {
+    if (levels.hasOwnProperty(emp.aiLevel)) {
+      levels[emp.aiLevel]++;
+    }
+  });
+
+  // 与公司整体对比（模拟数据）
+  const companyAvgL2L3 = 35; // 假设公司整体L2+L3占比为35%
+  const currentL2L3 = ((levels.L2 + levels.L3) / data.length) * 100;
+  let compareToCompany = '低于平均水平';
+  if (currentL2L3 > companyAvgL2L3 + 5) {
+    compareToCompany = '高于平均水平';
+  } else if (currentL2L3 > companyAvgL2L3) {
+    compareToCompany = '略高于平均水平';
+  } else if (currentL2L3 > companyAvgL2L3 - 5) {
+    compareToCompany = '接近平均水平';
+  }
+
+  return {
+    levels,
+    compareToCompany
+  };
+}
+
+// 辅助函数：计算流失预警
+function calculateAttritionWarning(data) {
+  const highRisk = [];
+  const mediumRisk = [];
+  const lowRisk = [];
+
+  data.forEach(emp => {
+    // 高风险：高潜（潜力4-5）+ 低稳定性（稳定性1-2）
+    if (emp.potential >= 4 && emp.stability <= 2) {
+      highRisk.push(emp);
+    } else if (emp.potential >= 3 && emp.stability <= 3) {
+      mediumRisk.push(emp);
+    } else {
+      lowRisk.push(emp);
+    }
+  });
+
+  return {
+    highRisk,
+    mediumRisk,
+    lowRisk
+  };
+}
+
+// 辅助函数：计算关键岗位盘点
+function calculateKeyPositions(data) {
+  let highPotential = 0;
+  let seniorTalent = 0;
+  let bottomTalent = 0;
+
+  data.forEach(emp => {
+    // 高潜人才：Q1-Q3
+    if (emp.qValue === 'Q1' || emp.qValue === 'Q2' || emp.qValue === 'Q3') {
+      highPotential++;
+    }
+
+    // 高级人才：高级工程师及以上
+    if (emp.positionLevel.includes('高级') || emp.positionLevel.includes('总监') || emp.positionLevel.includes('经理')) {
+      seniorTalent++;
+    }
+
+    // 尾部人才：Q4且绩效低
+    if (emp.qValue === 'Q4' && (emp.performance === '低' || emp.performance === '中')) {
+      bottomTalent++;
+    }
+  });
+
+  return {
+    highPotential,
+    seniorTalent,
+    bottomTalent,
+    highPotentialRatio: (highPotential / data.length) * 100,
+    seniorTalentRatio: (seniorTalent / data.length) * 100,
+    bottomTalentRatio: (bottomTalent / data.length) * 100
+  };
+}
+
+// 辅助函数：计算TOP50核心人才
+function calculateTop50Talent(data) {
+  return data
+    .map(emp => {
+      // 综合得分计算：潜力*0.4 + 绩效*0.3 + 稳定性*0.2 + AI等级*0.1
+      let performanceScore = 1;
+      switch (emp.performance) {
+        case '高': performanceScore = 5; break;
+        case '中': performanceScore = 3; break;
+        case '低': performanceScore = 1; break;
+      }
+
+      let aiLevelScore = 1;
+      switch (emp.aiLevel) {
+        case 'L3': aiLevelScore = 5; break;
+        case 'L2': aiLevelScore = 3; break;
+        case 'L1': aiLevelScore = 1; break;
+      }
+
+      const score = emp.potential * 0.4 + performanceScore * 0.3 + emp.stability * 0.2 + aiLevelScore * 0.1;
+      return { ...emp, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 50);
+}
+
+// 辅助函数：计算跨部门AI人才密度
+function calculateAIDensity(data) {
+  const deptData = {};
+
+  data.forEach(emp => {
+    // 提取一级部门
+    const dept = emp.dept.split('-')[0];
+
+    if (!deptData[dept]) {
+      deptData[dept] = {
+        total: 0,
+        aiCount: 0,
+        levels: { L1: 0, L2: 0, L3: 0 }
+      };
+    }
+
+    deptData[dept].total++;
+
+    if (emp.aiLevel !== 'L0') {
+      deptData[dept].aiCount++;
+      if (deptData[dept].levels.hasOwnProperty(emp.aiLevel)) {
+        deptData[dept].levels[emp.aiLevel]++;
+      }
+    }
+  });
+
+  return deptData;
+}
+
+// 辅助函数：计算AI转型进度追踪
+function calculateAITransformation(data) {
+  // 模拟数据，实际应基于历史数据计算
+  return {
+    l1ToL2Rate: 25.5,
+    l2ToL3Rate: 12.3,
+    growthRate: 18.7
+  };
+}
+</script>
 </body>
 </html>
