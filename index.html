@@ -1,0 +1,2479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人才管理智能体 v1.1</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+SC:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   CSS VARIABLES & RESET
+   ================================================================ */
+:root {
+  --blue:        #2563EB;
+  --blue-dark:   #1D4ED8;
+  --blue-light:  #EFF6FF;
+  --blue-mid:    #BFDBFE;
+  --dark:        #0F172A;
+  --dark2:       #1E293B;
+  --mid:         #334155;
+  --muted:       #64748B;
+  --border:      #E2E8F0;
+  --border-mid:  #CBD5E1;
+  --bg:          #F1F5F9;
+  --white:       #FFFFFF;
+  --green:       #16A34A;
+  --green-light: #DCFCE7;
+  --orange:      #EA580C;
+  --orange-light:#FFF7ED;
+  --red:         #DC2626;
+  --red-light:   #FEE2E2;
+  --yellow:      #CA8A04;
+  --yellow-light:#FEFCE8;
+  --purple:      #7C3AED;
+  --purple-light:#F5F3FF;
+  --radius:      8px;
+  --radius-lg:   12px;
+  --shadow-xs:   0 1px 2px rgba(0,0,0,.06);
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.08);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.14);
+  --font:        'IBM Plex Sans SC','PingFang SC','Hiragino Sans GB',sans-serif;
+  --mono:        'IBM Plex Mono',monospace;
+  --sidebar-w:   220px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--bg);color:var(--dark);min-height:100vh;line-height:1.6;display:flex;flex-direction:column}
+
+/* ================================================================
+   APP SHELL
+   ================================================================ */
+.app-shell{display:flex;flex:1;min-height:100vh}
+
+/* ── Sidebar ─────────────────────────────────────── */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:var(--dark2);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  border-right:1px solid #1e3a5f;
+  flex-shrink:0;
+}
+.sidebar-logo{
+  padding:20px 20px 16px;
+  border-bottom:1px solid #334155;
+  display:flex;align-items:center;gap:10px;
+}
+.logo-icon{
+  width:32px;height:32px;background:var(--blue);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+}
+.logo-text{color:#F1F5F9;font-size:14px;font-weight:600;line-height:1.3}
+.logo-ver{color:#64748B;font-size:10px;font-family:var(--mono);font-weight:400}
+
+.sidebar-section{padding:16px 12px 8px;font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;border-radius:6px;margin:1px 8px;
+  cursor:pointer;color:#94A3B8;font-size:13px;font-weight:500;
+  transition:all .15s;position:relative;
+}
+.nav-item:hover{background:#1e3a5f;color:#E2E8F0}
+.nav-item.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.4)}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{
+  margin-left:auto;background:#DC2626;color:#fff;border-radius:10px;
+  padding:1px 7px;font-size:10px;font-family:var(--mono);font-weight:600
+}
+
+.sidebar-footer{
+  margin-top:auto;padding:14px 16px;border-top:1px solid #334155;
+  display:flex;align-items:center;gap:10px;
+}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0;
+}
+.user-name{color:#CBD5E1;font-size:12px;font-weight:500}
+.user-role{color:#64748B;font-size:11px}
+
+/* ── Main ────────────────────────────────────────── */
+.main-area{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
+.topbar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:0 28px;height:54px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+  box-shadow:var(--shadow-xs);
+}
+.topbar-title{font-size:16px;font-weight:600;color:var(--dark)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-badge{
+  background:var(--blue-light);color:var(--blue);
+  border-radius:4px;padding:3px 10px;font-size:11px;font-weight:600;font-family:var(--mono);
+}
+.notif-btn{
+  width:34px;height:34px;border:1px solid var(--border);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;
+  transition:all .15s;background:transparent;color:var(--muted);
+}
+.notif-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+
+.page-content{padding:24px 28px 48px;flex:1;overflow-y:auto;height:calc(100vh - 54px)}
+
+/* ================================================================
+   PAGES (show/hide)
+   ================================================================ */
+.page{display:none}
+.page.active{display:block}
+
+/* ================================================================
+   COMMON COMPONENTS
+   ================================================================ */
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.page-title{font-size:20px;font-weight:700;color:var(--dark);letter-spacing:-.01em}
+.page-subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:0 14px;height:34px;border-radius:6px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  font-family:var(--font);transition:all .15s;border:none;
+  white-space:nowrap;
+}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dark);box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.btn-secondary{background:var(--white);color:var(--mid);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.btn-danger{background:#FEF2F2;color:var(--red);border:1px solid #FECACA}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-success{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0}
+.btn-success:hover{background:var(--green);color:#fff}
+.btn-sm{height:28px;padding:0 10px;font-size:11px}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600;color:var(--dark)}
+.card-body{padding:20px}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{
+  background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px 20px;box-shadow:var(--shadow-xs);position:relative;overflow:hidden;
+}
+.stat-card::after{
+  content:'';position:absolute;right:-10px;bottom:-10px;
+  width:60px;height:60px;border-radius:50%;
+  background:var(--blue-light);opacity:.6;
+}
+.stat-num{font-size:26px;font-weight:700;font-family:var(--mono);color:var(--dark)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+.stat-delta{font-size:11px;color:var(--green);margin-top:4px;font-weight:500}
+
+/* Badge system */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;white-space:nowrap}
+.badge-blue  {background:var(--blue-light);color:var(--blue)}
+.badge-gray  {background:#F1F5F9;color:var(--mid)}
+.badge-green {background:var(--green-light);color:#15803D}
+.badge-red   {background:var(--red-light);color:#B91C1C}
+.badge-orange{background:var(--orange-light);color:#C2410C}
+.badge-purple{background:var(--purple-light);color:#5B21B6}
+.badge-yellow{background:var(--yellow-light);color:var(--yellow)}
+
+.q-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:var(--mono)}
+.q-q1{background:var(--green-light);color:#15803D}
+.q-q2{background:#DBEAFE;color:#1D4ED8}
+.q-q3{background:var(--orange-light);color:#C2410C}
+.q-q4{background:var(--red-light);color:#B91C1C}
+.ai-badge{background:linear-gradient(135deg,#EEF2FF,#E0E7FF);color:#3730A3;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600;font-family:var(--mono)}
+
+/* Avatar */
+.avatar{
+  border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:600;flex-shrink:0;
+}
+
+/* Table */
+.table-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.table-toolbar{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.result-count{font-size:12px;color:var(--muted)}
+.result-count strong{color:var(--dark)}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:#F8FAFC;border-bottom:1px solid var(--border)}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--blue)}
+tbody tr{border-bottom:1px solid #F8FAFC;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--blue-light)}
+tbody tr:nth-child(even){background:#FAFBFC}
+tbody tr:nth-child(even):hover{background:var(--blue-light)}
+td{padding:11px 14px;color:var(--dark);white-space:nowrap}
+.td-name{font-weight:600;display:flex;align-items:center;gap:8px}
+.td-muted{color:var(--muted);font-size:12px}
+.checkbox-col{width:40px;text-align:center}
+input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:pointer}
+
+/* Filter card */
+.filter-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.filter-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:140px}
+.filter-group label{font-size:11px;color:var(--muted);font-weight:500}
+.filter-input,.filter-select{
+  height:34px;border:1px solid var(--border);border-radius:6px;
+  padding:0 10px;font-size:13px;font-family:var(--font);color:var(--dark);
+  background:var(--bg);outline:none;transition:all .15s;width:100%;
+}
+.filter-input:focus,.filter-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:var(--white)}
+
+/* Tag multi-select */
+.tag-filter-wrapper{position:relative}
+.tag-filter-btn{
+  height:34px;border:1px solid var(--border);border-radius:6px;
+  padding:0 10px;font-size:13px;font-family:var(--font);color:var(--dark);
+  background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px;
+  width:100%;transition:border-color .15s;
+}
+.tag-filter-btn.open{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.tag-dropdown{
+  position:absolute;top:calc(100% + 4px);left:0;min-width:220px;
+  background:var(--white);border:1px solid var(--border);border-radius:8px;
+  box-shadow:var(--shadow-md);z-index:60;padding:8px;display:none;max-height:240px;overflow-y:auto;
+}
+.tag-dropdown.show{display:block}
+.tag-option{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:13px;transition:background .1s}
+.tag-option:hover{background:var(--blue-light)}
+.active-tag-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tag-pill-rm{background:var(--blue-light);color:var(--blue);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:500;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.tag-pill-rm:hover{background:var(--blue-mid)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.empty-state strong{font-size:15px;color:var(--dark);display:block}
+.empty-state p{font-size:13px;margin-top:4px}
+
+/* ================================================================
+   SLIDE-OVER PANEL
+   ================================================================ */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
+.overlay.show{opacity:1;pointer-events:all}
+.detail-panel{
+  position:fixed;top:0;right:0;bottom:0;width:700px;max-width:96vw;
+  background:var(--white);z-index:210;overflow-y:auto;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  box-shadow:-8px 0 48px rgba(0,0,0,.18);
+}
+.detail-panel.show{transform:translateX(0)}
+.panel-header{background:var(--dark2);padding:20px 24px 16px;position:sticky;top:0;z-index:10}
+.panel-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.panel-emp-name{font-size:20px;font-weight:700;color:#F1F5F9;display:flex;align-items:center;gap:10px}
+.panel-emp-meta{font-size:12px;color:#94A3B8;margin-top:2px}
+.close-btn{width:32px;height:32px;border:1px solid #475569;border-radius:6px;background:transparent;color:#94A3B8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.close-btn:hover{background:#374151;color:#fff}
+.panel-badges{display:flex;gap:6px;flex-wrap:wrap}
+.panel-body{padding:0}
+.module{border-bottom:1px solid var(--border);padding:20px 24px}
+.module:last-child{border-bottom:none}
+.module-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.module-title::before{content:'';display:block;width:3px;height:14px;background:var(--blue);border-radius:2px}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.info-key{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:2px}
+.info-val{font-size:13px;color:var(--dark);font-weight:500}
+.radar-wrapper{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.radar-label-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px dashed #F1F5F9}
+.radar-label-row:last-child{border-bottom:none}
+.radar-bar{height:4px;background:var(--border);border-radius:2px;margin-top:2px;overflow:hidden}
+.radar-bar-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .6s ease}
+.perf-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:6px;margin-bottom:6px;background:#F8FAFC}
+.perf-high{color:#15803D}.perf-mid{color:var(--blue)}.perf-low{color:#B91C1C}
+.grid-chip{background:#F1F5F9;border-radius:6px;padding:6px 12px;font-size:12px;color:var(--mid)}
+.grid-chip strong{color:var(--dark);font-family:var(--mono)}
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.timeline-item{position:relative;margin-bottom:14px}
+.timeline-item:last-child{margin-bottom:0}
+.timeline-dot{position:absolute;left:-18px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--blue);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)}
+.timeline-period{font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:2px}
+.timeline-content{font-size:13px;color:var(--dark);font-weight:500}
+.tags-group{display:flex;flex-wrap:wrap;gap:6px}
+.project-chip{background:var(--blue-light);border:1px solid var(--blue-mid);color:var(--blue);border-radius:6px;padding:5px 10px;font-size:12px;line-height:1.4}
+.succession-box{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
+.detail-panel::-webkit-scrollbar{width:5px}
+.detail-panel::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+
+/* ================================================================
+   EXPORT MODAL
+   ================================================================ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-backdrop.show{display:flex}
+.modal{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:520px;max-width:95vw;overflow:hidden;animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.modal-header{background:var(--dark2);padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:600;color:#F1F5F9}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+
+.export-option{
+  border:2px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;
+  transition:all .15s;display:flex;align-items:center;gap:14px;margin-bottom:10px;
+}
+.export-option:hover{border-color:var(--blue);background:var(--blue-light)}
+.export-option.selected{border-color:var(--blue);background:var(--blue-light)}
+.export-icon{font-size:28px;flex-shrink:0}
+.export-option-title{font-size:14px;font-weight:600;color:var(--dark)}
+.export-option-desc{font-size:12px;color:var(--muted);margin-top:2px}
+
+.export-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+.field-check{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s}
+.field-check:hover{border-color:var(--blue);background:var(--blue-light)}
+.field-check.checked{border-color:var(--blue);background:var(--blue-light);color:var(--blue);font-weight:500}
+
+/* Progress bar for export */
+.export-progress{margin-top:14px;display:none}
+.export-progress.show{display:block}
+.progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--blue);border-radius:4px;transition:width .3s ease;width:0%}
+.progress-label{font-size:11px;color:var(--muted);margin-top:4px;text-align:center}
+
+/* ================================================================
+   USER MANAGEMENT PAGE
+   ================================================================ */
+.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+.user-card{
+  background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:18px;box-shadow:var(--shadow-xs);transition:all .2s;cursor:pointer;
+}
+.user-card:hover{box-shadow:var(--shadow-md);border-color:var(--blue-mid);transform:translateY(-1px)}
+.user-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.user-card-info{flex:1;min-width:0}
+.user-card-name{font-size:14px;font-weight:600;color:var(--dark)}
+.user-card-email{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-active{background:var(--green)}
+.dot-inactive{background:var(--muted)}
+.dot-pending{background:var(--yellow)}
+.user-card-meta{display:flex;justify-content:space-between;align-items:center}
+.user-card-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* User form in modal */
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:600;color:var(--mid);margin-bottom:5px;display:block}
+.form-input,.form-select,.form-textarea{
+  width:100%;height:36px;border:1px solid var(--border);border-radius:6px;
+  padding:0 12px;font-size:13px;font-family:var(--font);color:var(--dark);
+  background:var(--bg);outline:none;transition:all .15s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:var(--white)}
+.form-textarea{height:80px;padding:8px 12px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-hint{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ================================================================
+   PERMISSION MANAGEMENT PAGE
+   ================================================================ */
+.perm-layout{display:grid;grid-template-columns:260px 1fr;gap:16px}
+.role-list{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-xs)}
+.role-list-header{padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--dark);display:flex;justify-content:space-between;align-items:center}
+.role-item{
+  padding:12px 16px;cursor:pointer;border-bottom:1px solid #F8FAFC;
+  transition:background .12s;display:flex;align-items:center;gap:10px;
+}
+.role-item:last-child{border-bottom:none}
+.role-item:hover{background:var(--bg)}
+.role-item.active{background:var(--blue-light);border-right:3px solid var(--blue)}
+.role-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.role-name{font-size:13px;font-weight:500;color:var(--dark)}
+.role-count{font-size:11px;color:var(--muted);margin-top:1px}
+
+.perm-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-xs);overflow:hidden}
+.perm-panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.perm-section{padding:0}
+.perm-section-title{
+  padding:12px 20px;background:#F8FAFC;border-bottom:1px solid var(--border);
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+}
+.perm-row{
+  display:flex;align-items:center;padding:11px 20px;border-bottom:1px solid #F8FAFC;
+  transition:background .1s;
+}
+.perm-row:last-child{border-bottom:none}
+.perm-row:hover{background:var(--blue-light)}
+.perm-name{flex:1;font-size:13px;color:var(--dark);font-weight:500}
+.perm-desc{flex:2;font-size:12px;color:var(--muted)}
+.perm-toggle{display:flex;gap:8px;flex-shrink:0}
+
+/* Toggle switch */
+.toggle-wrap{display:flex;align-items:center;gap:6px}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{
+  position:absolute;inset:0;background:#CBD5E1;border-radius:10px;
+  cursor:pointer;transition:.2s;
+}
+.toggle-slider::before{
+  content:'';position:absolute;left:2px;top:2px;width:16px;height:16px;
+  background:#fff;border-radius:50%;transition:.2s;box-shadow:var(--shadow-xs);
+}
+.toggle input:checked + .toggle-slider{background:var(--blue)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(16px)}
+.toggle-label{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.anim-row{animation:fadeIn .18s ease both}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--blue-mid);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite}
+
+/* ================================================================
+   TOAST
+   ================================================================ */
+#toastContainer{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{
+  background:var(--dark2);color:#F1F5F9;padding:10px 16px;border-radius:8px;
+  font-size:13px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;
+  animation:toastIn .25s ease;min-width:240px;
+}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--blue)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* Scrollbar */
+.page-content::-webkit-scrollbar{width:5px}
+.page-content::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+.tag-dropdown::-webkit-scrollbar{width:4px}
+.tag-dropdown::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{width:64px;min-width:64px}
+  .logo-text,.nav-item span:not(.nav-icon),.sidebar-footer .user-name,.sidebar-footer .user-role,.sidebar-section{display:none}
+  .nav-item{justify-content:center;padding:10px}
+  .page-content{padding:16px 16px 40px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .perm-layout{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     APP SHELL
+     ================================================================ -->
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🧠</div>
+      <div>
+        <div class="logo-text">人才管理智能体</div>
+        <div class="logo-ver">v1.1 MVP</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">核心功能</div>
+    <div class="nav-item active" onclick="showPage('talent')" id="nav-talent">
+      <span class="nav-icon">👥</span><span>人才档案库</span>
+    </div>
+    <div class="nav-item" onclick="showPage('export')" id="nav-export">
+      <span class="nav-icon">📤</span><span>导出中心</span>
+    </div>
+
+    <div class="sidebar-section">系统管理</div>
+    <div class="nav-item" onclick="showPage('users')" id="nav-users">
+      <span class="nav-icon">🔑</span><span>用户管理</span>
+    </div>
+    <div class="nav-item" onclick="showPage('permissions')" id="nav-permissions">
+      <span class="nav-icon">🛡️</span><span>权限管理</span>
+    </div>
+
+    <div class="sidebar-section">标签库</div>
+    <div class="nav-item" onclick="showPage('tags')" id="nav-tags">
+      <span class="nav-icon">🏷️</span><span>标签管理</span>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar" style="width:32px;height:32px;font-size:12px">管</div>
+      <div>
+        <div class="user-name">系统管理员</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">人才档案库</div>
+      <div class="topbar-right">
+        <span class="topbar-badge" id="topbarBadge">Super Admin</span>
+        <button class="notif-btn" title="通知">🔔</button>
+        <button class="notif-btn" title="设置">⚙️</button>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ======================================================
+           PAGE: 人才档案
+           ====================================================== -->
+      <div class="page active" id="page-talent">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">人才档案库</h1>
+            <p class="page-subtitle">结构化人才数据管理 · 支持组合查询、详情查看与数据导出</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="openExportModal('list')">📤 导出列表</button>
+            <button class="btn btn-primary" onclick="openExportModal('profile')">🖨️ 导出画像</button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row" id="talentStats"></div>
+
+        <!-- Filters -->
+        <div class="filter-card">
+          <div class="filter-row">
+            <div class="filter-group" style="max-width:180px">
+              <label>姓名（模糊搜索）</label>
+              <input class="filter-input" id="filterName" placeholder="输入姓名…" oninput="applyFilters()">
+            </div>
+            <div class="filter-group" style="max-width:400px">
+              <label>部门 / 业务线</label>
+              <div style="display:flex;gap:6px">
+                <select class="filter-select" id="filterDeptLevel1" onchange="updateDeptLevel2('filter')">
+                  <option value="">全部一级部门</option>
+                </select>
+                <select class="filter-select" id="filterDeptLevel2" onchange="updateDeptLevel3('filter')">
+                  <option value="">全部二级部门</option>
+                </select>
+                <select class="filter-select" id="filterDeptLevel3" onchange="applyFilters()">
+                  <option value="">全部岗位</option>
+                </select>
+              </div>
+            </div>
+            <div class="filter-group" style="max-width:210px">
+              <label>技能标签</label>
+              <div class="tag-filter-wrapper">
+                <div class="tag-filter-btn" id="tagBtn" onclick="toggleTagDropdown()">
+                  <span id="tagBtnText" style="color:var(--muted)">选择技能标签</span><span>▾</span>
+                </div>
+                <div class="tag-dropdown" id="tagDropdown"></div>
+              </div>
+              <div class="active-tag-pills" id="activeTagPills"></div>
+            </div>
+            <div class="filter-group" style="max-width:140px">
+              <label>Q值</label>
+              <select class="filter-select" id="filterQ" onchange="applyFilters()">
+                <option value="">全部</option>
+                <option value="Q1">🟢 Q1</option>
+                <option value="Q2">🔵 Q2</option>
+                <option value="Q3">🟠 Q3</option>
+                <option value="Q4">🔴 Q4</option>
+              </select>
+            </div>
+            <div class="filter-group" style="max-width:130px">
+              <label>绩效档位</label>
+              <select class="filter-select" id="filterPerf" onchange="applyFilters()">
+                <option value="">全部</option>
+                <option value="高">高</option>
+                <option value="中">中</option>
+                <option value="低">低</option>
+              </select>
+            </div>
+            <div style="align-self:flex-end">
+              <button class="btn btn-secondary btn-sm" onclick="clearFilters()">✕ 清空</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="result-count">共 <strong id="resultCount">0</strong> 条，已选 <strong id="selectedCount">0</strong> 条</div>
+            <div class="btn-group" id="batchBtns" style="display:none">
+              <button class="btn btn-secondary btn-sm" onclick="openExportModal('list',true)">📤 导出已选列表</button>
+              <button class="btn btn-secondary btn-sm" onclick="openExportModal('profile',true)">🖨️ 导出已选画像</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="checkbox-col"><input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)"></th>
+                  <th>姓名</th>
+                  <th>部门 / 业务线</th>
+                  <th>岗位 / 职级</th>
+                  <th>技能标签</th>
+                  <th>Q值</th>
+                  <th>AI等级</th>
+                  <th>稳定性</th>
+                  <th>绩效</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display:none">
+              <div class="empty-icon">🔍</div>
+              <strong>未找到匹配人才</strong>
+              <p>请调整筛选条件后重试</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           PAGE: 导出中心
+           ====================================================== -->
+      <div class="page" id="page-export">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">导出中心</h1>
+            <p class="page-subtitle">管理并追踪所有数据导出记录</p>
+          </div>
+          <button class="btn btn-primary" onclick="openExportModal('list')">➕ 新建导出任务</button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num" id="expTotal">0</div><div class="stat-label">历史导出次数</div></div>
+          <div class="stat-card"><div class="stat-num" id="expToday">0</div><div class="stat-label">今日导出</div></div>
+          <div class="stat-card"><div class="stat-num" id="expRecords">0</div><div class="stat-label">累计导出条数</div></div>
+          <div class="stat-card"><div class="stat-num" id="expUsers">0</div><div class="stat-label">使用导出功能的用户</div></div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="card-title">导出记录</div>
+            <button class="btn btn-secondary btn-sm" onclick="clearExportLog()">🗑 清空记录</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>导出类型</th>
+                  <th>格式</th>
+                  <th>条数</th>
+                  <th>字段</th>
+                  <th>操作人</th>
+                  <th>时间</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="exportLogBody"></tbody>
+            </table>
+            <div id="exportLogEmpty" class="empty-state">
+              <div class="empty-icon">📋</div>
+              <strong>暂无导出记录</strong>
+              <p>在人才档案库点击「导出」按钮开始使用</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           PAGE: 用户管理
+           ====================================================== -->
+      <div class="page" id="page-users">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">用户管理</h1>
+            <p class="page-subtitle">管理系统访问用户账号、角色与状态</p>
+          </div>
+          <button class="btn btn-primary" onclick="openUserModal()">➕ 新增用户</button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num" id="userTotal">0</div><div class="stat-label">总用户数</div><div class="stat-delta">↑ 含停用账号</div></div>
+          <div class="stat-card"><div class="stat-num" id="userActive">0</div><div class="stat-label">活跃用户</div><div class="stat-delta" style="color:var(--green)">● 正常状态</div></div>
+          <div class="stat-card"><div class="stat-num" id="userAdmin">0</div><div class="stat-label">管理员</div></div>
+          <div class="stat-card"><div class="stat-num" id="userPending">0</div><div class="stat-label">待激活</div><div class="stat-delta" style="color:var(--yellow)">⚠ 需处理</div></div>
+        </div>
+
+        <div class="filter-card">
+          <div class="filter-row">
+            <div class="filter-group" style="max-width:200px">
+              <label>搜索用户</label>
+              <input class="filter-input" id="userSearch" placeholder="姓名/邮箱…" oninput="renderUsers()">
+            </div>
+            <div class="filter-group" style="max-width:150px">
+              <label>角色</label>
+              <select class="filter-select" id="userRoleFilter" onchange="renderUsers()">
+                <option value="">全部角色</option>
+                <option value="super_admin">超级管理员</option>
+                <option value="admin">管理员</option>
+                <option value="hr_bp">HRBP</option>
+                <option value="hr_viewer">HR查看</option>
+                <option value="dept_head">部门负责人</option>
+                <option value="viewer">只读用户</option>
+              </select>
+            </div>
+            <div class="filter-group" style="max-width:130px">
+              <label>状态</label>
+              <select class="filter-select" id="userStatusFilter" onchange="renderUsers()">
+                <option value="">全部</option>
+                <option value="active">活跃</option>
+                <option value="inactive">停用</option>
+                <option value="pending">待激活</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-grid" id="userGrid"></div>
+        <div id="userEmpty" class="empty-state" style="display:none">
+          <div class="empty-icon">👤</div><strong>暂无匹配用户</strong>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           PAGE: 权限管理
+           ====================================================== -->
+      <div class="page" id="page-permissions">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">权限管理</h1>
+            <p class="page-subtitle">配置系统角色与功能模块的访问权限矩阵</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="resetPermissions()">↺ 重置默认</button>
+            <button class="btn btn-primary" onclick="savePermissions()">💾 保存配置</button>
+          </div>
+        </div>
+
+        <div class="perm-layout">
+          <!-- Role list -->
+          <div>
+            <div class="role-list">
+              <div class="role-list-header">
+                角色列表
+                <button class="btn btn-secondary btn-sm" onclick="openRoleModal()">+ 新角色</button>
+              </div>
+              <div id="roleListBody"></div>
+            </div>
+            <div class="card" style="margin-top:12px;padding:14px">
+              <div class="card-title" style="margin-bottom:10px;font-size:12px">角色说明</div>
+              <div id="roleDesc" style="font-size:12px;color:var(--muted);line-height:1.6">点击左侧角色查看说明</div>
+            </div>
+          </div>
+
+          <!-- Permissions panel -->
+          <div class="perm-panel">
+            <div class="perm-panel-header">
+              <div>
+                <div class="card-title" id="permPanelTitle">选择角色查看权限</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px" id="permPanelSub">—</div>
+              </div>
+              <div class="btn-group" id="permBatchBtns" style="display:none">
+                <button class="btn btn-secondary btn-sm" onclick="permSelectAll(false)">全部禁用</button>
+                <button class="btn btn-primary btn-sm" onclick="permSelectAll(true)">全部启用</button>
+              </div>
+            </div>
+            <div id="permBody">
+              <div class="empty-state" style="padding:40px">
+                <div class="empty-icon">🛡️</div>
+                <strong>请先选择角色</strong>
+                <p>从左侧选择一个角色来配置权限</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           PAGE: 标签管理
+           ====================================================== -->
+      <div class="page" id="page-tags">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">标签库管理</h1>
+            <p class="page-subtitle">管理各部门的技能标签和通用能力标签</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="exportTags()">📤 导出标签</button>
+            <button class="btn btn-primary" onclick="openTagModal()">➕ 新增标签</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num" id="tagTotal">0</div><div class="stat-label">总标签数</div></div>
+          <div class="stat-card"><div class="stat-num" id="tagDept">0</div><div class="stat-label">部门标签</div></div>
+          <div class="stat-card"><div class="stat-num" id="tagCommon">0</div><div class="stat-label">通用标签</div></div>
+          <div class="stat-card"><div class="stat-num" id="tagUsage">0</div><div class="stat-label">标签使用次数</div></div>
+        </div>
+
+        <div class="filter-card">
+          <div class="filter-row">
+            <div class="filter-group" style="max-width:200px">
+              <label>标签名称</label>
+              <input class="filter-input" id="tagSearch" placeholder="输入标签名称…" oninput="renderTags()">
+            </div>
+            <div class="filter-group" style="max-width:180px">
+              <label>标签类型</label>
+              <select class="filter-select" id="tagTypeFilter" onchange="renderTags()">
+                <option value="">全部类型</option>
+                <option value="dept">部门技能</option>
+                <option value="common">通用能力</option>
+              </select>
+            </div>
+            <div class="filter-group" style="max-width:400px">
+              <label>所属部门</label>
+              <div style="display:flex;gap:6px">
+                <select class="filter-select" id="tagDeptLevel1" onchange="updateDeptLevel2('tag')">
+                  <option value="">全部一级部门</option>
+                </select>
+                <select class="filter-select" id="tagDeptLevel2" onchange="updateDeptLevel3('tag')">
+                  <option value="">全部二级部门</option>
+                </select>
+                <select class="filter-select" id="tagDeptLevel3" onchange="renderTags()">
+                  <option value="">全部岗位</option>
+                </select>
+              </div>
+            </div>
+            <div style="align-self:flex-end">
+              <button class="btn btn-secondary btn-sm" onclick="clearTagFilters()">✕ 清空</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="result-count">共 <strong id="tagResultCount">0</strong> 个标签</div>
+            <div class="btn-group" id="tagBatchBtns" style="display:none">
+              <button class="btn btn-secondary btn-sm" onclick="deleteSelectedTags()">🗑 批量删除</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="checkbox-col"><input type="checkbox" id="checkAllTags" onchange="toggleCheckAllTags(this)"></th>
+                  <th>标签名称</th>
+                  <th>标签类型</th>
+                  <th>所属部门</th>
+                  <th>使用次数</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="tagTableBody"></tbody>
+            </table>
+            <div id="tagEmptyState" class="empty-state" style="display:none">
+              <div class="empty-icon">🏷️</div>
+              <strong>暂无标签</strong>
+              <p>点击「新增标签」按钮开始创建</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
+
+<!-- ================================================================
+     SLIDE-OVER PANEL (detail)
+     ================================================================ -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-header">
+    <div class="panel-header-top">
+      <div>
+        <div class="panel-emp-name" id="panelName">—</div>
+        <div class="panel-emp-meta" id="panelMeta">—</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-secondary btn-sm" onclick="exportSingleProfile(currentEmp)" style="background:#374151;border-color:#475569;color:#CBD5E1">🖨️ 导出画像</button>
+        <button class="close-btn" onclick="closePanel()">✕</button>
+      </div>
+    </div>
+    <div class="panel-badges" id="panelBadges"></div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<!-- ================================================================
+     EXPORT MODAL
+     ================================================================ -->
+<div class="modal-backdrop" id="exportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="exportModalTitle">📤 导出数据</div>
+      <button class="close-btn" onclick="closeExportModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Step 1: type -->
+      <div id="exportStep1">
+        <div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:12px">选择导出类型</div>
+        <div class="export-option selected" id="exportOptList" onclick="selectExportType('list')">
+          <div class="export-icon">📊</div>
+          <div>
+            <div class="export-option-title">人才列表（表格）</div>
+            <div class="export-option-desc">导出为 CSV / Excel 格式，包含选定字段</div>
+          </div>
+        </div>
+        <div class="export-option" id="exportOptProfile" onclick="selectExportType('profile')">
+          <div class="export-icon">📋</div>
+          <div>
+            <div class="export-option-title">人才画像（报告）</div>
+            <div class="export-option-desc">导出为 HTML 画像报告，可打印/另存为PDF</div>
+          </div>
+        </div>
+
+        <div id="listOptions" style="margin-top:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px">选择导出格式</div>
+          <div style="display:flex;gap:10px;margin-bottom:16px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+              <input type="radio" name="exportFormat" value="csv" checked accent-color="var(--blue)"> CSV 文件
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+              <input type="radio" name="exportFormat" value="html_table"> HTML 表格
+            </label>
+          </div>
+          <div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px">选择导出字段</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+            <button class="btn btn-secondary btn-sm" onclick="toggleAllFields(true)">全选</button>
+            <button class="btn btn-secondary btn-sm" onclick="toggleAllFields(false)">清空</button>
+          </div>
+          <div class="export-fields" id="exportFields"></div>
+        </div>
+
+        <div id="profileOptions" style="display:none;margin-top:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px">包含模块</div>
+          <div class="export-fields" id="profileModuleFields"></div>
+          <div style="margin-top:12px;padding:10px;background:var(--blue-light);border-radius:6px;font-size:12px;color:var(--blue)">
+            💡 导出后将在新窗口打开HTML格式报告，支持 Ctrl+P 打印或另存为PDF
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="export-progress" id="exportProgress">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">准备中…</div>
+      </div>
+
+      <div style="margin-top:14px;padding:10px;background:#F8FAFC;border-radius:6px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between">
+        <span>📊 当前筛选结果</span>
+        <strong id="exportCountLabel" style="color:var(--dark)">— 条记录</strong>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeExportModal()">取消</button>
+      <button class="btn btn-primary" id="exportConfirmBtn" onclick="doExport()">
+        <span class="spinner" id="exportSpinner" style="display:none"></span>
+        确认导出
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     USER MODAL
+     ================================================================ -->
+<div class="modal-backdrop" id="userModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="userModalTitle">➕ 新增用户</div>
+      <button class="close-btn" onclick="closeUserModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">姓名 *</label>
+          <input class="form-input" id="uName" placeholder="请输入姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">工号</label>
+          <input class="form-input" id="uEmpId" placeholder="自动生成">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">邮箱地址 *</label>
+        <input class="form-input" id="uEmail" type="email" placeholder="user@company.com">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">系统角色 *</label>
+          <select class="form-select" id="uRole">
+            <option value="viewer">只读用户</option>
+            <option value="hr_viewer">HR查看</option>
+            <option value="hr_bp">HRBP</option>
+            <option value="dept_head">部门负责人</option>
+            <option value="admin">管理员</option>
+            <option value="super_admin">超级管理员</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">所属部门</label>
+            <div style="display:flex;gap:6px">
+              <select class="form-select" id="uDeptLevel1" onchange="updateDeptLevel2('user')">
+                <option value="">请选择一级部门</option>
+              </select>
+              <select class="form-select" id="uDeptLevel2" onchange="updateDeptLevel3('user')">
+                <option value="">请选择二级部门</option>
+              </select>
+              <select class="form-select" id="uDeptLevel3">
+                <option value="">请选择岗位</option>
+              </select>
+            </div>
+          </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">账号状态</label>
+          <select class="form-select" id="uStatus">
+            <option value="active">活跃</option>
+            <option value="pending">待激活</option>
+            <option value="inactive">停用</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">数据访问范围</label>
+          <select class="form-select" id="uScope">
+            <option value="all">全部数据</option>
+            <option value="dept">仅本部门</option>
+            <option value="assigned">指定人员</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">备注</label>
+        <textarea class="form-textarea" id="uRemark" placeholder="可选备注…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeUserModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveUser()">保存用户</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     ROLE MODAL
+     ================================================================ -->
+<div class="modal-backdrop" id="roleModal">
+  <div class="modal" style="width:440px">
+    <div class="modal-header">
+      <div class="modal-title">➕ 新增角色</div>
+      <button class="close-btn" onclick="document.getElementById('roleModal').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">角色名称 *</label>
+        <input class="form-input" id="rName" placeholder="例：分析师、业务顾问">
+      </div>
+      <div class="form-group">
+        <label class="form-label">角色标识（英文）</label>
+        <input class="form-input" id="rKey" placeholder="例：analyst">
+        <div class="form-hint">小写英文，用作系统内部标识</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">角色颜色</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="roleColorPicker">
+          <div class="role-dot" style="width:20px;height:20px;border-radius:50%;background:#2563EB;cursor:pointer;border:2px solid #2563EB" onclick="selectRoleColor('#2563EB',this)"></div>
+          <div class="role-dot" style="width:20px;height:20px;border-radius:50%;background:#16A34A;cursor:pointer" onclick="selectRoleColor('#16A34A',this)"></div>
+          <div class="role-dot" style="width:20px;height:20px;border-radius:50%;background:#7C3AED;cursor:pointer" onclick="selectRoleColor('#7C3AED',this)"></div>
+          <div class="role-dot" style="width:20px;height:20px;border-radius:50%;background:#EA580C;cursor:pointer" onclick="selectRoleColor('#EA580C',this)"></div>
+          <div class="role-dot" style="width:20px;height:20px;border-radius:50%;background:#0891B2;cursor:pointer" onclick="selectRoleColor('#0891B2',this)"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">角色说明</label>
+        <textarea class="form-textarea" id="rDesc" placeholder="描述该角色的职责与权限范围…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('roleModal').classList.remove('show')">取消</button>
+      <button class="btn btn-primary" onclick="saveRole()">创建角色</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     TAG MODAL
+     ================================================================ -->
+<div class="modal-backdrop" id="tagModal">
+  <div class="modal" style="width:440px">
+    <div class="modal-header">
+      <div class="modal-title" id="tagModalTitle">➕ 新增标签</div>
+      <button class="close-btn" onclick="closeTagModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">标签名称 *</label>
+        <input class="form-input" id="tagName" placeholder="例：Python、沟通能力">
+      </div>
+      <div class="form-group">
+        <label class="form-label">标签类型 *</label>
+        <select class="form-select" id="tagType" onchange="toggleTagDeptField()">
+          <option value="common">通用能力</option>
+          <option value="dept">部门技能</option>
+        </select>
+      </div>
+      <div class="form-group" id="tagDeptField">
+        <label class="form-label">所属部门</label>
+        <div style="display:flex;gap:6px">
+          <select class="form-select" id="tagDeptLevel1" onchange="updateDeptLevel2('tagModal')">
+            <option value="">请选择一级部门</option>
+          </select>
+          <select class="form-select" id="tagDeptLevel2" onchange="updateDeptLevel3('tagModal')">
+            <option value="">请选择二级部门</option>
+          </select>
+          <select class="form-select" id="tagDeptLevel3">
+            <option value="">请选择岗位</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">标签描述</label>
+        <textarea class="form-textarea" id="tagDesc" placeholder="描述该标签的含义和适用场景…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeTagModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveTag()">保存标签</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toastContainer"></div>
+
+<!-- ================================================================
+     SCRIPT
+     ================================================================ -->
+<script>
+/* ================================================================
+   MOCK DATA — 18条人才档案
+   ================================================================ */
+const MOCK_DATA=[{id:"EMP001",name:"张三",dept:"技术-开发-后端开发岗",positionLevel:"高级开发工程师/P6",tags:["Java","高并发架构","AI工程化"],qValue:"Q2",aiLevel:"L2",stability:"高",performance:"中",basicInfo:{age:29,tenure:"3年2个月",location:"深圳",education:"硕士",university:"华中科技大学",status:"在职",manager:"李四(直属)/王五(虚线)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:高,2023全年:高",potentialScore:4.2,potentialRadar:{业务洞察:4,技术深度:5,协同领导力:3,创新突破:4,学习敏捷:4},aiLevelDetail:"L2-熟练应用AI工具",historyGrid:[{year:"2023",label:"中潜高绩"},{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["Java","微服务"],generalTags:["项目管理","跨部门协同"],recentProjects:["平安南山项目-数据负责人(2024.03-2024.08)","智能客服系统重构(2024.09-至今)"]},developmentInfo:{succession:"Ready Now - 技术架构师",promotionHistory:["2023.07 晋升P6","2021.03 入职P5"]},performanceHistory:["2024Q4: 中","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2022.06–2023.06",role:"技术-开发-后端开发岗-开发工程师"},{period:"2023.07–至今",role:"技术-开发-后端开发岗-高级开发工程师"}]},{id:"EMP002",name:"李梅",dept:"产品-产品经理-产品经理岗-商业类（数字孪生产品、交通线产品等）",positionLevel:"资深产品经理/P7",tags:["B端产品","用户研究","数据分析"],qValue:"Q1",aiLevel:"L3",stability:"高",performance:"高",basicInfo:{age:33,tenure:"5年6个月",location:"上海",education:"本科",university:"复旦大学",status:"在职",manager:"陈总(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.8,potentialRadar:{业务洞察:5,技术深度:3,协同领导力:5,创新突破:4,学习敏捷:5},aiLevelDetail:"L3-具备AI产品策划能力",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["ToB产品","SaaS"],generalTags:["战略规划","团队领导","客户访谈"],recentProjects:["HR-SaaS全新功能规划(2024.01-至今)","用户体验提升专项(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 产品总监候选",promotionHistory:["2024.01 晋升P7","2021.07 晋升P6","2019.01 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2019.01–2021.06",role:"产品-产品经理-初级产品经理"},{period:"2021.07–2024.01",role:"产品-产品经理-产品经理"},{period:"2024.01–至今",role:"产品-产品经理-产品经理岗-商业类（数字孪生产品、交通线产品等）-资深产品经理"}]},{id:"EMP003",name:"王强",dept:"技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）",positionLevel:"AI算法工程师/P6",tags:["NLP","LLM微调","Python","AI工程化"],qValue:"Q1",aiLevel:"L4",stability:"中",performance:"高",basicInfo:{age:28,tenure:"2年1个月",location:"北京",education:"硕士",university:"清华大学",status:"在职",manager:"赵工(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.9,potentialRadar:{业务洞察:4,技术深度:5,协同领导力:3,创新突破:5,学习敏捷:5},aiLevelDetail:"L4-AI应用开发专家",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["机器学习","深度学习","LLM"],generalTags:["技术分享","论文阅读"],recentProjects:["企业内部LLM平台搭建(2024.03-至今)","智能问答系统(2023.09-2024.03)"]},developmentInfo:{succession:"1-2年 - 技术专家/P7",promotionHistory:["2023.03 晋升P6","2022.12 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 中"],internalExperience:[{period:"2022.12–2023.02",role:"技术-AI与大数据-机器学习岗-算法工程师"},{period:"2023.03–至今",role:"技术-AI与大数据-机器学习岗-AI算法工程师"}]},{id:"EMP004",name:"陈静",dept:"职能-人力资源-人力资源-HRBP方向",positionLevel:"高级HRBP/M2",tags:["HRBP","组织发展","人才盘点","敬业度"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"高",basicInfo:{age:35,tenure:"7年3个月",location:"深圳",education:"本科",university:"武汉大学",status:"在职",manager:"HR总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:中",potentialScore:3.9,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:5,创新突破:3,学习敏捷:4},aiLevelDetail:"L1-基础AI工具使用",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"中潜高绩"}]},capabilityProfile:{ethnicTags:["HR管理","劳动法"],generalTags:["影响力","沟通协调","数据分析"],recentProjects:["2024年全员人才盘点(2024.08-2024.10)","核心人才保留专项(2024.01-2024.06)"]},developmentInfo:{succession:"Ready Now - CHRO候选梯队",promotionHistory:["2022.01 晋升M2","2019.06 晋升M1","2017.07 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 中","2024Q1: 中"],internalExperience:[{period:"2017.07–2019.05",role:"职能-人力资源-招聘组"},{period:"2019.06–2022.01",role:"职能-人力资源-人力资源-HRBP方向-HRBP"},{period:"2022.01–至今",role:"职能-人力资源-人力资源-HRBP方向-高级HRBP"}]},{id:"EMP005",name:"刘洋",dept:"前场-销售-销售-交通To B",positionLevel:"客户成功经理/B5",tags:["客户成功","SaaS销售","数据分析"],qValue:"Q3",aiLevel:"L1",stability:"低",performance:"中",basicInfo:{age:27,tenure:"1年5个月",location:"上海",education:"本科",university:"同济大学",status:"在职",manager:"张总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.2,potentialRadar:{业务洞察:3,技术深度:2,协同领导力:3,创新突破:3,学习敏捷:3},aiLevelDetail:"L1-基础AI工具",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"低潜中绩"}]},capabilityProfile:{ethnicTags:["B2B销售","SaaS"],generalTags:["客户关系","演示技能"],recentProjects:["Q3大客户续约专项(2024.07-2024.09)"]},developmentInfo:{succession:"暂无继任计划",promotionHistory:["2023.08 入职B4","2024.03 晋升B5"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 低"],internalExperience:[{period:"2023.08–2024.03",role:"前场-销售-销售-交通To B-销售专员"},{period:"2024.03–至今",role:"前场-销售-销售-交通To B-客户成功经理"}]},{id:"EMP006",name:"赵敏",dept:"技术-开发-前端开发岗",positionLevel:"前端架构师/P7",tags:["Vue3","React","工程化","低代码"],qValue:"Q1",aiLevel:"L3",stability:"高",performance:"高",basicInfo:{age:31,tenure:"4年8个月",location:"深圳",education:"本科",university:"浙江大学",status:"在职",manager:"CTO(虚线)/技术总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.7,potentialRadar:{业务洞察:4,技术深度:5,协同领导力:4,创新突破:5,学习敏捷:4},aiLevelDetail:"L3-AI辅助开发专家",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["前端工程化","性能优化"],generalTags:["技术规划","跨团队协同","代码评审"],recentProjects:["低代码平台核心架构设计(2024.02-至今)","微前端改造专项(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 前端技术负责人",promotionHistory:["2023.10 晋升P7","2021.03 晋升P6","2020.04 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2020.04–2021.02",role:"技术-开发-前端开发岗-前端开发"},{period:"2021.03–2023.10",role:"技术-开发-前端开发岗-高级前端"},{period:"2023.10–至今",role:"技术-开发-前端开发岗-前端架构师"}]},{id:"EMP007",name:"孙磊",dept:"技术-AI与大数据-数据研发岗",positionLevel:"数据工程师/P5",tags:["Flink","Spark","数据仓库","ClickHouse"],qValue:"Q2",aiLevel:"L2",stability:"中",performance:"中",basicInfo:{age:26,tenure:"1年10个月",location:"北京",education:"本科",university:"北京航空航天大学",status:"在职",manager:"李架构师(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.8,potentialRadar:{业务洞察:3,技术深度:4,协同领导力:3,创新突破:3,学习敏捷:5},aiLevelDetail:"L2-AI工具辅助分析",historyGrid:[{year:"2023",label:"高潜中绩"},{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["大数据","实时计算"],generalTags:["问题诊断","文档编写"],recentProjects:["实时数仓架构升级(2024.06-至今)"]},developmentInfo:{succession:"1-2年 - 高级数据工程师P6",promotionHistory:["2023.02 入职P5"]},performanceHistory:["2024Q4: 中","2024Q3: 高","2024Q2: 中","2024Q1: 中"],internalExperience:[{period:"2023.02–至今",role:"技术-AI与大数据-数据研发岗-数据工程师"}]},{id:"EMP008",name:"吴芳",dept:"职能-财务-财务综合管理岗",positionLevel:"高级财务BP/M1",tags:["财务分析","预算管理","业财融合"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"中",basicInfo:{age:32,tenure:"4年2个月",location:"上海",education:"硕士",university:"上海财经大学",status:"在职",manager:"CFO(虚线)/财务总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:高",potentialScore:3.6,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:4,创新突破:3,学习敏捷:3},aiLevelDetail:"L1-基础AI辅助",historyGrid:[{year:"2023",label:"中潜高绩"},{year:"2024",label:"中潜中绩"}]},capabilityProfile:{ethnicTags:["财务管理","会计准则"],generalTags:["数据分析","汇报能力","关系管理"],recentProjects:["2024年度全面预算编制(2024.09-2024.12)","业财一体化项目配合(2024.01-2024.08)"]},developmentInfo:{succession:"1-2年 - 财务总监候选",promotionHistory:["2023.01 晋升M1","2020.10 入职P6"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2020.10–2023.01",role:"职能-财务-财务综合管理岗-财务分析岗"},{period:"2023.01–至今",role:"职能-财务-财务综合管理岗-高级财务BP"}]},{id:"EMP009",name:"郑凯",dept:"技术-开发-后端开发岗",positionLevel:"后端工程师/P4",tags:["Go","微服务","K8s"],qValue:"Q3",aiLevel:"L1",stability:"低",performance:"低",basicInfo:{age:24,tenure:"0年9个月",location:"深圳",education:"本科",university:"南京大学",status:"在职",manager:"张三(直属)"},reviewData:{performanceHistory:"2024Q4:低,2024全年:低",potentialScore:2.8,potentialRadar:{业务洞察:2,技术深度:3,协同领导力:2,创新突破:2,学习敏捷:3},aiLevelDetail:"L1-了解基础AI概念",historyGrid:[{year:"2024",label:"中潜低绩"}]},capabilityProfile:{ethnicTags:["Go","云原生"],generalTags:["执行力"],recentProjects:["接口服务开发配合(2024.05-至今)"]},developmentInfo:{succession:"关注名单-建议绩效面谈",promotionHistory:["2024.03 入职P4"]},performanceHistory:["2024Q4: 低","2024Q3: 低","2024Q2: 中","2024Q1: —"],internalExperience:[{period:"2024.03–至今",role:"技术-开发-后端开发岗-工程师"}]},{id:"EMP010",name:"周婷",dept:"运营-产品运营岗（交通线）",positionLevel:"品牌经理/B6",tags:["品牌策划","内容营销","用户增长"],qValue:"Q2",aiLevel:"L2",stability:"中",performance:"高",basicInfo:{age:30,tenure:"3年6个月",location:"上海",education:"本科",university:"中山大学",status:"在职",manager:"CMO(虚线)/品牌总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:中",potentialScore:4.0,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:4,创新突破:5,学习敏捷:4},aiLevelDetail:"L2-AI内容创作应用",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["品牌管理","内容营销"],generalTags:["创意思维","项目统筹","数据驱动"],recentProjects:["品牌焕新项目-主负责人(2024.03-2024.09)","618大促内容营销(2024.05-2024.06)"]},developmentInfo:{succession:"1-2年 - 品牌总监候选",promotionHistory:["2024.04 晋升B6","2022.06 晋升B5","2021.06 入职B4"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 中","2024Q1: 中"],internalExperience:[{period:"2021.06–2022.05",role:"运营-产品运营岗（交通线）-内容专员"},{period:"2022.06–2024.04",role:"运营-产品运营岗（交通线）-品牌经理"},{period:"2024.04–至今",role:"运营-产品运营岗（交通线）-高级品牌经理"}]},{id:"EMP011",name:"胡伟",dept:"技术-信息安全-信息安全岗（技术方向）",positionLevel:"安全工程师/P6",tags:["渗透测试","安全架构","合规"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"中",basicInfo:{age:34,tenure:"6年1个月",location:"北京",education:"本科",university:"电子科技大学",status:"在职",manager:"CTO(虚线)/安全总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.5,potentialRadar:{业务洞察:3,技术深度:5,协同领导力:3,创新突破:3,学习敏捷:3},aiLevelDetail:"L1-基础AI安全理解",historyGrid:[{year:"2023",label:"中潜中绩"},{year:"2024",label:"中潜中绩"}]},capabilityProfile:{ethnicTags:["信息安全","合规审计"],generalTags:["风险管理","培训能力"],recentProjects:["ISO27001认证推进(2024.01-2024.11)","等保三级整改(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 安全总监候选",promotionHistory:["2021.06 晋升P6","2019.06 晋升P5","2018.12 入职P4"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 高"],internalExperience:[{period:"2018.12–2019.05",role:"技术-运维-系统运维-运维工程师"},{period:"2019.06–2021.06",role:"技术-信息安全-信息安全岗（技术方向）-工程师"},{period:"2021.06–至今",role:"技术-信息安全-信息安全岗（技术方向）-高级工程师"}]},{id:"EMP012",name:"冯娜",dept:"产品-产品经理-产品经理岗- 其他（算法/平台/硬件产品/物流产品）",positionLevel:"增长产品经理/P5",tags:["增长黑客","A/B测试","用户行为分析"],qValue:"Q1",aiLevel:"L3",stability:"中",performance:"高",basicInfo:{age:27,tenure:"2年3个月",location:"上海",education:"本科",university:"厦门大学",status:"在职",manager:"李梅(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.5,potentialRadar:{业务洞察:5,技术深度:3,协同领导力:3,创新突破:5,学习敏捷:5},aiLevelDetail:"L3-AI辅助增长实验",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["增长运营","数据分析"],generalTags:["实验设计","快速迭代"],recentProjects:["新用户激活漏斗优化(2024.04-2024.10)","付费转化率提升专项(2024.10-至今)"]},developmentInfo:{succession:"1-2年 - 高级产品P6",promotionHistory:["2023.09 晋升P5","2022.09 入职P4"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 中"],internalExperience:[{period:"2022.09–2023.09",role:"产品-产品经理-产品经理岗- 其他（算法/平台/硬件产品/物流产品）-产品专员"},{period:"2023.09–至今",role:"产品-产品经理-产品经理岗- 其他（算法/平台/硬件产品/物流产品）-产品经理"}]},{id:"EMP013",name:"蒋涛",dept:"技术-开发-软件开发序列大类-应用架构岗",positionLevel:"技术架构师/P8",tags:["系统架构","高可用","分布式","Java","Go"],qValue:"Q1",aiLevel:"L2",stability:"中",performance:"高",basicInfo:{age:38,tenure:"8年4个月",location:"深圳",education:"硕士",university:"北京大学",status:"在职",manager:"CTO(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.6,potentialRadar:{业务洞察:5,技术深度:5,协同领导力:4,创新突破:4,学习敏捷:4},aiLevelDetail:"L2-AI辅助架构决策",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["系统架构","性能调优"],generalTags:["技术决策","导师辅导","跨部门协同"],recentProjects:["核心交易系统重架构(2023.06-2024.06)","混合云迁移专项(2024.07-至今)"]},developmentInfo:{succession:"Ready Now - CTO候选梯队",promotionHistory:["2022.01 晋升P8","2019.06 晋升P7","2016.08 入职P5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2016.08–2019.05",role:"技术-开发-后端开发岗-后端研发"},{period:"2019.06–2022.01",role:"技术-开发-软件开发序列大类-应用架构岗-技术专家"},{period:"2022.01–至今",role:"技术-开发-软件开发序列大类-应用架构岗-技术架构师"}]},{id:"EMP014",name:"韩雪",dept:"运营-产品运营岗（交通线）",positionLevel:"客服专员/B3",tags:["客户服务","投诉处理","CRM"],qValue:"Q4",aiLevel:"L1",stability:"低",performance:"低",basicInfo:{age:23,tenure:"0年6个月",location:"深圳",education:"本科",university:"广东外语外贸大学",status:"在职",manager:"李主管(直属)"},reviewData:{performanceHistory:"2024Q4:低,2024全年(半年):低",potentialScore:2.5,potentialRadar:{业务洞察:2,技术深度:1,协同领导力:2,创新突破:2,学习敏捷:3},aiLevelDetail:"L1-了解AI客服工具",historyGrid:[{year:"2024",label:"低潜低绩"}]},capabilityProfile:{ethnicTags:["客户服务"],generalTags:["沟通能力"],recentProjects:["VIP用户投诉处理日常工作"]},developmentInfo:{succession:"关注名单-建议绩效面谈",promotionHistory:["2024.06 入职B3"]},performanceHistory:["2024Q4: 低","2024Q3: 低","2024Q2: —","2024Q1: —"],internalExperience:[{period:"2024.06–至今",role:"运营-产品运营岗（交通线）-客服专员"}]},{id:"EMP015",name:"曹磊",dept:"运营-数据运营与分析-数据运营与分析岗",positionLevel:"高级运营经理/B7",tags:["私域运营","社群运营","SCRM","用户增长"],qValue:"Q2",aiLevel:"L2",stability:"高",performance:"高",basicInfo:{age:32,tenure:"5年0个月",location:"上海",education:"本科",university:"华东师范大学",status:"在职",manager:"运营总监(直属)"},reviewData:{performanceHistory:"2024Q4:高,2024全年:高,2023全年:高",potentialScore:4.1,potentialRadar:{业务洞察:5,技术深度:2,协同领导力:4,创新突破:4,学习敏捷:4},aiLevelDetail:"L2-AI辅助运营决策",historyGrid:[{year:"2023",label:"高潜高绩"},{year:"2024",label:"高潜高绩"}]},capabilityProfile:{ethnicTags:["用户运营","私域流量"],generalTags:["数据分析","活动策划","团队管理"],recentProjects:["私域用户规模10万+达成(2024.01-2024.12)","SCRM系统建设落地(2023.06-2024.01)"]},developmentInfo:{succession:"Ready Now - 运营总监候选",promotionHistory:["2023.07 晋升B7","2021.06 晋升B6","2019.12 入职B5"]},performanceHistory:["2024Q4: 高","2024Q3: 高","2024Q2: 高","2024Q1: 高"],internalExperience:[{period:"2019.12–2021.05",role:"运营-数据运营与分析-数据运营与分析岗-运营专员"},{period:"2021.06–2023.07",role:"运营-数据运营与分析-数据运营与分析岗-运营经理"},{period:"2023.07–至今",role:"运营-数据运营与分析-数据运营与分析岗-高级运营经理"}]},{id:"EMP016",name:"秦阳",dept:"技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）",positionLevel:"机器学习工程师/P5",tags:["PyTorch","模型部署","推荐系统"],qValue:"Q2",aiLevel:"L3",stability:"中",performance:"中",basicInfo:{age:25,tenure:"1年2个月",location:"北京",education:"硕士",university:"上海交通大学",status:"在职",manager:"王强(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中",potentialScore:4.0,potentialRadar:{业务洞察:3,技术深度:4,协同领导力:2,创新突破:4,学习敏捷:5},aiLevelDetail:"L3-AI模型工程化部署",historyGrid:[{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["机器学习","推荐算法"],generalTags:["快速学习","论文实现"],recentProjects:["推荐系统A/B实验框架(2024.06-至今)"]},developmentInfo:{succession:"1-2年 - 高级MLE/P6",promotionHistory:["2023.10 入职P5"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 高","2024Q1: —"],internalExperience:[{period:"2023.10–至今",role:"技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）-ML工程师"}]},{id:"EMP017",name:"林佳",dept:"职能-法务&风控-法律事务岗",positionLevel:"法务经理/M1",tags:["数据合规","GDPR","劳动法","合同审查"],qValue:"Q2",aiLevel:"L1",stability:"高",performance:"中",basicInfo:{age:33,tenure:"4年9个月",location:"深圳",education:"硕士",university:"中国政法大学",status:"在职",manager:"法务总监(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:高",potentialScore:3.7,potentialRadar:{业务洞察:4,技术深度:2,协同领导力:4,创新突破:3,学习敏捷:4},aiLevelDetail:"L1-AI合规文档辅助",historyGrid:[{year:"2023",label:"中潜高绩"},{year:"2024",label:"中潜中绩"}]},capabilityProfile:{ethnicTags:["公司法务","数据安全法"],generalTags:["风险评估","内部培训","政策解读"],recentProjects:["数据出境安全评估(2024.07-2024.10)","供应商合规体系建立(2023.12-2024.06)"]},developmentInfo:{succession:"1-2年 - 高级法务经理",promotionHistory:["2022.03 晋升M1","2020.03 入职P6"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 高"],internalExperience:[{period:"2020.03–2022.02",role:"职能-法务&风控-法律事务岗-法务专员"},{period:"2022.03–至今",role:"职能-法务&风控-法律事务岗-法务经理"}]},{id:"EMP018",name:"杨帆",dept:"技术-开发-前端开发岗",positionLevel:"前端工程师/P5",tags:["Vue3","TypeScript","性能优化"],qValue:"Q2",aiLevel:"L2",stability:"中",performance:"中",basicInfo:{age:26,tenure:"2年0个月",location:"深圳",education:"本科",university:"华南理工大学",status:"在职",manager:"赵敏(直属)"},reviewData:{performanceHistory:"2024Q4:中,2024全年:中,2023全年:中",potentialScore:3.6,potentialRadar:{业务洞察:3,技术深度:4,协同领导力:2,创新突破:3,学习敏捷:4},aiLevelDetail:"L2-AI辅助编码",historyGrid:[{year:"2023",label:"高潜中绩"},{year:"2024",label:"高潜中绩"}]},capabilityProfile:{ethnicTags:["前端开发","组件库"],generalTags:["代码规范","文档撰写"],recentProjects:["低代码平台前端组件开发(2024.03-至今)"]},developmentInfo:{succession:"1-2年 - 高级前端P6",promotionHistory:["2023.12 晋升P5","2022.12 入职P4"]},performanceHistory:["2024Q4: 中","2024Q3: 中","2024Q2: 中","2024Q1: 高"],internalExperience:[{period:"2022.12–2023.12",role:"技术-开发-前端开发岗-前端工程师P4"},{period:"2023.12–至今",role:"技术-开发-前端开发岗-前端工程师P5"}]}];
+
+/* ================================================================
+   SYSTEM USERS DATA
+   ================================================================ */
+let USERS = [
+  {id:"USR001",name:"系统管理员",email:"admin@company.com",empId:"ADM001",role:"super_admin",dept:"",status:"active",scope:"all",remark:"系统超级管理员",createdAt:"2024-01-01"},
+  {id:"USR002",name:"陈静",email:"chenjing@company.com",empId:"EMP004",role:"hr_bp",dept:"人力资源-HRBP组",status:"active",scope:"all",remark:"负责全员人才盘点",createdAt:"2024-02-15"},
+  {id:"USR003",name:"蒋涛",email:"jiangtao@company.com",empId:"EMP013",role:"dept_head",dept:"产研中心-后端组",status:"active",scope:"dept",remark:"产研中心技术负责人",createdAt:"2024-03-01"},
+  {id:"USR004",name:"李梅",email:"limei@company.com",empId:"EMP002",role:"dept_head",dept:"产品中心-体验设计组",status:"active",scope:"dept",remark:"产品中心负责人",createdAt:"2024-03-01"},
+  {id:"USR005",name:"HR专员小王",email:"hrviewer@company.com",empId:"HR005",role:"hr_viewer",dept:"人力资源-HRBP组",status:"active",scope:"all",remark:"",createdAt:"2024-05-10"},
+  {id:"USR006",name:"外部顾问A",email:"consultant@external.com",empId:"EXT001",role:"viewer",dept:"",status:"pending",scope:"assigned",remark:"外部组织诊断顾问，待激活",createdAt:"2024-11-01"},
+  {id:"USR007",name:"离职员工B",email:"former@company.com",empId:"EMP999",role:"viewer",dept:"",status:"inactive",scope:"assigned",remark:"已离职，账号停用",createdAt:"2023-06-01"},
+  {id:"USR008",name:"张总",email:"zhangvp@company.com",empId:"VP001",role:"admin",dept:"",status:"active",scope:"all",remark:"分管副总裁，可查看全量数据",createdAt:"2024-01-15"},
+];
+
+/* ================================================================
+   ROLES & PERMISSIONS DATA
+   ================================================================ */
+const DEFAULT_ROLES = [
+  {key:"super_admin",name:"超级管理员",color:"#DC2626",desc:"拥有系统所有权限，可管理用户、角色、配置及全量数据。仅限1-2人持有。",count:1},
+  {key:"admin",name:"管理员",color:"#2563EB",desc:"可管理用户账号与部分系统配置，可访问全量人才数据及导出功能。",count:1},
+  {key:"hr_bp",name:"HRBP",color:"#7C3AED",desc:"HR业务伙伴，可查看全量人才档案、编辑盘点数据、执行导出操作。",count:1},
+  {key:"hr_viewer",name:"HR查看",color:"#0891B2",desc:"HR只读角色，可查看全量人才基础信息和盘点结果，不可编辑或导出敏感字段。",count:1},
+  {key:"dept_head",name:"部门负责人",color:"#16A34A",desc:"仅可查看本部门人才数据，支持基础导出，不可查看薪酬及绩效明细。",count:2},
+  {key:"viewer",name:"只读用户",color:"#64748B",desc:"最低权限角色，仅查看脱敏后的基础人才信息，不可导出。",count:2},
+];
+
+const PERM_MODULES = [
+  {section:"人才档案",perms:[
+    {key:"talent_view_basic",name:"查看基础信息",desc:"姓名、部门、职级、标签等基本字段"},
+    {key:"talent_view_sensitive",name:"查看敏感信息",desc:"绩效评分、潜力评分、稳定性、薪酬相关"},
+    {key:"talent_view_full",name:"查看完整画像",desc:"所有6大模块的完整详情"},
+    {key:"talent_view_all_dept",name:"跨部门查看",desc:"查看非本部门人员数据"},
+    {key:"talent_edit",name:"编辑人才数据",desc:"修改盘点数据、备注、发展信息"},
+  ]},
+  {section:"导出功能",perms:[
+    {key:"export_list_basic",name:"导出列表（基础字段）",desc:"导出姓名、部门、职级等非敏感字段"},
+    {key:"export_list_full",name:"导出列表（全字段）",desc:"包含绩效、潜力等所有字段"},
+    {key:"export_profile",name:"导出人才画像",desc:"导出完整HTML画像报告"},
+    {key:"export_batch",name:"批量导出",desc:"一次导出超过10条记录"},
+  ]},
+  {section:"用户管理",perms:[
+    {key:"user_view",name:"查看用户列表",desc:"查看系统用户信息"},
+    {key:"user_create",name:"创建用户",desc:"新增系统用户账号"},
+    {key:"user_edit",name:"编辑用户",desc:"修改用户角色、状态、权限"},
+    {key:"user_delete",name:"停用/删除用户",desc:"停用或删除用户账号"},
+  ]},
+  {section:"权限管理",perms:[
+    {key:"perm_view",name:"查看权限配置",desc:"查看角色权限矩阵"},
+    {key:"perm_edit",name:"编辑权限配置",desc:"修改角色权限、创建新角色"},
+    {key:"perm_assign",name:"分配用户角色",desc:"为用户指定系统角色"},
+  ]},
+  {section:"系统配置",perms:[
+    {key:"sys_audit_log",name:"查看审计日志",desc:"查看所有操作记录"},
+    {key:"sys_config",name:"系统配置",desc:"修改系统参数与全局配置"},
+  ]},
+];
+
+// Default permission matrix
+const DEFAULT_PERM_MATRIX = {
+  super_admin: {talent_view_basic:true,talent_view_sensitive:true,talent_view_full:true,talent_view_all_dept:true,talent_edit:true,export_list_basic:true,export_list_full:true,export_profile:true,export_batch:true,user_view:true,user_create:true,user_edit:true,user_delete:true,perm_view:true,perm_edit:true,perm_assign:true,sys_audit_log:true,sys_config:true},
+  admin:       {talent_view_basic:true,talent_view_sensitive:true,talent_view_full:true,talent_view_all_dept:true,talent_edit:true,export_list_basic:true,export_list_full:true,export_profile:true,export_batch:true,user_view:true,user_create:true,user_edit:true,user_delete:false,perm_view:true,perm_edit:false,perm_assign:true,sys_audit_log:true,sys_config:false},
+  hr_bp:       {talent_view_basic:true,talent_view_sensitive:true,talent_view_full:true,talent_view_all_dept:true,talent_edit:true,export_list_basic:true,export_list_full:true,export_profile:true,export_batch:true,user_view:false,user_create:false,user_edit:false,user_delete:false,perm_view:false,perm_edit:false,perm_assign:false,sys_audit_log:false,sys_config:false},
+  hr_viewer:   {talent_view_basic:true,talent_view_sensitive:true,talent_view_full:true,talent_view_all_dept:true,talent_edit:false,export_list_basic:true,export_list_full:false,export_profile:false,export_batch:false,user_view:false,user_create:false,user_edit:false,user_delete:false,perm_view:false,perm_edit:false,perm_assign:false,sys_audit_log:false,sys_config:false},
+  dept_head:   {talent_view_basic:true,talent_view_sensitive:false,talent_view_full:false,talent_view_all_dept:false,talent_edit:false,export_list_basic:true,export_list_full:false,export_profile:false,export_batch:false,user_view:false,user_create:false,user_edit:false,user_delete:false,perm_view:false,perm_edit:false,perm_assign:false,sys_audit_log:false,sys_config:false},
+  viewer:      {talent_view_basic:true,talent_view_sensitive:false,talent_view_full:false,talent_view_all_dept:false,talent_edit:false,export_list_basic:false,export_list_full:false,export_profile:false,export_batch:false,user_view:false,user_create:false,user_edit:false,user_delete:false,perm_view:false,perm_edit:false,perm_assign:false,sys_audit_log:false,sys_config:false},
+};
+let permMatrix = JSON.parse(JSON.stringify(DEFAULT_PERM_MATRIX));
+let roles = JSON.parse(JSON.stringify(DEFAULT_ROLES));
+let selectedRoleKey = null;
+
+/* ================================================================   STATE   ================================================================ */
+let selectedTags = new Set();
+let filteredData = [...MOCK_DATA];
+let selectedRows = new Set();
+let currentEmp = null;
+let exportLog = [];
+let exportType = 'list';
+let exportBatchMode = false;
+let editingUserId = null;
+let selectedRoleColor = '#2563EB';
+
+/* ================================================================   DEPARTMENT HIERARCHY   ================================================================ */
+function parseDepartment(deptString) {
+  // 移除括号内的介绍性文字
+  const cleanDept = deptString.replace(/\s*\([^)]*\)/g, '').trim();
+  const parts = cleanDept.split('-').filter(p => p.trim());
+  return {
+    level1: parts[0] || '',
+    level2: parts[1] || '',
+    level3: parts[2] || '',
+    full: deptString
+  };
+}
+
+function buildDepartmentHierarchy() {
+  const hierarchy = {};
+  MOCK_DATA.forEach(emp => {
+    const dept = parseDepartment(emp.dept);
+    if (!hierarchy[dept.level1]) {
+      hierarchy[dept.level1] = {
+        name: dept.level1,
+        children: {}
+      };
+    }
+    if (dept.level2 && !hierarchy[dept.level1].children[dept.level2]) {
+      hierarchy[dept.level1].children[dept.level2] = {
+        name: dept.level2,
+        children: {}
+      };
+    }
+    if (dept.level3 && dept.level2) {
+      hierarchy[dept.level1].children[dept.level2].children[dept.level3] = {
+        name: dept.level3,
+        full: emp.dept
+      };
+    }
+  });
+  return hierarchy;
+}
+
+let departmentHierarchy = buildDepartmentHierarchy();
+
+/* ================================================================   DEPARTMENT SELECTION FUNCTIONS   ================================================================ */
+function initDeptSelects(prefix) {
+  const level1Select = document.getElementById(`${prefix}DeptLevel1`);
+  if (!level1Select) return;
+  
+  // 清空并添加一级部门选项
+  level1Select.innerHTML = '<option value="">全部一级部门</option>';
+  Object.keys(departmentHierarchy).sort().forEach(level1 => {
+    const option = document.createElement('option');
+    option.value = level1;
+    option.textContent = level1;
+    level1Select.appendChild(option);
+  });
+  
+  // 重置二级和三级部门选择
+  const level2Select = document.getElementById(`${prefix}DeptLevel2`);
+  const level3Select = document.getElementById(`${prefix}DeptLevel3`);
+  if (level2Select) {
+    level2Select.innerHTML = '<option value="">全部二级部门</option>';
+  }
+  if (level3Select) {
+    level3Select.innerHTML = '<option value="">全部岗位</option>';
+  }
+}
+
+function updateDeptLevel2(prefix) {
+  const level1Select = document.getElementById(`${prefix}DeptLevel1`);
+  const level2Select = document.getElementById(`${prefix}DeptLevel2`);
+  const level3Select = document.getElementById(`${prefix}DeptLevel3`);
+  
+  if (!level1Select || !level2Select || !level3Select) return;
+  
+  const selectedLevel1 = level1Select.value;
+  
+  // 清空二级部门选择
+  level2Select.innerHTML = '<option value="">全部二级部门</option>';
+  
+  if (selectedLevel1) {
+    const level2s = departmentHierarchy[selectedLevel1]?.children || {};
+    Object.keys(level2s).sort().forEach(level2 => {
+      const option = document.createElement('option');
+      option.value = level2;
+      option.textContent = level2;
+      level2Select.appendChild(option);
+    });
+  }
+  
+  // 重置三级部门选择
+  level3Select.innerHTML = '<option value="">全部岗位</option>';
+  
+  // 如果是过滤功能，重新应用过滤
+  if (prefix === 'filter') {
+    applyFilters();
+  }
+}
+
+function updateDeptLevel3(prefix) {
+  const level1Select = document.getElementById(`${prefix}DeptLevel1`);
+  const level2Select = document.getElementById(`${prefix}DeptLevel2`);
+  const level3Select = document.getElementById(`${prefix}DeptLevel3`);
+  
+  if (!level1Select || !level2Select || !level3Select) return;
+  
+  const selectedLevel1 = level1Select.value;
+  const selectedLevel2 = level2Select.value;
+  
+  // 清空三级部门选择
+  level3Select.innerHTML = '<option value="">全部岗位</option>';
+  
+  if (selectedLevel1 && selectedLevel2) {
+    const level3s = departmentHierarchy[selectedLevel1]?.children[selectedLevel2]?.children || {};
+    Object.keys(level3s).sort().forEach(level3 => {
+      const option = document.createElement('option');
+      option.value = level3s[level3].full;
+      option.textContent = level3;
+      level3Select.appendChild(option);
+    });
+  }
+  
+  // 如果是过滤功能，重新应用过滤
+  if (prefix === 'filter') {
+    applyFilters();
+  }
+  // 如果是标签管理，重新渲染标签
+  else if (prefix === 'tag') {
+    renderTags();
+  }
+}
+
+// 获取当前选中的部门
+function getSelectedDept(prefix) {
+  const level3Select = document.getElementById(`${prefix}DeptLevel3`);
+  if (level3Select && level3Select.value) {
+    return level3Select.value;
+  }
+  return '';
+}
+
+const EXPORT_FIELDS = [
+  {key:'name',label:'姓名',default:true},
+  {key:'id',label:'工号',default:true},
+  {key:'dept',label:'部门/业务线',default:true},
+  {key:'positionLevel',label:'岗位/职级',default:true},
+  {key:'tags',label:'技能标签',default:true},
+  {key:'qValue',label:'Q值',default:true},
+  {key:'aiLevel',label:'AI应用等级',default:true},
+  {key:'stability',label:'稳定性',default:true},
+  {key:'performance',label:'绩效档位',default:true},
+  {key:'age',label:'年龄',default:false},
+  {key:'tenure',label:'司龄',default:false},
+  {key:'location',label:'工作地点',default:false},
+  {key:'education',label:'学历',default:false},
+  {key:'university',label:'院校',default:false},
+  {key:'manager',label:'汇报关系',default:false},
+  {key:'succession',label:'继任计划',default:false},
+  {key:'potentialScore',label:'潜力评分',default:false},
+];
+
+const PROFILE_MODULES = [
+  {key:'basic',label:'基础信息',default:true},
+  {key:'review',label:'盘点数据',default:true},
+  {key:'capability',label:'能力画像',default:true},
+  {key:'development',label:'发展信息',default:true},
+  {key:'perf',label:'绩效记录',default:true},
+  {key:'experience',label:'内部任职经历',default:true},
+];
+
+/* ================================================================
+   PAGE NAVIGATION
+   ================================================================ */
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page).classList.add('active');
+  const titles = {talent:'人才档案库',export:'导出中心',users:'用户管理',permissions:'权限管理',tags:'标签库管理'};
+  document.getElementById('topbarTitle').textContent = titles[page]||page;
+  if(page==='export') renderExportLog();
+  if(page==='users') renderUsers();
+  if(page==='permissions') renderPermissions();
+  if(page==='tags') renderTags();
+}
+
+/* ================================================================
+   TALENT TABLE
+   ================================================================ */
+function initTalent() {
+  // 初始化三级部门选择
+  initDeptSelects('filter');
+  initDeptSelects('user');
+
+  const allTags=[...new Set(MOCK_DATA.flatMap(d=>d.tags))].sort();
+  const dd=document.getElementById('tagDropdown');
+  allTags.forEach(tag=>{
+    const div=document.createElement('div');div.className='tag-option';
+    div.innerHTML=`<input type="checkbox" id="tag_${tag}" value="${tag}"><label for="tag_${tag}" style="cursor:pointer;flex:1">${tag}</label>`;
+    div.querySelector('input').addEventListener('change',function(){
+      if(this.checked)selectedTags.add(tag);else selectedTags.delete(tag);
+      updateTagPills();applyFilters();
+    });
+    dd.appendChild(div);
+  });
+
+  // Stats
+  const stats = document.getElementById('talentStats');
+  const deptCount = Object.keys(departmentHierarchy).reduce((count, level1) => {
+    const level2s = departmentHierarchy[level1].children;
+    const level3s = Object.values(level2s).reduce((sum, level2) => sum + Object.keys(level2.children).length, 0);
+    return count + level3s;
+  }, 0);
+  stats.innerHTML = `
+    <div class="stat-card"><div class="stat-num">${MOCK_DATA.length}</div><div class="stat-label">总人才数</div></div>
+    <div class="stat-card"><div class="stat-num">${MOCK_DATA.filter(d=>d.qValue==='Q1'||d.qValue==='Q2').length}</div><div class="stat-label">Q1/Q2核心人才</div><div class="stat-delta" style="color:var(--green)">↑ 重点关注</div></div>
+    <div class="stat-card"><div class="stat-num">${deptCount}</div><div class="stat-label">覆盖部门数</div></div>
+    <div class="stat-card"><div class="stat-num">${MOCK_DATA.filter(d=>d.aiLevel==='L3'||d.aiLevel==='L4').length}</div><div class="stat-label">AI高能力人才</div><div class="stat-delta" style="color:var(--blue)">L3/L4 等级</div></div>
+  `;
+  applyFilters();
+}
+
+window.addEventListener('click',e=>{
+  const dd=document.getElementById('tagDropdown');
+  const btn=document.getElementById('tagBtn');
+  if(dd&&btn&&!btn.contains(e.target)&&!dd.contains(e.target)){dd.classList.remove('show');btn.classList.remove('open');}
+});
+
+function applyFilters(){
+  const name=document.getElementById('filterName').value.trim().toLowerCase();
+  const dept=getSelectedDept('filter');
+  const q=document.getElementById('filterQ').value;
+  const perf=document.getElementById('filterPerf').value;
+  filteredData=MOCK_DATA.filter(emp=>{
+    if(name&&!emp.name.toLowerCase().includes(name))return false;
+    if(dept&&emp.dept!==dept)return false;
+    if(q&&emp.qValue!==q)return false;
+    if(perf&&emp.performance!==perf)return false;
+    if(selectedTags.size>0&&![...selectedTags].every(t=>emp.tags.includes(t)))return false;
+    return true;
+  });
+  selectedRows.clear();
+  renderTable();
+  document.getElementById('exportCountLabel').textContent=`${filteredData.length} 条记录`;
+}
+
+function clearFilters(){
+  document.getElementById('filterName').value='';
+  document.getElementById('filterDept').value='';
+  document.getElementById('filterQ').value='';
+  document.getElementById('filterPerf').value='';
+  selectedTags.clear();
+  document.querySelectorAll('#tagDropdown input').forEach(c=>c.checked=false);
+  updateTagPills();applyFilters();
+}
+function toggleTagDropdown(){
+  document.getElementById('tagDropdown').classList.toggle('show');
+  document.getElementById('tagBtn').classList.toggle('open');
+}
+function updateTagPills(){
+  const c=document.getElementById('activeTagPills');
+  const t=document.getElementById('tagBtnText');
+  c.innerHTML='';
+  if(selectedTags.size===0){t.textContent='选择技能标签';t.style.color='var(--muted)';return;}
+  t.textContent=`已选 ${selectedTags.size} 个`;t.style.color='var(--blue)';
+  selectedTags.forEach(tag=>{
+    const p=document.createElement('div');p.className='tag-pill-rm';
+    p.innerHTML=`${tag} <span onclick="removeTag('${tag}')">✕</span>`;c.appendChild(p);
+  });
+}
+function removeTag(tag){
+  selectedTags.delete(tag);
+  const cb=document.querySelector(`#tag_${tag}`);if(cb)cb.checked=false;
+  updateTagPills();applyFilters();
+}
+
+function renderTable(){
+  const tbody=document.getElementById('tableBody');
+  const empty=document.getElementById('emptyState');
+  document.getElementById('resultCount').textContent=filteredData.length;
+  document.getElementById('selectedCount').textContent=selectedRows.size;
+  document.getElementById('batchBtns').style.display=selectedRows.size>0?'flex':'none';
+  tbody.innerHTML='';
+  if(filteredData.length===0){empty.style.display='';return;}
+  empty.style.display='none';
+  filteredData.forEach((emp,i)=>{
+    const tr=document.createElement('tr');
+    tr.className='anim-row';tr.style.animationDelay=`${i*.03}s`;
+    const checked=selectedRows.has(emp.id);
+    const tagHtml=emp.tags.slice(0,3).map(t=>`<span class="badge badge-gray">${t}</span>`).join('')+(emp.tags.length>3?`<span class="badge badge-gray">+${emp.tags.length-3}</span>`:'');
+    tr.innerHTML=`
+      <td class="checkbox-col" onclick="event.stopPropagation()">
+        <input type="checkbox" ${checked?'checked':''} onchange="toggleRow('${emp.id}',this)">
+      </td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))"><div class="td-name"><div class="avatar" style="width:28px;height:28px;font-size:11px">${emp.name[0]}</div>${emp.name}</div></td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))" class="td-muted">${emp.dept}</td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))" class="td-muted" style="max-width:160px;overflow:hidden;text-overflow:ellipsis">${emp.positionLevel}</td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))"><div style="display:flex;gap:4px;flex-wrap:wrap;max-width:200px">${tagHtml}</div></td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))">${qBadge(emp.qValue)}</td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))"><span class="ai-badge">${emp.aiLevel}</span></td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))">${stabilityBadge(emp.stability)}</td>
+      <td onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))">${perfBadge(emp.performance)}</td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-secondary btn-sm" onclick="openPanel(MOCK_DATA.find(d=>d.id==='${emp.id}'))">详情</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportSingleProfile(MOCK_DATA.find(d=>d.id==='${emp.id}'))">画像</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleRow(id,cb){
+  if(cb.checked)selectedRows.add(id);else selectedRows.delete(id);
+  document.getElementById('selectedCount').textContent=selectedRows.size;
+  document.getElementById('batchBtns').style.display=selectedRows.size>0?'flex':'none';
+  document.getElementById('checkAll').checked=selectedRows.size===filteredData.length&&filteredData.length>0;
+}
+function toggleCheckAll(cb){
+  filteredData.forEach(emp=>{if(cb.checked)selectedRows.add(emp.id);else selectedRows.delete(emp.id);});
+  renderTable();
+}
+
+/* ================================================================
+   BADGES
+   ================================================================ */
+function qBadge(q){const m={Q1:'🟢',Q2:'🔵',Q3:'🟠',Q4:'🔴'};return`<span class="q-badge q-${q.toLowerCase()}">${m[q]||''} ${q}</span>`}
+function stabilityBadge(s){if(s==='高')return`<span class="badge badge-green">高稳定</span>`;if(s==='中')return`<span class="badge badge-blue">中稳定</span>`;return`<span class="badge badge-red">低稳定</span>`}
+function perfBadge(p){if(p==='高')return`<span class="badge badge-green">高</span>`;if(p==='中')return`<span class="badge badge-blue">中</span>`;if(p==='低')return`<span class="badge badge-red">低</span>`;return`<span class="badge badge-gray">—</span>`}
+function perfClass(p){if(p.includes('高'))return'perf-high';if(p.includes('低'))return'perf-low';return'perf-mid'}
+
+/* ================================================================
+   DETAIL PANEL
+   ================================================================ */
+function openPanel(emp){
+  if(!emp)return;
+  currentEmp=emp;
+  document.getElementById('panelName').innerHTML=`<div class="avatar" style="width:36px;height:36px;font-size:15px">${emp.name[0]}</div>${emp.name}`;
+  document.getElementById('panelMeta').textContent=`${emp.dept}  ·  ${emp.positionLevel}  ·  ${emp.id}`;
+  document.getElementById('panelBadges').innerHTML=`${qBadge(emp.qValue)}<span class="ai-badge">${emp.aiLevel}</span>${stabilityBadge(emp.stability)}${perfBadge(emp.performance)}`;
+  document.getElementById('panelBody').innerHTML=buildPanelBody(emp);
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('detailPanel').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closePanel(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('detailPanel').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function buildPanelBody(emp){
+  const bi=emp.basicInfo,rd=emp.reviewData,cp=emp.capabilityProfile,di=emp.developmentInfo;
+  const radarSvg=buildRadarSVG(rd.potentialRadar);
+  const radarRows=Object.entries(rd.potentialRadar).map(([k,v])=>`
+    <div class="radar-label-row"><span style="font-size:12px;color:var(--mid)">${k}</span><span style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--blue)">${v}/5</span></div>
+    <div class="radar-bar"><div class="radar-bar-fill" style="width:${v/5*100}%"></div></div>
+  `).join('');
+  const gridHistory=rd.historyGrid.map(g=>`<div class="grid-chip"><strong>${g.year}</strong> ${g.label}</div>`).join('');
+  const promotions=di.promotionHistory.map(p=>`<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">${p}</div></div>`).join('');
+  const perfRows=emp.performanceHistory.map(p=>{const[q,r]=p.split(': ');return`<div class="perf-row"><span style="font-size:12px;color:var(--muted);font-family:var(--mono)">${q}</span><span class="perf-result ${perfClass(r||'')}">  ${r||'—'}</span></div>`;}).join('');
+  const expItems=emp.internalExperience.map(e=>`<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-period">${e.period}</div><div class="timeline-content">${e.role}</div></div>`).join('');
+  return `
+  <div class="module"><div class="module-title">基础信息</div>
+    <div class="info-grid">
+      <div><div class="info-key">年龄</div><div class="info-val">${bi.age} 岁</div></div>
+      <div><div class="info-key">司龄</div><div class="info-val">${bi.tenure}</div></div>
+      <div><div class="info-key">工作地点</div><div class="info-val">${bi.location}</div></div>
+      <div><div class="info-key">学历</div><div class="info-val">${bi.education}</div></div>
+      <div><div class="info-key">院校</div><div class="info-val">${bi.university}</div></div>
+      <div><div class="info-key">在职状态</div><div class="info-val">${bi.status}</div></div>
+      <div style="grid-column:1/-1"><div class="info-key">汇报关系</div><div class="info-val">${bi.manager}</div></div>
+    </div>
+  </div>
+  <div class="module"><div class="module-title">盘点数据</div>
+    <div class="info-grid" style="margin-bottom:14px">
+      <div><div class="info-key">综合潜力评分</div><div class="info-val" style="font-size:20px;font-family:var(--mono);color:var(--blue)">${rd.potentialScore}<span style="font-size:12px;color:var(--muted)">/5.0</span></div></div>
+      <div><div class="info-key">AI应用等级</div><div class="info-val"><span class="ai-badge">${rd.aiLevelDetail}</span></div></div>
+      <div><div class="info-key">绩效历史摘要</div><div class="info-val" style="font-size:12px;color:var(--mid)">${rd.performanceHistory}</div></div>
+    </div>
+    <div class="radar-wrapper">
+      <div style="flex-shrink:0">${radarSvg}<div style="text-align:center;font-size:10px;color:var(--muted);margin-top:4px">⚠ 待接入图表库</div></div>
+      <div style="flex:1;min-width:140px">${radarRows}</div>
+    </div>
+    <div style="margin-top:14px"><div class="info-key" style="margin-bottom:8px">历史九宫格轨迹</div><div style="display:flex;gap:8px;flex-wrap:wrap">${gridHistory}</div></div>
+  </div>
+  <div class="module"><div class="module-title">能力画像</div>
+    <div style="margin-bottom:12px"><div class="info-key">族群级标签</div><div class="tags-group" style="margin-top:6px">${cp.ethnicTags.map(t=>`<span class="badge badge-blue">${t}</span>`).join('')}</div></div>
+    <div style="margin-bottom:12px"><div class="info-key">通用能力标签</div><div class="tags-group" style="margin-top:6px">${cp.generalTags.map(t=>`<span class="badge badge-purple">${t}</span>`).join('')}</div></div>
+    <div><div class="info-key">近1年关键项目经历</div><div style="margin-top:6px;display:flex;flex-direction:column;gap:6px">${cp.recentProjects.map(p=>`<div class="project-chip">${p}</div>`).join('')}</div></div>
+  </div>
+  <div class="module"><div class="module-title">发展信息</div>
+    <div class="succession-box" style="margin-bottom:14px"><div style="font-size:20px">🚀</div><div><div style="font-size:11px;color:#15803D;font-weight:600;text-transform:uppercase;letter-spacing:.04em">继任计划</div><div style="font-size:14px;font-weight:600;color:var(--dark);margin-top:1px">${di.succession}</div></div></div>
+    <div class="info-key" style="margin-bottom:8px">晋升 / 调动记录</div>
+    <div class="timeline">${promotions}</div>
+  </div>
+  <div class="module"><div class="module-title">绩效记录（近4季度）</div>${perfRows}</div>
+  <div class="module"><div class="module-title">内部任职经历</div><div class="timeline">${expItems}</div></div>`;
+}
+
+function buildRadarSVG(data){
+  const keys=Object.keys(data),vals=Object.values(data),n=keys.length;
+  const cx=90,cy=90,r=68,maxVal=5,step=(Math.PI*2)/n,offset=-Math.PI/2;
+  const pt=(lv,i)=>{const a=offset+step*i,d=(lv/maxVal)*r;return[cx+d*Math.cos(a),cy+d*Math.sin(a)];};
+  let grid='';for(let lv=1;lv<=5;lv++){const pts=keys.map((_,i)=>pt(lv,i).join(',')).join(' ');grid+=`<polygon points="${pts}" fill="none" stroke="#E2E8F0" stroke-width="1"/>`;}
+  const axes=keys.map((_,i)=>{const[x,y]=pt(5,i);return`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E2E8F0" stroke-width="1"/>`;}).join('');
+  const dataPts=vals.map((v,i)=>pt(v,i).join(',')).join(' ');
+  const dots=vals.map((v,i)=>{const[x,y]=pt(v,i);return`<circle cx="${x}" cy="${y}" r="3" fill="#2563EB"/>`;}).join('');
+  return`<svg width="180" height="180" viewBox="0 0 180 180">${grid}${axes}<polygon points="${dataPts}" fill="rgba(37,99,235,.15)" stroke="#2563EB" stroke-width="2"/>${dots}</svg>`;
+}
+
+/* ================================================================
+   EXPORT MODAL
+   ================================================================ */
+function openExportModal(type, batchMode=false){
+  exportType=type; exportBatchMode=batchMode;
+  selectExportType(type);
+  const count = batchMode ? selectedRows.size : filteredData.length;
+  document.getElementById('exportCountLabel').textContent=`${count} 条记录`;
+  document.getElementById('exportModalTitle').textContent= batchMode ? `📤 导出已选数据（${count}条）` : '📤 导出数据';
+  document.getElementById('exportProgress').classList.remove('show');
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('exportModal').classList.add('show');
+  renderExportFields();
+  renderProfileModules();
+}
+function closeExportModal(){document.getElementById('exportModal').classList.remove('show');}
+function selectExportType(t){
+  exportType=t;
+  document.getElementById('exportOptList').className='export-option'+(t==='list'?' selected':'');
+  document.getElementById('exportOptProfile').className='export-option'+(t==='profile'?' selected':'');
+  document.getElementById('listOptions').style.display=t==='list'?'block':'none';
+  document.getElementById('profileOptions').style.display=t==='profile'?'block':'none';
+}
+function renderExportFields(){
+  const c=document.getElementById('exportFields');c.innerHTML='';
+  EXPORT_FIELDS.forEach(f=>{
+    const div=document.createElement('div');
+    div.className='field-check'+(f.default?' checked':'');
+    div.innerHTML=`<input type="checkbox" ${f.default?'checked':''} id="ef_${f.key}"><label for="ef_${f.key}" style="cursor:pointer">${f.label}</label>`;
+    div.querySelector('input').addEventListener('change',function(){div.className='field-check'+(this.checked?' checked':'');});
+    c.appendChild(div);
+  });
+}
+function renderProfileModules(){
+  const c=document.getElementById('profileModuleFields');c.innerHTML='';
+  PROFILE_MODULES.forEach(m=>{
+    const div=document.createElement('div');
+    div.className='field-check'+(m.default?' checked':'');
+    div.innerHTML=`<input type="checkbox" ${m.default?'checked':''} id="pm_${m.key}"><label for="pm_${m.key}" style="cursor:pointer">${m.label}</label>`;
+    div.querySelector('input').addEventListener('change',function(){div.className='field-check'+(this.checked?' checked':'');});
+    c.appendChild(div);
+  });
+}
+function toggleAllFields(val){
+  document.querySelectorAll('#exportFields input').forEach(cb=>{cb.checked=val;cb.closest('.field-check').className='field-check'+(val?' checked':'');});
+}
+
+function doExport(){
+  const prog=document.getElementById('exportProgress');
+  const fill=document.getElementById('progressFill');
+  const lbl=document.getElementById('progressLabel');
+  prog.classList.add('show');
+  const btn=document.getElementById('exportConfirmBtn');
+  btn.disabled=true;
+  document.getElementById('exportSpinner').style.display='';
+
+  let pct=0;
+  const interval=setInterval(()=>{
+    pct+=Math.random()*30;
+    if(pct>90)pct=90;
+    fill.style.width=pct+'%';
+    lbl.textContent=pct<30?'准备数据…':pct<60?'处理中…':pct<85?'生成文件…':'即将完成…';
+  },200);
+
+  setTimeout(()=>{
+    clearInterval(interval);fill.style.width='100%';lbl.textContent='完成！';
+    const dataToExport = exportBatchMode
+      ? MOCK_DATA.filter(d=>selectedRows.has(d.id))
+      : filteredData;
+
+    if(exportType==='list'){
+      const fmt=document.querySelector('input[name=exportFormat]:checked')?.value||'csv';
+      const fields=EXPORT_FIELDS.filter(f=>document.getElementById('ef_'+f.key)?.checked);
+      if(fmt==='csv') exportCSV(dataToExport,fields);
+      else exportHTMLTable(dataToExport,fields);
+    } else {
+      const mods=PROFILE_MODULES.filter(m=>document.getElementById('pm_'+m.key)?.checked);
+      exportProfiles(dataToExport,mods);
+    }
+
+    addExportLog(exportType, dataToExport.length);
+    btn.disabled=false;document.getElementById('exportSpinner').style.display='none';
+    closeExportModal();
+    showToast(`✅ 已成功导出 ${dataToExport.length} 条数据`,'success');
+  },1800);
+}
+
+function exportCSV(data,fields){
+  const header=fields.map(f=>f.label).join(',');
+  const rows=data.map(emp=>fields.map(f=>{
+    let v='';
+    if(f.key==='tags') v=emp.tags.join('/');
+    else if(f.key==='age') v=emp.basicInfo.age;
+    else if(f.key==='tenure') v=emp.basicInfo.tenure;
+    else if(f.key==='location') v=emp.basicInfo.location;
+    else if(f.key==='education') v=emp.basicInfo.education;
+    else if(f.key==='university') v=emp.basicInfo.university;
+    else if(f.key==='manager') v=emp.basicInfo.manager;
+    else if(f.key==='succession') v=emp.developmentInfo.succession;
+    else if(f.key==='potentialScore') v=emp.reviewData.potentialScore;
+    else v=emp[f.key]||'';
+    return `"${String(v).replace(/"/g,'""')}"`;
+  }).join(','));
+  const csv='\uFEFF'+[header,...rows].join('\n');
+  downloadFile(csv,'talent_list_'+formatDate()+'.csv','text/csv;charset=utf-8;');
+}
+
+function exportHTMLTable(data,fields){
+  const header=fields.map(f=>`<th style="padding:8px 12px;background:#1E293B;color:#fff;text-align:left;white-space:nowrap;font-size:12px">${f.label}</th>`).join('');
+  const rows=data.map((emp,i)=>{
+    const tds=fields.map(f=>{
+      let v='';
+      if(f.key==='tags')v=emp.tags.join(', ');
+      else if(f.key==='age')v=emp.basicInfo.age+'岁';
+      else if(f.key==='tenure')v=emp.basicInfo.tenure;
+      else if(f.key==='location')v=emp.basicInfo.location;
+      else if(f.key==='education')v=emp.basicInfo.education;
+      else if(f.key==='university')v=emp.basicInfo.university;
+      else if(f.key==='manager')v=emp.basicInfo.manager;
+      else if(f.key==='succession')v=emp.developmentInfo.succession;
+      else if(f.key==='potentialScore')v=emp.reviewData.potentialScore+'/5';
+      else v=emp[f.key]||'—';
+      return`<td style="padding:8px 12px;border-bottom:1px solid #E2E8F0;font-size:13px;white-space:nowrap">${v}</td>`;
+    }).join('');
+    return`<tr style="background:${i%2===0?'#fff':'#F8FAFC'}">${tds}</tr>`;
+  }).join('');
+  const html=`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>人才列表导出_${formatDate()}</title></head><body style="font-family:'PingFang SC',sans-serif;padding:24px"><h2 style="margin-bottom:16px;color:#0F172A">人才列表 · 导出时间 ${new Date().toLocaleString()}</h2><p style="color:#64748B;margin-bottom:20px;font-size:13px">共 ${data.length} 条记录</p><table style="border-collapse:collapse;width:100%"><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></body></html>`;
+  downloadFile(html,'talent_list_'+formatDate()+'.html','text/html;charset=utf-8;');
+}
+
+function exportProfiles(data,mods){
+  const profilesHtml=data.map(emp=>buildProfileHTML(emp,mods)).join('<div style="page-break-after:always;height:40px;border-bottom:3px dashed #CBD5E1;margin:40px 0;position:relative"><span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:0 16px;color:#94A3B8;font-size:12px">— 分页符 —</span></div>');
+  const html=`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>人才画像报告_${formatDate()}</title>
+  <style>
+    body{font-family:'PingFang SC','Hiragino Sans GB',sans-serif;color:#0F172A;margin:0;padding:0;background:#F1F5F9}
+    .cover{background:linear-gradient(135deg,#1E293B,#0F172A);color:#fff;padding:48px;margin-bottom:0}
+    .cover-title{font-size:28px;font-weight:700;margin-bottom:8px}
+    .cover-meta{font-size:14px;color:#94A3B8}
+    .profiles-container{padding:32px;max-width:960px;margin:0 auto}
+    .profile-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1);margin-bottom:40px}
+    @media print{.profile-card{page-break-inside:avoid}body{background:#fff}.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  </style></head>
+  <body>
+  <div class="cover">
+    <div class="cover-title">🧠 人才画像报告</div>
+    <div class="cover-meta">导出时间：${new Date().toLocaleString()} · 共 ${data.length} 人 · 人才管理智能体 v1.1</div>
+  </div>
+  <div class="profiles-container">${profilesHtml}</div>
+  <script>window.onload=()=>{document.title='人才画像报告_${formatDate()}'}<\/script>
+  </body></html>`;
+  const win=window.open('','_blank');
+  win.document.write(html);win.document.close();
+}
+
+function exportSingleProfile(emp){
+  if(!emp)return;
+  exportProfiles([emp],PROFILE_MODULES);
+  addExportLog('profile',1);
+  showToast(`✅ 已在新窗口打开 ${emp.name} 的画像报告`,'success');
+}
+
+function buildProfileHTML(emp,mods){
+  const bi=emp.basicInfo,rd=emp.reviewData,cp=emp.capabilityProfile,di=emp.developmentInfo;
+  const qColors={Q1:'#16A34A',Q2:'#2563EB',Q3:'#EA580C',Q4:'#DC2626'};
+  const qBg={Q1:'#DCFCE7',Q2:'#DBEAFE',Q3:'#FFF7ED',Q4:'#FEE2E2'};
+
+  let html=`<div class="profile-card">
+  <div style="background:linear-gradient(135deg,#1E293B,#334155);padding:24px 28px;color:#fff">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2563EB,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0">${emp.name[0]}</div>
+      <div>
+        <div style="font-size:22px;font-weight:700">${emp.name}</div>
+        <div style="font-size:13px;color:#94A3B8;margin-top:2px">${emp.dept} · ${emp.positionLevel} · ${emp.id}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="background:${qBg[emp.qValue]};color:${qColors[emp.qValue]};padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600">${emp.qValue}</span>
+      <span style="background:#EEF2FF;color:#3730A3;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:600">${emp.aiLevel}</span>
+      <span style="background:#F0FDF4;color:#15803D;padding:4px 12px;border-radius:4px;font-size:12px">稳定性：${emp.stability}</span>
+      <span style="background:#DBEAFE;color:#1D4ED8;padding:4px 12px;border-radius:4px;font-size:12px">绩效：${emp.performance}</span>
+    </div>
+  </div>`;
+
+  const modsMap={
+    basic: mods.find(m=>m.key==='basic'),
+    review: mods.find(m=>m.key==='review'),
+    capability: mods.find(m=>m.key==='capability'),
+    development: mods.find(m=>m.key==='development'),
+    perf: mods.find(m=>m.key==='perf'),
+    experience: mods.find(m=>m.key==='experience'),
+  };
+
+  const sec=(title,body)=>`<div style="padding:20px 28px;border-bottom:1px solid #E2E8F0">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2563EB;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span style="width:3px;height:14px;background:#2563EB;border-radius:2px;display:inline-block"></span>${title}</div>
+    ${body}
+  </div>`;
+  const kv=(k,v)=>`<div><div style="font-size:11px;color:#64748B;margin-bottom:2px">${k}</div><div style="font-size:13px;font-weight:500">${v}</div></div>`;
+  const grid=(items)=>`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">${items.map(([k,v])=>kv(k,v)).join('')}</div>`;
+
+  if(modsMap.basic) html+=sec('基础信息',grid([['年龄',bi.age+'岁'],['司龄',bi.tenure],['地点',bi.location],['学历',bi.education],['院校',bi.university],['在职状态',bi.status]])+`<div style="margin-top:10px">${kv('汇报关系',bi.manager)}</div>`);
+  if(modsMap.review) html+=sec('盘点数据',`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">${kv('综合潜力',`<span style="font-size:18px;font-weight:700;color:#2563EB;font-family:monospace">${rd.potentialScore}/5.0</span>`)}${kv('AI等级',rd.aiLevelDetail)}${kv('绩效摘要',`<span style="font-size:12px">${rd.performanceHistory}</span>`)}</div><div>${Object.entries(rd.potentialRadar).map(([k,v])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px dashed #F1F5F9"><span style="font-size:12px;color:#334155">${k}</span><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden"><div style="height:100%;width:${v/5*100}%;background:#2563EB;border-radius:3px"></div></div><span style="font-family:monospace;font-size:12px;font-weight:600;color:#2563EB;width:24px;text-align:right">${v}</span></div></div>`).join('')}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${rd.historyGrid.map(g=>`<div style="background:#F1F5F9;border-radius:6px;padding:6px 12px;font-size:12px"><strong style="font-family:monospace">${g.year}</strong> ${g.label}</div>`).join('')}</div>`);
+  if(modsMap.capability) html+=sec('能力画像',`<div style="margin-bottom:10px"><div style="font-size:11px;color:#64748B;margin-bottom:6px">族群级标签</div><div style="display:flex;gap:6px;flex-wrap:wrap">${cp.ethnicTags.map(t=>`<span style="background:#EFF6FF;color:#2563EB;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500">${t}</span>`).join('')}</div></div><div style="margin-bottom:10px"><div style="font-size:11px;color:#64748B;margin-bottom:6px">通用能力标签</div><div style="display:flex;gap:6px;flex-wrap:wrap">${cp.generalTags.map(t=>`<span style="background:#F5F3FF;color:#5B21B6;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500">${t}</span>`).join('')}</div></div><div><div style="font-size:11px;color:#64748B;margin-bottom:6px">近1年关键项目</div>${cp.recentProjects.map(p=>`<div style="background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:6px;padding:6px 10px;font-size:12px;margin-bottom:6px">${p}</div>`).join('')}</div>`);
+  if(modsMap.development) html+=sec('发展信息',`<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:12px 16px;margin-bottom:12px"><div style="font-size:11px;color:#15803D;font-weight:700;text-transform:uppercase;letter-spacing:.04em">继任计划</div><div style="font-size:14px;font-weight:600;margin-top:2px">${di.succession}</div></div><div style="font-size:11px;color:#64748B;margin-bottom:8px">晋升/调动记录</div><div style="padding-left:16px;border-left:2px solid #E2E8F0">${di.promotionHistory.map(p=>`<div style="margin-bottom:8px;font-size:13px">${p}</div>`).join('')}</div>`);
+  if(modsMap.perf) html+=sec('绩效记录',emp.performanceHistory.map(p=>{const[q,r]=p.split(': ');const c=r==='高'?'#15803D':r==='低'?'#B91C1C':'#2563EB';return`<div style="display:flex;justify-content:space-between;padding:8px 12px;background:#F8FAFC;border-radius:6px;margin-bottom:6px"><span style="font-family:monospace;font-size:12px;color:#64748B">${q}</span><span style="font-weight:600;color:${c}">${r||'—'}</span></div>`;}).join(''));
+  if(modsMap.experience) html+=sec('内部任职经历',`<div style="padding-left:16px;border-left:2px solid #E2E8F0">${emp.internalExperience.map(e=>`<div style="margin-bottom:12px"><div style="font-size:11px;color:#94A3B8;font-family:monospace">${e.period}</div><div style="font-size:13px;font-weight:500">${e.role}</div></div>`).join('')}</div>`);
+
+  html+=`<div style="padding:14px 28px;background:#F8FAFC;display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:#94A3B8">人才管理智能体 v1.1 · 仅限内部使用 · 请妥善保管</span><span style="font-size:11px;color:#94A3B8">生成时间：${new Date().toLocaleString()}</span></div></div>`;
+  return html;
+}
+
+/* ================================================================
+   EXPORT LOG
+   ================================================================ */
+function addExportLog(type,count){
+  const fields=EXPORT_FIELDS.filter(f=>document.getElementById('ef_'+f.key)?.checked).map(f=>f.label);
+  exportLog.unshift({id:exportLog.length+1,type,format:type==='list'?(document.querySelector('input[name=exportFormat]:checked')?.value||'csv'):'html_profile',count,fields:type==='list'?fields.join('、'):'全画像模块',operator:'系统管理员',time:new Date().toLocaleString(),status:'success'});
+  updateExportStats();
+}
+
+function updateExportStats(){
+  document.getElementById('expTotal').textContent=exportLog.length;
+  document.getElementById('expToday').textContent=exportLog.filter(l=>l.time.includes(new Date().toLocaleDateString())).length;
+  document.getElementById('expRecords').textContent=exportLog.reduce((a,b)=>a+b.count,0);
+  document.getElementById('expUsers').textContent=exportLog.length>0?1:0;
+}
+
+function renderExportLog(){
+  updateExportStats();
+  const tbody=document.getElementById('exportLogBody');
+  const empty=document.getElementById('exportLogEmpty');
+  if(exportLog.length===0){tbody.innerHTML='';empty.style.display='';return;}
+  empty.style.display='none';
+  tbody.innerHTML=exportLog.map((log,i)=>`
+    <tr class="anim-row" style="animation-delay:${i*.03}s">
+      <td style="color:var(--muted);font-family:var(--mono)">#${log.id}</td>
+      <td>${log.type==='list'?'<span class="badge badge-blue">列表</span>':'<span class="badge badge-purple">画像</span>'}</td>
+      <td><span class="badge badge-gray">${log.format}</span></td>
+      <td style="font-family:var(--mono);font-weight:600">${log.count}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:12px">${log.fields}</td>
+      <td>${log.operator}</td>
+      <td style="font-size:12px;color:var(--muted)">${log.time}</td>
+      <td><span class="badge badge-green">✓ 完成</span></td>
+      <td><button class="btn btn-secondary btn-sm" onclick="showToast('重新导出功能开发中…','info')">重新导出</button></td>
+    </tr>
+  `).join('');
+}
+
+function clearExportLog(){exportLog=[];renderExportLog();showToast('已清空导出记录','info');}
+
+/* ================================================================
+   USER MANAGEMENT
+   ================================================================ */
+const ROLE_LABELS={super_admin:'超级管理员',admin:'管理员',hr_bp:'HRBP',hr_viewer:'HR查看',dept_head:'部门负责人',viewer:'只读用户'};
+const ROLE_COLORS={super_admin:'#DC2626',admin:'#2563EB',hr_bp:'#7C3AED',hr_viewer:'#0891B2',dept_head:'#16A34A',viewer:'#64748B'};
+const STATUS_LABELS={active:'活跃',inactive:'停用',pending:'待激活'};
+const STATUS_CLASSES={active:'badge-green',inactive:'badge-red',pending:'badge-yellow'};
+const SCOPE_LABELS={all:'全部数据',dept:'仅本部门',assigned:'指定人员'};
+
+function renderUsers(){
+  const search=document.getElementById('userSearch').value.toLowerCase();
+  const role=document.getElementById('userRoleFilter').value;
+  const status=document.getElementById('userStatusFilter').value;
+  const filtered=USERS.filter(u=>{
+    if(search&&!u.name.toLowerCase().includes(search)&&!u.email.toLowerCase().includes(search))return false;
+    if(role&&u.role!==role)return false;
+    if(status&&u.status!==status)return false;
+    return true;
+  });
+  document.getElementById('userTotal').textContent=USERS.length;
+  document.getElementById('userActive').textContent=USERS.filter(u=>u.status==='active').length;
+  document.getElementById('userAdmin').textContent=USERS.filter(u=>u.role==='super_admin'||u.role==='admin').length;
+  document.getElementById('userPending').textContent=USERS.filter(u=>u.status==='pending').length;
+  const grid=document.getElementById('userGrid');
+  const empty=document.getElementById('userEmpty');
+  if(filtered.length===0){grid.innerHTML='';empty.style.display='';return;}
+  empty.style.display='none';
+  grid.innerHTML=filtered.map(u=>`
+    <div class="user-card">
+      <div class="user-card-header">
+        <div class="avatar" style="width:42px;height:42px;font-size:15px;background:linear-gradient(135deg,${ROLE_COLORS[u.role]||'#64748B'},#7C3AED)">${u.name[0]}</div>
+        <div class="user-card-info">
+          <div class="user-card-name">${u.name}</div>
+          <div class="user-card-email">${u.email}</div>
+        </div>
+        <div class="user-status-dot dot-${u.status}" title="${STATUS_LABELS[u.status]}"></div>
+      </div>
+      <div class="user-card-meta">
+        <span class="badge" style="background:${ROLE_COLORS[u.role]}20;color:${ROLE_COLORS[u.role]};border:1px solid ${ROLE_COLORS[u.role]}40">${ROLE_LABELS[u.role]||u.role}</span>
+        <span class="badge ${STATUS_CLASSES[u.status]}">${STATUS_LABELS[u.status]}</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px">
+        📁 ${SCOPE_LABELS[u.scope]} · 🏢 ${u.dept||'—'} · 🆔 ${u.empId||'—'}
+      </div>
+      ${u.remark?`<div style="font-size:11px;color:var(--muted);margin-top:4px;padding:6px;background:var(--bg);border-radius:4px">💬 ${u.remark}</div>`:''}
+      <div class="user-card-actions">
+        <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openUserModal('${u.id}')">✏️ 编辑</button>
+        ${u.status==='active'?`<button class="btn btn-danger btn-sm" onclick="toggleUserStatus('${u.id}','inactive')">停用</button>`:`<button class="btn btn-success btn-sm" onclick="toggleUserStatus('${u.id}','active')">启用</button>`}
+        ${u.role!=='super_admin'?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">删除</button>`:'<button class="btn btn-secondary btn-sm" disabled title="超级管理员不可删除">🔒</button>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function openUserModal(userId=null){
+  editingUserId=userId;
+  document.getElementById('userModalTitle').textContent=userId?'✏️ 编辑用户':'➕ 新增用户';
+  if(userId){
+    const u=USERS.find(u=>u.id===userId);
+    if(!u)return;
+    document.getElementById('uName').value=u.name;
+    document.getElementById('uEmpId').value=u.empId||'';
+    document.getElementById('uEmail').value=u.email;
+    document.getElementById('uRole').value=u.role;
+    document.getElementById('uStatus').value=u.status;
+    document.getElementById('uScope').value=u.scope;
+    document.getElementById('uRemark').value=u.remark||'';
+    
+    // 设置三级部门选择
+    if (u.dept) {
+      const dept = parseDepartment(u.dept);
+      const level1Select = document.getElementById('uDeptLevel1');
+      const level2Select = document.getElementById('uDeptLevel2');
+      const level3Select = document.getElementById('uDeptLevel3');
+      
+      // 设置一级部门
+      if (level1Select) {
+        level1Select.value = dept.level1;
+        // 触发二级部门更新
+        updateDeptLevel2('u');
+        
+        // 设置二级部门
+        if (level2Select) {
+          level2Select.value = dept.level2;
+          // 触发三级部门更新
+          updateDeptLevel3('u');
+          
+          // 设置三级部门
+          if (level3Select) {
+            level3Select.value = u.dept;
+          }
+        }
+      }
+    }
+  } else {
+    ['uName','uEmpId','uEmail','uRemark'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('uRole').value='viewer';
+    document.getElementById('uStatus').value='active';
+    document.getElementById('uScope').value='all';
+    
+    // 重置三级部门选择
+    const level1Select = document.getElementById('uDeptLevel1');
+    const level2Select = document.getElementById('uDeptLevel2');
+    const level3Select = document.getElementById('uDeptLevel3');
+    if (level1Select) level1Select.value = '';
+    if (level2Select) level2Select.value = '';
+    if (level3Select) level3Select.value = '';
+  }
+  document.getElementById('userModal').classList.add('show');
+}
+function closeUserModal(){document.getElementById('userModal').classList.remove('show');}
+
+function saveUser(){
+  const name=document.getElementById('uName').value.trim();
+  const email=document.getElementById('uEmail').value.trim();
+  if(!name||!email){showToast('请填写姓名和邮箱','error');return;}
+  const dept = getSelectedDept('u');
+  if(editingUserId){
+    const u=USERS.find(u=>u.id===editingUserId);
+    if(u){
+      u.name=name;u.email=email;u.empId=document.getElementById('uEmpId').value;
+      u.role=document.getElementById('uRole').value;u.dept=dept;
+      u.status=document.getElementById('uStatus').value;u.scope=document.getElementById('uScope').value;
+      u.remark=document.getElementById('uRemark').value;
+    }
+    showToast('✅ 用户信息已更新','success');
+  } else {
+    USERS.push({
+      id:'USR'+String(USERS.length+1).padStart(3,'0'),
+      name,email,empId:document.getElementById('uEmpId').value,
+      role:document.getElementById('uRole').value,
+      dept:dept,
+      status:document.getElementById('uStatus').value,
+      scope:document.getElementById('uScope').value,
+      remark:document.getElementById('uRemark').value,
+      createdAt:new Date().toISOString().slice(0,10)
+    });
+    showToast('✅ 用户已创建','success');
+  }
+  closeUserModal();renderUsers();
+}
+
+function toggleUserStatus(id,status){
+  const u=USERS.find(u=>u.id===id);if(u){u.status=status;renderUsers();}
+  showToast(`✅ 账号已${status==='active'?'启用':'停用'}`,'success');
+}
+
+function deleteUser(id){
+  if(!confirm('确认删除该用户吗？此操作不可撤销。'))return;
+  USERS=USERS.filter(u=>u.id!==id);renderUsers();
+  showToast('用户已删除','info');
+}
+
+/* ================================================================
+   PERMISSION MANAGEMENT
+   ================================================================ */
+function renderPermissions(){
+  renderRoleList();
+}
+
+function renderRoleList(){
+  const body=document.getElementById('roleListBody');
+  body.innerHTML=roles.map(r=>`
+    <div class="role-item ${selectedRoleKey===r.key?'active':''}" onclick="selectRole('${r.key}')">
+      <div class="role-dot" style="background:${r.color};width:10px;height:10px;border-radius:50%"></div>
+      <div>
+        <div class="role-name">${r.name}</div>
+        <div class="role-count">${r.count} 位用户</div>
+      </div>
+      ${r.key==='super_admin'?'<span style="font-size:10px;color:var(--muted)">🔒</span>':''}
+    </div>
+  `).join('');
+}
+
+function selectRole(key){
+  selectedRoleKey=key;
+  renderRoleList();
+  const role=roles.find(r=>r.key===key);
+  if(!role)return;
+  document.getElementById('permPanelTitle').textContent=`${role.name} — 权限配置`;
+  document.getElementById('permPanelSub').textContent=`当前 ${role.count} 位用户持有此角色`;
+  document.getElementById('permBatchBtns').style.display='flex';
+  document.getElementById('roleDesc').textContent=role.desc;
+  if(!permMatrix[key]) permMatrix[key]={};
+  const body=document.getElementById('permBody');
+  body.innerHTML=PERM_MODULES.map(mod=>`
+    <div class="perm-section-title">${mod.section}</div>
+    ${mod.perms.map(p=>`
+      <div class="perm-row">
+        <div class="perm-name">${p.name}</div>
+        <div class="perm-desc">${p.desc}</div>
+        <div class="perm-toggle">
+          <label class="toggle" title="${key==='super_admin'?'超级管理员权限不可修改':''}">
+            <input type="checkbox" ${permMatrix[key][p.key]?'checked':''} 
+              ${key==='super_admin'?'disabled':''}
+              onchange="permMatrix['${key}']['${p.key}']=this.checked">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    `).join('')}
+  `).join('');
+}
+
+function permSelectAll(val){
+  if(!selectedRoleKey||selectedRoleKey==='super_admin')return;
+  PERM_MODULES.forEach(mod=>mod.perms.forEach(p=>{permMatrix[selectedRoleKey][p.key]=val;}));
+  selectRole(selectedRoleKey);
+}
+
+function savePermissions(){
+  showToast('✅ 权限配置已保存','success');
+}
+function resetPermissions(){
+  if(!confirm('确认重置所有角色权限为默认配置？'))return;
+  permMatrix=JSON.parse(JSON.stringify(DEFAULT_PERM_MATRIX));
+  if(selectedRoleKey)selectRole(selectedRoleKey);
+  showToast('权限已重置为默认配置','info');
+}
+function openRoleModal(){document.getElementById('roleModal').classList.add('show');}
+function selectRoleColor(color,el){
+  selectedRoleColor=color;
+  document.querySelectorAll('#roleColorPicker .role-dot').forEach(d=>d.style.border='none');
+  el.style.border=`2px solid ${color}`;
+}
+function saveRole(){
+  const name=document.getElementById('rName').value.trim();
+  const key=document.getElementById('rKey').value.trim()||name.toLowerCase().replace(/\s+/g,'_');
+  const desc=document.getElementById('rDesc').value.trim();
+  if(!name){showToast('请输入角色名称','error');return;}
+  if(roles.find(r=>r.key===key)){showToast('角色标识已存在','error');return;}
+  roles.push({key,name,color:selectedRoleColor,desc:desc||'新角色',count:0});
+  permMatrix[key]={};
+  document.getElementById('roleModal').classList.remove('show');
+  renderRoleList();
+  showToast(`✅ 角色 "${name}" 已创建`,'success');
+}
+
+/* ================================================================
+   UTILITIES
+   ================================================================ */
+function formatDate(){return new Date().toISOString().slice(0,10).replace(/-/g,'');}
+function downloadFile(content,filename,mime){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function showToast(msg,type='info'){
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;t.textContent=msg;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+/* ================================================================
+   TAGS MANAGEMENT
+   ================================================================ */
+let TAGS = [
+  {id: 'TAG001', name: 'Java', type: 'dept', dept: '技术-开发-后端开发岗', usage: 12, createdAt: '2024-01-01'},
+  {id: 'TAG002', name: 'Python', type: 'dept', dept: '技术-开发-后端开发岗', usage: 8, createdAt: '2024-01-02'},
+  {id: 'TAG003', name: '前端开发', type: 'dept', dept: '技术-开发-前端开发岗', usage: 15, createdAt: '2024-01-03'},
+  {id: 'TAG004', name: '产品设计', type: 'dept', dept: '产品-产品经理-产品经理岗-商业类（数字孪生产品、交通线产品等）', usage: 10, createdAt: '2024-01-04'},
+  {id: 'TAG005', name: '数据分析', type: 'common', dept: '', usage: 20, createdAt: '2024-01-05'},
+  {id: 'TAG006', name: '项目管理', type: 'common', dept: '', usage: 25, createdAt: '2024-01-06'},
+  {id: 'TAG007', name: '沟通能力', type: 'common', dept: '', usage: 30, createdAt: '2024-01-07'},
+  {id: 'TAG008', name: 'AI算法', type: 'dept', dept: '技术-AI与大数据-机器学习岗(包括视觉算法、自然语言）', usage: 5, createdAt: '2024-01-08'},
+  {id: 'TAG009', name: '测试自动化', type: 'dept', dept: '技术-测试-测试开发岗', usage: 7, createdAt: '2024-01-09'},
+  {id: 'TAG010', name: '团队协作', type: 'common', dept: '', usage: 35, createdAt: '2024-01-10'},
+  {id: 'TAG011', name: '全栈开发', type: 'dept', dept: '技术-开发-全栈开发岗', usage: 6, createdAt: '2024-01-11'},
+  {id: 'TAG012', name: '运维开发', type: 'dept', dept: '技术-运维-运维开发岗', usage: 4, createdAt: '2024-01-12'},
+  {id: 'TAG013', name: '解决方案架构', type: 'dept', dept: '技术-架构-解决方案架构师岗', usage: 3, createdAt: '2024-01-13'},
+  {id: 'TAG014', name: '数据工程', type: 'dept', dept: '技术-数据-数据工程师岗', usage: 5, createdAt: '2024-01-14'},
+  {id: 'TAG015', name: '网络安全', type: 'dept', dept: '技术-安全-安全工程师岗', usage: 2, createdAt: '2024-01-15'},
+  {id: 'TAG016', name: '云平台', type: 'dept', dept: '技术-云原生-云平台工程师岗', usage: 4, createdAt: '2024-01-16'},
+  {id: 'TAG017', name: 'Android开发', type: 'dept', dept: '技术-移动开发-Android开发岗', usage: 3, createdAt: '2024-01-17'},
+  {id: 'TAG018', name: 'iOS开发', type: 'dept', dept: '技术-移动开发-iOS开发岗', usage: 2, createdAt: '2024-01-18'}
+];
+
+let selectedTagsIds = new Set();
+let editingTagId = null;
+
+function initTags() {
+  // 初始化标签管理页面的三级部门选择
+  initDeptSelects('tag');
+  
+  updateTagStats();
+  renderTags();
+}
+
+function updateTagStats() {
+  const total = TAGS.length;
+  const deptTags = TAGS.filter(t => t.type === 'dept').length;
+  const commonTags = TAGS.filter(t => t.type === 'common').length;
+  const usage = TAGS.reduce((sum, t) => sum + t.usage, 0);
+  
+  document.getElementById('tagTotal').textContent = total;
+  document.getElementById('tagDept').textContent = deptTags;
+  document.getElementById('tagCommon').textContent = commonTags;
+  document.getElementById('tagUsage').textContent = usage;
+}
+
+function renderTags() {
+  const search = document.getElementById('tagSearch').value.trim().toLowerCase();
+  const typeFilter = document.getElementById('tagTypeFilter').value;
+  const deptFilter = getSelectedDept('tag');
+  
+  const filteredTags = TAGS.filter(tag => {
+    if (search && !tag.name.toLowerCase().includes(search)) return false;
+    if (typeFilter && tag.type !== typeFilter) return false;
+    if (deptFilter && tag.dept !== deptFilter) return false;
+    return true;
+  });
+  
+  const tbody = document.getElementById('tagTableBody');
+  const empty = document.getElementById('tagEmptyState');
+  document.getElementById('tagResultCount').textContent = filteredTags.length;
+  document.getElementById('tagBatchBtns').style.display = selectedTagsIds.size > 0 ? 'flex' : 'none';
+  
+  tbody.innerHTML = '';
+  if (filteredTags.length === 0) {
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  
+  filteredTags.forEach((tag, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'anim-row';
+    tr.style.animationDelay = `${i * 0.03}s`;
+    const checked = selectedTagsIds.has(tag.id);
+    const typeText = tag.type === 'dept' ? '部门技能' : '通用能力';
+    
+    tr.innerHTML = `
+      <td class="checkbox-col" onclick="event.stopPropagation()">
+        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTagRow('${tag.id}', this)">
+      </td>
+      <td>${tag.name}</td>
+      <td>${typeText}</td>
+      <td class="td-muted">${tag.dept || '通用'}</td>
+      <td>${tag.usage}</td>
+      <td class="td-muted">${tag.createdAt}</td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-secondary btn-sm" onclick="editTag('${tag.id}')">编辑</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTag('${tag.id}')">删除</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleTagRow(id, cb) {
+  if (cb.checked) selectedTagsIds.add(id);
+  else selectedTagsIds.delete(id);
+  document.getElementById('tagBatchBtns').style.display = selectedTagsIds.size > 0 ? 'flex' : 'none';
+  document.getElementById('checkAllTags').checked = selectedTagsIds.size === document.querySelectorAll('#tagTableBody input:checked').length && TAGS.length > 0;
+}
+
+function toggleCheckAllTags(cb) {
+  selectedTagsIds.clear();
+  if (cb.checked) {
+    TAGS.forEach(tag => selectedTagsIds.add(tag.id));
+  }
+  renderTags();
+}
+
+function openTagModal() {
+  editingTagId = null;
+  document.getElementById('tagModalTitle').textContent = '➕ 新增标签';
+  document.getElementById('tagName').value = '';
+  document.getElementById('tagType').value = 'common';
+  document.getElementById('tagDesc').value = '';
+  
+  // 重置三级部门选择
+  const level1Select = document.getElementById('tagDeptLevel1');
+  const level2Select = document.getElementById('tagDeptLevel2');
+  const level3Select = document.getElementById('tagDeptLevel3');
+  if (level1Select) level1Select.value = '';
+  if (level2Select) level2Select.value = '';
+  if (level3Select) level3Select.value = '';
+  
+  toggleTagDeptField();
+  document.getElementById('tagModal').classList.add('show');
+}
+
+function closeTagModal() {
+  document.getElementById('tagModal').classList.remove('show');
+}
+
+function toggleTagDeptField() {
+  const type = document.getElementById('tagType').value;
+  const deptField = document.getElementById('tagDeptField');
+  deptField.style.display = type === 'dept' ? 'block' : 'none';
+}
+
+function saveTag() {
+  const name = document.getElementById('tagName').value.trim();
+  const type = document.getElementById('tagType').value;
+  const dept = type === 'dept' ? getSelectedDept('tagModal') : '';
+  const desc = document.getElementById('tagDesc').value.trim();
+  
+  if (!name) {
+    showToast('⚠ 请输入标签名称', 'error');
+    return;
+  }
+  
+  if (type === 'dept' && !dept) {
+    showToast('⚠ 部门技能标签必须选择所属部门', 'error');
+    return;
+  }
+  
+  if (editingTagId) {
+    const tag = TAGS.find(t => t.id === editingTagId);
+    if (tag) {
+      tag.name = name;
+      tag.type = type;
+      tag.dept = dept;
+      showToast('✅ 标签已更新', 'success');
+    }
+  } else {
+    const newTag = {
+      id: 'TAG' + String(TAGS.length + 1).padStart(3, '0'),
+      name: name,
+      type: type,
+      dept: dept,
+      usage: 0,
+      createdAt: formatDate()
+    };
+    TAGS.push(newTag);
+    showToast('✅ 标签已创建', 'success');
+  }
+  
+  closeTagModal();
+  updateTagStats();
+  renderTags();
+}
+
+function editTag(id) {
+  const tag = TAGS.find(t => t.id === id);
+  if (tag) {
+    editingTagId = id;
+    document.getElementById('tagModalTitle').textContent = '✏️ 编辑标签';
+    document.getElementById('tagName').value = tag.name;
+    document.getElementById('tagType').value = tag.type;
+    document.getElementById('tagDesc').value = '';
+    toggleTagDeptField();
+    
+    // 设置三级部门选择
+    if (tag.dept) {
+      const dept = parseDepartment(tag.dept);
+      const level1Select = document.getElementById('tagDeptLevel1');
+      const level2Select = document.getElementById('tagDeptLevel2');
+      const level3Select = document.getElementById('tagDeptLevel3');
+      
+      // 设置一级部门
+      if (level1Select) {
+        level1Select.value = dept.level1;
+        // 触发二级部门更新
+        updateDeptLevel2('tagModal');
+        
+        // 设置二级部门
+        if (level2Select) {
+          level2Select.value = dept.level2;
+          // 触发三级部门更新
+          updateDeptLevel3('tagModal');
+          
+          // 设置三级部门
+          if (level3Select) {
+            level3Select.value = tag.dept;
+          }
+        }
+      }
+    }
+    
+    document.getElementById('tagModal').classList.add('show');
+  }
+}
+
+function deleteTag(id) {
+  if (confirm('确定要删除这个标签吗？')) {
+    TAGS = TAGS.filter(t => t.id !== id);
+    selectedTagsIds.delete(id);
+    showToast('✅ 标签已删除', 'success');
+    updateTagStats();
+    renderTags();
+  }
+}
+
+function deleteSelectedTags() {
+  if (selectedTagsIds.size === 0) return;
+  if (confirm(`确定要删除选中的 ${selectedTagsIds.size} 个标签吗？`)) {
+    TAGS = TAGS.filter(t => !selectedTagsIds.has(t.id));
+    selectedTagsIds.clear();
+    showToast(`✅ 已删除 ${selectedTagsIds.size} 个标签`, 'success');
+    updateTagStats();
+    renderTags();
+  }
+}
+
+function clearTagFilters() {
+  document.getElementById('tagSearch').value = '';
+  document.getElementById('tagTypeFilter').value = '';
+  document.getElementById('tagDeptFilter').value = '';
+  renderTags();
+}
+
+function exportTags() {
+  const csv = '标签名称,标签类型,所属部门,使用次数,创建时间\n' + 
+    TAGS.map(tag => {
+      const typeText = tag.type === 'dept' ? '部门技能' : '通用能力';
+      return `"${tag.name}","${typeText}","${tag.dept || '通用'}",${tag.usage},${tag.createdAt}`;
+    }).join('\n');
+  
+  downloadFile(csv, 'tags_export_' + formatDate() + '.csv', 'text/csv;charset=utf-8;');
+  showToast('✅ 标签已导出', 'success');
+}
+
+function formatDate() {
+  const d = new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+initTalent();
+updateExportStats();
+renderUsers();
+initTags();
+</script>
+
+<!--
+=================================================================
+如何本地运行
+=================================================================
+1. 保存为 index.html，双击即可运行（无需任何服务器）
+2. 推荐 Chrome / Edge 最新版以获取最佳效果
+3. 导出CSV后用Excel打开时，需选择UTF-8编码（文件头已添加BOM）
+
+=================================================================
+新增功能说明
+=================================================================
+【导出功能】
+• 导出列表：支持CSV/HTML表格，可自由选择导出字段（15+个字段）
+• 导出画像：输出可打印的HTML报告，可在浏览器中 Ctrl+P 另存PDF
+• 单条画像：列表行操作区或详情面板均有"导出画像"快捷按钮
+• 批量导出：勾选记录后支持批量导出列表/画像
+• 导出中心：记录所有导出历史，展示操作人/时间/字段/条数
+
+【用户管理】
+• 支持创建/编辑/停用/删除用户账号
+• 用户属性：姓名、邮箱、工号、系统角色、部门、状态、数据范围、备注
+• 卡片式列表，状态指示灯直观展示活跃/停用/待激活
+
+【权限管理】
+• 角色-权限矩阵：6个内置角色 × 18项功能权限
+• 支持逐项配置开关，也可一键全选/全禁
+• 超级管理员权限锁定，防止误操作
+• 支持创建自定义角色（含颜色、标识、说明）
+• 权限分5大模块：人才档案/导出/用户管理/权限管理/系统配置
+
+=================================================================
+二期接入真实 API 的改造路径
+=================================================================
+• 用户认证：接入SSO/OAuth，替换顶部用户信息，实现真实登录
+• 权限鉴权：根据当前用户角色和 permMatrix，在 openPanel/导出 前做权限拦截
+• 后端存储：将 USERS、permMatrix、exportLog 接口化，持久化到数据库
+• 审计日志：在每次导出/用户变更操作后，POST到 /api/audit-log 接口
+• 图表接入：ECharts 替换雷达图SVG占位，接入真实图表组件
+=================================================================
+-->
+</body>
+</html>
