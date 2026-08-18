@@ -1,2 +1,2 @@
 def webhook_test():
-    print("EvoAgent webhook test1")
+    print("EvoAgent webhook test2")
